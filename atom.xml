@@ -1,34 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Hexo</title>
+  <title>李海洲的小站</title>
   
-  
+  <subtitle>李海洲</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-04-24T09:43:15.310Z</updated>
+  <updated>2018-04-24T07:35:02.654Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
-    <name>John Doe</name>
+    <name>李海洲</name>
     
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>lihaizhou</title>
-    <link href="http://yoursite.com/2018/04/24/lihaizhou/"/>
-    <id>http://yoursite.com/2018/04/24/lihaizhou/</id>
-    <published>2018-04-24T09:43:15.000Z</published>
-    <updated>2018-04-24T09:43:15.310Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>Hello World</title>

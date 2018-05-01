@@ -780,13 +780,13 @@
   
   <script type="text/javascript">
     var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
+    var guest = 'nick# custom comment header';
     guest = guest.split(',').filter(item=>{
       return GUEST.indexOf(item)>-1;
     });
     new Valine({
         el: '#comments' ,
-        verify: true,
+        verify: false,
         notify: true,
         appId: 'Hsz9zOlrvMN9ry0R9Jfi5ykJ-gzGzoHsz',
         appKey: 'MAHOS3RIF7wDFRbEeC7kf3Vr',

@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="李海洲的成长之路">
 <meta property="og:description" content="问题平台Android 7.1.1  MT6739 问题现象需要常驻的进程经常被kill，界面操作不流畅 日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样 LMK机制简介在系统内存不足的情况下">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-13T13:09:46.077Z">
+<meta property="og:updated_time" content="2018-05-13T13:46:38.321Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="低内存引发的一点思考">
 <meta name="twitter:description" content="问题平台Android 7.1.1  MT6739 问题现象需要常驻的进程经常被kill，界面操作不流畅 日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样 LMK机制简介在系统内存不足的情况下">
@@ -429,7 +429,7 @@
 <p><strong>问题现象</strong><br><code>需要常驻的进程经常被kill，界面操作不流畅</code></p>
 <p><strong>日志分析</strong><br>鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样</p>
 <p><strong>LMK机制简介</strong><br>在系统内存不足的情况下，系统开始依据自身的一套进程回收机制来判断要kill掉哪些进程，以腾出内存来供给需要的app。<br>总的来说，进程的<code>oom_adj</code>越大，表示此进程优先级越低，越容易被杀回收；越小，表示进程优先级越高，越不容易被杀回收，kill进程是通过发送SIGKILL信息。这套杀进程回收内存的机制就叫<code>Low Memory Killer</code> ，简称<code>LMK</code>，它是基于Linux内核的<code>OOM Killer</code>机制诞生<br>如果LMK都无法释放出足够的内存空间，那么当为新的进程分配应用程序时将发生<code>Out of Memory</code>异常，这时候<code>OOM_killer</code>开始工作，<code>OOM_killer</code>会在系统内存耗尽的情况下，启用自己算法有选择性的kill 掉一些进程</p>
-<p><strong>常见的提升应用存活率</strong><br>这种问题老生常谈，网上资料一抓一大把，其中不乏各种旁门左道，诸如一像素，互相唤醒，防杀死重启服务之类。<br>这些方法不一定通用，是否奏效依赖Android版本以及手机厂商。<br>比较常规的做法是标记为系统应用，相比于三方应用来讲，系统应用的优先级高一些，当然这个做法前提是有条件且需要。<br>另外一种常见的方式是加入<code>android:persistent=&quot;true&quot;</code>属性，这种方式只对系统应用奏效，这样做的目的是使进程持续占据 Memory不被杀死，现在的512内存手表项目中的Launcher里使用了，该种方式的使用务必谨慎，切记不可滥用<br>还有一个就是降低应用的占用内存，LMK工作时往往会挑肥的经常kill</p>
+<p><strong>常见的提升应用存活率</strong><br>这种问题老生常谈，网上资料一抓一大把，其中不乏各种旁门左道，诸如一像素，互相唤醒，防杀死重启服务之类。<br>这些方法不一定通用，是否奏效依赖Android版本以及手机厂商。<br>比较常规的做法是标记为系统应用，相比于三方应用来讲，系统应用的优先级高一些，当然这个做法前提是有条件且需要。<br>另外一种常见的方式是加入<code>android:persistent=&quot;true&quot;</code>属性，这种方式只对系统应用奏效，这样做的目的是使进程持续占据 Memory不被杀死，现在的512内存手表项目中的Launcher里使用了，该种方式的使用务必谨慎，切记不可滥用<br>还有一个就是降低应用的占用内存，LMK工作时往往会先挑肥的来kill</p>
 <p><strong>如何判断某个应用的进程的oom_adj</strong><br>两个shell命令即可<br>1.<code>ps | grep PackageName</code><br>获取到指定应用的进程ID<br>2.<code>cat /proc/</code><br>进程ID/oom_adj获取到<code>oom_adj</code>数值</p>
 <p><strong>如何判别LMK是否太频繁呢</strong><br>这个其实没有什么标准，从过往的情况来看，看<code>kernel日志</code>中LMK触发的次数，1分钟超过20次就是非常多了</p>
 <p><strong>LMK kill进程顺序的判别依据</strong><br>根据adj的值以及占用内存值<br>现在不少程序会做成进程组形式，以前的项目上有遇到过，一个进程被kill了，另一个好兄弟再把它唤起来，这种互相唤醒的好基友方式会导致RAM无法真正释放，释放的 RAM 马上被吃掉。</p>

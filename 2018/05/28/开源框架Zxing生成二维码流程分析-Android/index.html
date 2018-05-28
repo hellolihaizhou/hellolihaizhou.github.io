@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李海洲的成长之路" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。之前比较忙没有仔细研究，接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开源框架Zxing生成二维码流程分析(Android)">
+<meta property="og:url" content="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/index.html">
+<meta property="og:site_name" content="李海洲的成长之路">
+<meta property="og:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。之前比较忙没有仔细研究，接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hin">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-28T08:16:33.870Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开源框架Zxing生成二维码流程分析(Android)">
+<meta name="twitter:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。之前比较忙没有仔细研究，接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hin">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/"/>
+
+
+
+
+
+  <title>开源框架Zxing生成二维码流程分析(Android) | 李海洲的成长之路</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+	<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李海洲的成长之路</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">开源框架Zxing生成二维码流程分析(Android)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T15:55:37+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/28/开源框架Zxing生成二维码流程分析-Android/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/28/开源框架Zxing生成二维码流程分析-Android/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,809
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>项目中用到了<code>Zxing</code>的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。之前比较忙没有仔细研究，接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go</p>
+<p>应用端核心代码  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hashtable hints= <span class="keyword">new</span> Hashtable();</span><br><span class="line">hints.put(EncodeHintType.CHARACTER_SET, <span class="string">"utf-8"</span>);</span><br><span class="line">hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);</span><br><span class="line">hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br><span class="line">BitMatrix bitMatrix = <span class="keyword">new</span> QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, width, height,hints);</span><br></pre></td></tr></table></figure>
+<p><code>url</code>: 即数据源，可以根据项目需求传入指定的url，比如一个下载应用的链接网址<br><code>width height</code> : 应用端设置的二维码宽高<br><code>hints</code>: 主要用于配置二维码的一些参数，比如纠错级别，白边宽度等  </p>
+<p>最核心的一句代码即:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BitMatrix bitMatrix = <span class="keyword">new</span> QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, width, height,hints);</span><br></pre></td></tr></table></figure>
+<p>接下来以此为切入点展开分析</p>
+<p><strong>源码分析流程</strong></p>
+<p>如下代码均摘自Zxing github项目(<a href="https://github.com/zxing/zxing/" target="_blank" rel="noopener">https://github.com/zxing/zxing/</a>)</p>
+<p><strong>Step1</strong><br><code>QRCodeWriter.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> BitMatrix <span class="title">encode</span><span class="params">(String contents,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BarcodeFormat format,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> width,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> height,</span></span></span><br><span class="line"><span class="function"><span class="params">                          Map&lt;EncodeHintType,?&gt; hints)</span> <span class="keyword">throws</span> WriterException </span>&#123;</span><br><span class="line">    <span class="comment">//检查传入内容是否为空</span></span><br><span class="line">    <span class="keyword">if</span> (contents.isEmpty()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Found empty contents"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//不是QR_CODE直接跑出异常, 我们前面应用端传入的正是QR_CODE</span></span><br><span class="line">    <span class="keyword">if</span> (format != BarcodeFormat.QR_CODE) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can only encode QR_CODE, but got "</span> + format);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//检测宽高数值是否异常</span></span><br><span class="line">    <span class="keyword">if</span> (width &lt; <span class="number">0</span> || height &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Requested dimensions are too small: "</span> + width + <span class="string">'x'</span> +</span><br><span class="line">          height);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//纠错级别初始值是Low</span></span><br><span class="line">    ErrorCorrectionLevel errorCorrectionLevel = ErrorCorrectionLevel.L;</span><br><span class="line">    <span class="keyword">int</span> quietZone = QUIET_ZONE_SIZE;</span><br><span class="line">    <span class="comment">//检测hints是否为空即用户是否有设置</span></span><br><span class="line">    <span class="keyword">if</span> (hints != <span class="keyword">null</span>) &#123;</span><br><span class="line">       <span class="comment">//检测hints中用户是否设置了纠错级别，有的话使用用户自己设置的纠错级别</span></span><br><span class="line">      <span class="keyword">if</span> (hints.containsKey(EncodeHintType.ERROR_CORRECTION)) &#123;</span><br><span class="line">        errorCorrectionLevel =                         ErrorCorrectionLevel.valueOf(hints.get(EncodeHintType.ERROR_CORRECTION).toString());</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//检测hints中用户是否设置了白边宽度，有的话使用用户自己设置的白边宽度</span></span><br><span class="line">      <span class="keyword">if</span> (hints.containsKey(EncodeHintType.MARGIN)) &#123;</span><br><span class="line">        quietZone = Integer.parseInt(hints.get(EncodeHintType.MARGIN).toString());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    如下两句代码是这个函数最核心的两句</span><br><span class="line">    <span class="comment">//这里是将传入的contents转换成QRcode</span></span><br><span class="line">    QRCode code = Encoder.encode(contents, errorCorrectionLevel, hints);</span><br><span class="line">   <span class="comment">//这里将QRcode转换为BitMatrix并jhi加入白边</span></span><br><span class="line">    <span class="keyword">return</span> renderResult(code, width, height, quietZone);(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Step2</strong><br><code>Encoder.java</code></p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_BYTE_MODE_ENCODING = <span class="string">"ISO-8859-1"</span>; <span class="comment">//如果hints中不设置编码格式的话，默认使用此编码</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> QRCode <span class="title">encode</span><span class="params">(String content,</span></span></span><br><span class="line"><span class="function"><span class="params">                              ErrorCorrectionLevel ecLevel,</span></span></span><br><span class="line"><span class="function"><span class="params">                              Map&lt;EncodeHintType,?&gt; hints)</span> <span class="keyword">throws</span> WriterException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Determine what character encoding has been specified by the caller, if any</span></span><br><span class="line">    String encoding = DEFAULT_BYTE_MODE_ENCODING;</span><br><span class="line">    <span class="comment">//hint不为空且其中包含key为CHARACTER_SET的值</span></span><br><span class="line">    <span class="keyword">boolean</span> hasEncodingHint = hints != <span class="keyword">null</span> &amp;&amp; hints.containsKey(EncodeHintType.CHARACTER_SET);</span><br><span class="line">    <span class="keyword">if</span> (hasEncodingHint) &#123;</span><br><span class="line">      <span class="comment">//从hints中取key为CHARACTER_SET的值，即对应的编码方式</span></span><br><span class="line">      encoding = hints.get(EncodeHintType.CHARACTER_SET).toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Pick an encoding mode appropriate for the content. Note that this will not attempt to use</span></span><br><span class="line">    <span class="comment">// multiple modes / segments even if that were more efficient. Twould be nice.</span></span><br><span class="line">    <span class="comment">//根据传入的内容选择合适的编码模型</span></span><br><span class="line">    Mode mode = chooseMode(content, encoding);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This will store the header information, like mode and</span></span><br><span class="line">    <span class="comment">// length, as well as "header" segments like an ECI segment.</span></span><br><span class="line">    BitArray headerBits = <span class="keyword">new</span> BitArray();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Append ECI segment if applicable</span></span><br><span class="line">    <span class="keyword">if</span> (mode == Mode.BYTE &amp;&amp; (hasEncodingHint || !DEFAULT_BYTE_MODE_ENCODING.equals(encoding))) &#123;</span><br><span class="line">      CharacterSetECI eci = CharacterSetECI.getCharacterSetECIByName(encoding);</span><br><span class="line">      <span class="keyword">if</span> (eci != <span class="keyword">null</span>) &#123;</span><br><span class="line">        appendECI(eci, headerBits);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (With ECI in place,) Write the mode marker</span></span><br><span class="line">    appendModeInfo(mode, headerBits);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Collect data within the main segment, separately, to count its size if needed. Don't add it to</span></span><br><span class="line">    <span class="comment">// main payload yet.</span></span><br><span class="line">    BitArray dataBits = <span class="keyword">new</span> BitArray();</span><br><span class="line">    appendBytes(content, mode, dataBits, encoding);</span><br><span class="line"></span><br><span class="line">    Version version;</span><br><span class="line">    <span class="comment">//查询hints是否指定了使用的版本，没有的话则使用默认版本</span></span><br><span class="line">    <span class="keyword">if</span> (hints != <span class="keyword">null</span> &amp;&amp; hints.containsKey(EncodeHintType.QR_VERSION)) &#123;</span><br><span class="line">      <span class="keyword">int</span> versionNumber = Integer.parseInt(hints.get(EncodeHintType.QR_VERSION).toString());</span><br><span class="line">      version = Version.getVersionForNumber(versionNumber);</span><br><span class="line">      <span class="keyword">int</span> bitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, version);</span><br><span class="line">      <span class="keyword">if</span> (!willFit(bitsNeeded, version, ecLevel)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> WriterException(<span class="string">"Data too big for requested version"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      version = recommendVersion(ecLevel, mode, headerBits, dataBits);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BitArray headerAndDataBits = <span class="keyword">new</span> BitArray();</span><br><span class="line">    headerAndDataBits.appendBitArray(headerBits);</span><br><span class="line">    <span class="comment">// Find "length" of main segment and write it</span></span><br><span class="line">    <span class="keyword">int</span> numLetters = mode == Mode.BYTE ? dataBits.getSizeInBytes() : content.length();</span><br><span class="line">    appendLengthInfo(numLetters, version, mode, headerAndDataBits);</span><br><span class="line">    <span class="comment">// Put data together into the overall payload</span></span><br><span class="line">    headerAndDataBits.appendBitArray(dataBits);</span><br><span class="line"></span><br><span class="line">    Version.ECBlocks ecBlocks = version.getECBlocksForLevel(ecLevel);</span><br><span class="line">    <span class="keyword">int</span> numDataBytes = version.getTotalCodewords() - ecBlocks.getTotalECCodewords();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Terminate the bits properly.</span></span><br><span class="line">    terminateBits(numDataBytes, headerAndDataBits);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Interleave data bits with error correction code.</span></span><br><span class="line">    BitArray finalBits = interleaveWithECBytes(headerAndDataBits,</span><br><span class="line">                                              version.getTotalCodewords(),</span><br><span class="line">                                              numDataBytes,</span><br><span class="line">                                              ecBlocks.getNumBlocks());</span><br><span class="line"></span><br><span class="line">    QRCode qrCode = <span class="keyword">new</span> QRCode();</span><br><span class="line"></span><br><span class="line">    qrCode.setECLevel(ecLevel);<span class="comment">// 纠错级别</span></span><br><span class="line">    qrCode.setMode(mode);</span><br><span class="line">    qrCode.setVersion(version);<span class="comment">// 设置Qrcode包的版本</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//  Choose the mask pattern and set to "qrCode".</span></span><br><span class="line">    <span class="keyword">int</span> dimension = version.getDimensionForVersion();</span><br><span class="line">    ByteMatrix matrix = <span class="keyword">new</span> ByteMatrix(dimension, dimension);</span><br><span class="line">    <span class="comment">//这里遍历所有的Mask Pattern并根据一定的判定准则来选择最佳的Mask Pattern</span></span><br><span class="line">    <span class="keyword">int</span> maskPattern = chooseMaskPattern(finalBits, ecLevel, version, matrix);</span><br><span class="line">    qrCode.setMaskPattern(maskPattern);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Build the matrix and set it to "qrCode".</span></span><br><span class="line">    MatrixUtil.buildMatrix(finalBits, ecLevel, version, maskPattern, matrix);</span><br><span class="line">    qrCode.setMatrix(matrix);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> qrCode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Step3</strong><br>这一步最为关键，将上一步得到的<code>QRcode</code>转换为<code>BitMatrix</code>  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Note that the input matrix uses 0 == white, 1 == black, while the output matrix uses</span></span><br><span class="line">  <span class="comment">// 0 == black, 255 == white (i.e. an 8 bit greyscale bitmap).</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> BitMatrix <span class="title">renderResult</span><span class="params">(QRCode code, <span class="keyword">int</span> width, <span class="keyword">int</span> height, <span class="keyword">int</span> quietZone)</span> </span>&#123;</span><br><span class="line">    ByteMatrix input = code.getMatrix();</span><br><span class="line">    <span class="keyword">if</span> (input == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> inputWidth = input.getWidth();</span><br><span class="line">    <span class="keyword">int</span> inputHeight = input.getHeight();</span><br><span class="line">    <span class="comment">//这里在原始数据基础上加上边距即白边的距离，分别计算出二维码宽高</span></span><br><span class="line">    <span class="keyword">int</span> qrWidth = inputWidth + (quietZone * <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">int</span> qrHeight = inputHeight + (quietZone * <span class="number">2</span>);</span><br><span class="line">    <span class="comment">//这里进一步根据应用端传入的宽高进行对比，得出最终要输出的宽高</span></span><br><span class="line">    <span class="keyword">int</span> outputWidth = Math.max(width, qrWidth);</span><br><span class="line">    <span class="keyword">int</span> outputHeight = Math.max(height, qrHeight);</span><br><span class="line">    <span class="comment">//计算缩放比例</span></span><br><span class="line">    <span class="keyword">int</span> multiple = Math.min(outputWidth / qrWidth, outputHeight / qrHeight);</span><br><span class="line">    <span class="comment">// Padding includes both the quiet zone and the extra white pixels to accommodate the requested</span></span><br><span class="line">    <span class="comment">// dimensions. For example, if input is 25x25 the QR will be 33x33 including the quiet zone.</span></span><br><span class="line">    <span class="comment">// If the requested size is 200x160, the multiple will be 4, for a QR of 132x132. These will</span></span><br><span class="line">    <span class="comment">// handle all the padding from 100x100 (the actual QR) up to 200x160.</span></span><br><span class="line">    <span class="comment">//计算左边白边的宽度</span></span><br><span class="line">    <span class="keyword">int</span> leftPadding = (outputWidth - (inputWidth * multiple)) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">//计算顶部白边的宽度</span></span><br><span class="line">    <span class="keyword">int</span> topPadding = (outputHeight - (inputHeight * multiple)) / <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line">    BitMatrix output = <span class="keyword">new</span> BitMatrix(outputWidth, outputHeight);</span><br><span class="line">    <span class="comment">//双重循环, 将ByteMatrix内容进行padding计算后转换为BitMatrix</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> inputY = <span class="number">0</span>, outputY = topPadding; inputY &lt; inputHeight; inputY++, outputY += multiple) &#123;</span><br><span class="line">      <span class="comment">// Write the contents of this row of the barcode</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> inputX = <span class="number">0</span>, outputX = leftPadding; inputX &lt; inputWidth; inputX++, outputX += multiple) &#123;</span><br><span class="line">        <span class="keyword">if</span> (input.get(inputX, inputY) == <span class="number">1</span>) &#123;</span><br><span class="line">          output.setRegion(outputX, outputY, multiple, multiple);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里白边宽度在应用端是根据属性<code>Margin</code>来设置, 示例如下: </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p><strong>Step4</strong><br>拿到<code>BitMatrix</code>后就可以转换为<code>bitmap</code>进而转换为<code>image</code>显示</p>
+<p>如下是将BitMatrix转成bitmap的过程 </p>
+<pre><code class="java"><span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; height; y++) {
+       <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; width; x++) {
+             <span class="keyword">if</span> (bitMatrix.get(x, y)) {
+                 pixels[y * width+ x] = <span class="number">0xff000000</span>;
+              } <span class="keyword">else</span> {
+                 pixels[y * width+ x] = <span class="number">0xFFF1C900</span>; 
+              }
+          }
+ }
+Bitmap bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
+bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="number">0</span>, <span class="number">0</span>,width,height);  
+</code></pre>
+<p>这里的height,width代表应用端设置的宽高值</p>
+<p><strong>Step5</strong><br>添加logo，这个比较简单，在Bitmap中间再绘制一个Bitmap就可以了  </p>
+<pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">addLogo</span><span class="params">(Bitmap src, Bitmap logo)</span> </span>{
+  <span class="keyword">if</span> (logo == <span class="keyword">null</span>) {
+      <span class="keyword">return</span> src;
+  }
+  <span class="comment">// 获取图片的宽高</span>
+  <span class="keyword">int</span> srcWidth = src.getWidth();
+  <span class="keyword">int</span> srcHeight = src.getHeight();
+  <span class="keyword">int</span> logoWidth = logo.getWidth();
+  <span class="keyword">int</span> logoHeight = logo.getHeight();
+  <span class="keyword">if</span> (logoWidth == <span class="number">0</span> || logoHeight == <span class="number">0</span>) {
+      <span class="keyword">return</span> src;
+  }
+  <span class="comment">// logo大小为二维码整体大小的1/5</span>
+ <span class="keyword">float</span> scaleFactor = srcWidth * <span class="number">1.0f</span> / <span class="number">5</span> / logoWidth;
+ Bitmap bitmap = Bitmap.createBitmap(srcWidth, srcHeight, Bitmap.Config.ARGB_8888);
+ <span class="keyword">try</span> {
+      Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);
+      canvas.drawBitmap(src, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">null</span>);
+      canvas.scale(scaleFactor, scaleFactor, srcWidth / <span class="number">2</span>, srcHeight / <span class="number">2</span>);
+      canvas.drawBitmap(logo, (srcWidth - logoWidth) / <span class="number">2</span>, (srcHeight - logoHeight) / <span class="number">2</span>, <span class="keyword">null</span>);
+      canvas.save(Canvas.ALL_SAVE_FLAG);
+      canvas.restore();
+ } <span class="keyword">catch</span> (Exception e) {
+      bitmap = <span class="keyword">null</span>;
+      e.getStackTrace();
+ }
+
+      <span class="keyword">return</span> bitmap;
+}
+</code></pre>
+<p>Zxing中的功能较多且支持多平台，这里讨论的是Android平台上的生成二维码流程，到此讨论完毕</p>
+<p>Have a good day!</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    steven li
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/" title="开源框架Zxing生成二维码流程分析(Android)">http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/17/一个无法开机问题的分析流程/" rel="next" title="一个无法开机问题的分析流程">
+                <i class="fa fa-chevron-left"></i> 一个无法开机问题的分析流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/background.jpg"
+                alt="steven li" />
+            
+              <p class="site-author-name" itemprop="name">steven li</p>
+              <p class="site-description motion-element" itemprop="description">Nothing for nothing</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">steven li</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">Steven的博客共8.6k字</span>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'Hsz9zOlrvMN9ry0R9Jfi5ykJ-gzGzoHsz',
+        appKey: 'MAHOS3RIF7wDFRbEeC7kf3Vr',
+        placeholder: '此处输入评论内容',
+        avatar:'wavatar',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

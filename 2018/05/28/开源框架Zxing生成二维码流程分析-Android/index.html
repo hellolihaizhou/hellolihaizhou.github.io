@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok,let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encode">
+<meta name="description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encod">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开源框架Zxing生成二维码流程分析(Android)">
 <meta property="og:url" content="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/index.html">
 <meta property="og:site_name" content="李海洲的成长之路">
-<meta property="og:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok,let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encode">
+<meta property="og:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encod">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-05-28T08:24:55.551Z">
+<meta property="og:updated_time" content="2018-05-28T08:29:52.938Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开源框架Zxing生成二维码流程分析(Android)">
-<meta name="twitter:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok,let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encode">
+<meta name="twitter:description" content="项目中用到了Zxing的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go 应用端核心代码   12345Hashtable hints= new Hashtable();hints.put(EncodeHintType.CHARACTER_SET, &quot;utf-8&quot;);hints.put(Encod">
 
 
 
@@ -425,7 +425,7 @@
       
 
       
-        <p>项目中用到了<code>Zxing</code>的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok,let’s go</p>
+        <p>项目中用到了<code>Zxing</code>的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go</p>
 <p>应用端核心代码  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hashtable hints= <span class="keyword">new</span> Hashtable();</span><br><span class="line">hints.put(EncodeHintType.CHARACTER_SET, <span class="string">"utf-8"</span>);</span><br><span class="line">hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);</span><br><span class="line">hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br><span class="line">BitMatrix bitMatrix = <span class="keyword">new</span> QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, width, height,hints);</span><br></pre></td></tr></table></figure>
 <p><code>url</code>: 即数据源，可以根据项目需求传入指定的url，比如一个下载应用的链接网址<br><code>width height</code> : 应用端设置的二维码宽高<br><code>hints</code>: 主要用于配置二维码的一些参数，比如纠错级别，白边宽度等  </p>
@@ -554,6 +554,10 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/" rel="prev" title="一个屏幕滑动无响应问题的分析流程">
+                一个屏幕滑动无响应问题的分析流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -627,7 +631,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -702,7 +706,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共8.7k字</span>
+  <span class="post-count">Steven的博客共10.7k字</span>
 </div>
         
 

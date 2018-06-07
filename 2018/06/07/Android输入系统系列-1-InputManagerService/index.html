@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
+<meta name="description" content="最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemSe">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android输入系统系列(1)----InputManagerService">
 <meta property="og:url" content="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/index.html">
 <meta property="og:site_name" content="李海洲的成长之路">
-<meta property="og:description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
+<meta property="og:description" content="最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemSe">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-07T11:53:11.964Z">
+<meta property="og:updated_time" content="2018-06-07T11:54:49.516Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android输入系统系列(1)----InputManagerService">
-<meta name="twitter:description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
+<meta name="twitter:description" content="最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemSe">
 
 
 
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  973
+                  978
                 </span>
               
 
@@ -425,7 +425,7 @@
       
 
       
-        <p>最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析</p>
+        <p>最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析</p>
 <p>以下讨论基于<code>Android 7.1.1</code>代码</p>
 <p>InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中创建<br><code>frameworks\base\services\java\com\android\server\SystemServer.java</code>  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Starts a miscellaneous grab bag of stuff that has yet to be refactored</span></span><br><span class="line"><span class="comment">    * and organized.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startOtherServices</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    .....</span><br><span class="line">    InputManagerService inputManager = <span class="keyword">null</span>;</span><br><span class="line">    .....</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartInputManagerService"</span>);</span><br><span class="line">    <span class="comment">//创建InputManagerService对象</span></span><br><span class="line">    inputManager = <span class="keyword">new</span> InputManagerService(context);</span><br><span class="line">    Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartWindowManagerService"</span>);</span><br><span class="line">    wm = WindowManagerService.main(context, inputManager,</span><br><span class="line">                    mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL,</span><br><span class="line">                    !mFirstBoot, mOnlyCore);</span><br><span class="line">     ServiceManager.addService(Context.WINDOW_SERVICE, wm);</span><br><span class="line">     <span class="comment">//添加到ServiceManager中</span></span><br><span class="line">     ServiceManager.addService(Context.INPUT_SERVICE, inputManager);</span><br><span class="line">     Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      traceBeginAndSlog(<span class="string">"StartVrManagerService"</span>);</span><br><span class="line">      mSystemServiceManager.startService(VrManagerService.class);</span><br><span class="line">      Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      mActivityManagerService.setWindowManager(wm);</span><br><span class="line"></span><br><span class="line">      inputManager.setWindowManagerCallbacks(wm.getInputMonitor());</span><br><span class="line">      <span class="comment">//调用了InputManagerService的start方法</span></span><br><span class="line">      inputManager.start();</span><br><span class="line">      .....</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>

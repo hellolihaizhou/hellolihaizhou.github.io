@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta name="description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个滑动冲突问题的分析流程">
-<meta property="og:url" content="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/index.html">
+<meta property="og:title" content="Android输入系统系列(1)----InputManagerService">
+<meta property="og:url" content="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/index.html">
 <meta property="og:site_name" content="李海洲的成长之路">
-<meta property="og:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta property="og:description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-06T14:53:32.956Z">
+<meta property="og:updated_time" content="2018-06-07T11:53:11.964Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个滑动冲突问题的分析流程">
-<meta name="twitter:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta name="twitter:title" content="Android输入系统系列(1)----InputManagerService">
+<meta name="twitter:description" content="最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析 以下讨论基于Android 7.1.1代码 InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中">
 
 
 
@@ -128,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/"/>
 
 
 
 
 
-  <title>一个滑动冲突问题的分析流程 | 李海洲的成长之路</title>
+  <title>Android输入系统系列(1)----InputManagerService | 李海洲的成长之路</title>
   
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="steven li">
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一个滑动冲突问题的分析流程</h1>
+          <h1 class="post-title" itemprop="name headline">Android输入系统系列(1)----InputManagerService</h1>
         
 
         <div class="post-meta">
@@ -346,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-06T21:58:15+08:00">
-                2018-06-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-07T19:42:10+08:00">
+                2018-06-07
               </time>
             
 
@@ -365,8 +365,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/06/06/一个滑动冲突问题的分析流程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/06/一个滑动冲突问题的分析流程/" itemprop="commentCount"></span>
+                <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/07/Android输入系统系列-1-InputManagerService/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,154
+                  973
                 </span>
               
 
@@ -404,7 +404,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  5
                 </span>
               
             </div>
@@ -425,20 +425,34 @@
       
 
       
-        <p><strong>问题需求</strong><br>原先效果是用户在<code>ViewPager</code>上长按会弹出一个<code>dialog</code>，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出<code>dialog</code></p>
-<p><strong>初步分析</strong><br>外边的<code>ViewPager</code>是可以左右滑动的，现在希望单个界面即子<code>view</code>接收到触摸事件后能接管本次事件序列中后续事件，即子<code>View</code>接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间<code>Android</code>默认是<code>400ms</code>后会识别为长按事件，此时子<code>View</code>的长按事件被触发。那么问题来了，怎么才能在子<code>view</code>接收到触摸事件并能接管本次事件序列呢？<br>这就要说到老生常谈的事件拦截了，正常拦截事件有外部拦截和内部拦截两种，这里因为代码中子view已写好现成的手势判断的相关方法，故这里为简单起见，采用内部拦截法来实现。</p>
-<p><strong>修改方法</strong><br><code>LauncherPagerAdapter.java</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> mTouchSlop = <span class="number">40</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = LayoutInflater.from(mContext).inflate(R.layout.launcher_item_layout, <span class="keyword">null</span>);</span><br><span class="line">        ViewGroup parent = (ViewGroup) view.getParent();</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">	<span class="comment">//Add begin</span></span><br><span class="line">        view.setOnTouchListener(<span class="keyword">new</span> View.OnTouchListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">                    <span class="comment">//省略部分代码</span></span><br><span class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                        <span class="keyword">if</span> (Math.abs(event.getY() - mDownY) &lt;= ((<span class="keyword">float</span>) mTouchSlop) &amp;&amp; Math.abs(event.getX() - mDownX) &lt;= ((<span class="keyword">float</span>) mTouchSlop)) &#123;</span><br><span class="line">                                view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>); <span class="comment">//当出现上下左右距离不超过40时，父view不拦截事件, 交给子view</span></span><br><span class="line">                         &#125;</span><br><span class="line">                         <span class="keyword">break</span>;</span><br><span class="line">                        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(Math.abs(event.getX() - mDownX) &gt; ((<span class="keyword">float</span>) mTouchSlop))&#123;</span><br><span class="line">                               view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">false</span>); <span class="comment">//当出现左右距离超过40时，父view拦截事件并自行消耗</span></span><br><span class="line">                          &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">	 <span class="comment">//Add end</span></span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-<p>这样的话，再对子<code>view</code>添加长按事件处理，也能顺利的接收到长按事件了。效果上便达到了微小长按滑动也会进入长按事件的处理逻辑中，注意此时微小的向左或向右滑动，<code>viewpager</code>本身并不会移动了，修改之前<code>Viewpager</code>会跟着滑动。</p>
-<p>这个问题里用的是内部拦截法，其实也可以自定义<code>Viewpager</code>中重写<code>canScrool()</code>方法，这里就不介绍了，相比而言稍稍麻烦了一点</p>
-<p>下面顺便说下滑动冲突的一般解决思路，这是个老生常谈的话题，解决方法已形成固定的流程，需要根据具体的实际业务需求灵活改变。</p>
-<p>先介绍几个事件分发处理的几个常见方法<br><code>dispatchTouchEvent</code><br>主要是用来分发事件<br><code>onInterceptTouchEvent</code><br>主要是用来拦截事件的(ViewGroup才有这个方法，View没有这个方法)<br><code>onTouchEvent</code><br>这个方法主要是用来处理事件的<br><code>requestDisallowInterceptTouchEvent(true)</code><br>这个方法能够影响父View是否拦截事件，true 表示父 View 不拦截事件，false 表示父 View 拦截事件</p>
-<p><strong>滑动冲突一般解决方法</strong><br>1.外部拦截法<br>一般是通过重写父控件的<code>onInterceptTouchEvent</code>方法，然后根据具体的需求，来决定父控件是否拦截事件。如果拦截返回返回true，不拦截返回false，比如说希望上下滑动不要拦截，那么就在父控件的<code>onInterceptTouchEvent</code>方法里的<code>MotionEvent.ACTION_MOVE</code>这个case块里返回false就好。如果希望指定位置不拦截，则再进行位置判断即可。</p>
-<p>对于外部拦截法我们的核心工作一般是做在<code>ACTION_MOVE</code>中，不过需要注意的是不要在<code>ACTION_DOWN</code>中返回 true，这里一旦为true，则同一个事件序列<code>ViewGroup</code>的<code>disPatchTouchEvent</code>就不会再调用<code>onInterceptTouchEvent</code>方法了 。那么本次的事件序列后续都由父view接管，子view对这次事件序列也就没有了机会去消耗事件。归纳起来就是一句话: 父控件一旦拦截了事件，那么同一个事件序列的所有事件都将交给它处理。</p>
-<p>2.内部拦截法<br>内部拦截法主要是通过调用父控件的 <code>requestDisallowInterceptTouchEvent</code>方法，传进去一个<code>boolean</code>参数值，true为请求父控件不拦截<br>需要注意的是父控件的<code>onInterceptTouchEvent</code>方法中的<code>ACTION_DOWN</code>事件不要拦截，一旦父控件拦截<code>ACTION_DOWN</code>事件，那么事件无法传递到子元素之中，内部拦截法也就无法起作用了</p>
-<p>Good night!</p>
+        <p>最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析</p>
+<p>以下讨论基于<code>Android 7.1.1</code>代码</p>
+<p>InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中创建<br><code>frameworks\base\services\java\com\android\server\SystemServer.java</code>  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Starts a miscellaneous grab bag of stuff that has yet to be refactored</span></span><br><span class="line"><span class="comment">    * and organized.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startOtherServices</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    .....</span><br><span class="line">    InputManagerService inputManager = <span class="keyword">null</span>;</span><br><span class="line">    .....</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartInputManagerService"</span>);</span><br><span class="line">    <span class="comment">//创建InputManagerService对象</span></span><br><span class="line">    inputManager = <span class="keyword">new</span> InputManagerService(context);</span><br><span class="line">    Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartWindowManagerService"</span>);</span><br><span class="line">    wm = WindowManagerService.main(context, inputManager,</span><br><span class="line">                    mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL,</span><br><span class="line">                    !mFirstBoot, mOnlyCore);</span><br><span class="line">     ServiceManager.addService(Context.WINDOW_SERVICE, wm);</span><br><span class="line">     <span class="comment">//添加到ServiceManager中</span></span><br><span class="line">     ServiceManager.addService(Context.INPUT_SERVICE, inputManager);</span><br><span class="line">     Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      traceBeginAndSlog(<span class="string">"StartVrManagerService"</span>);</span><br><span class="line">      mSystemServiceManager.startService(VrManagerService.class);</span><br><span class="line">      Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      mActivityManagerService.setWindowManager(wm);</span><br><span class="line"></span><br><span class="line">      inputManager.setWindowManagerCallbacks(wm.getInputMonitor());</span><br><span class="line">      <span class="comment">//调用了InputManagerService的start方法</span></span><br><span class="line">      inputManager.start();</span><br><span class="line">      .....</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里创建了InputManagerService对象，下面看下InputManagerService的构造方法<br><code>frameworks\base\services\core\java\com\android\server\input\InputManagerService.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputManagerService</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mContext = context;</span><br><span class="line">        <span class="keyword">this</span>.mHandler = <span class="keyword">new</span> InputManagerHandler(DisplayThread.get().getLooper());</span><br><span class="line"></span><br><span class="line">        mUseDevInputEventForAudioJack =</span><br><span class="line">                context.getResources().getBoolean(R.bool.config_useDevInputEventForAudioJack);</span><br><span class="line">        Slog.i(TAG, <span class="string">"Initializing input manager, mUseDevInputEventForAudioJack="</span></span><br><span class="line">                + mUseDevInputEventForAudioJack);</span><br><span class="line">        <span class="comment">//这里调用了InputManagerHandler对象的getLooper()获取主线程的looper后进而调用getQueue()得到消息队列</span></span><br><span class="line">        <span class="comment">//并作为参数传进了nativeInit函数中</span></span><br><span class="line">        mPtr = nativeInit(<span class="keyword">this</span>, mContext, mHandler.getLooper().getQueue());</span><br><span class="line"></span><br><span class="line">        String doubleTouchGestureEnablePath = context.getResources().getString(</span><br><span class="line">                R.string.config_doubleTouchGestureEnableFile);</span><br><span class="line">        mDoubleTouchGestureEnableFile = TextUtils.isEmpty(doubleTouchGestureEnablePath) ? <span class="keyword">null</span> :</span><br><span class="line">            <span class="keyword">new</span> File(doubleTouchGestureEnablePath);</span><br><span class="line"></span><br><span class="line">        LocalServices.addService(InputManagerInternal.class, <span class="keyword">new</span> LocalService());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>接着看nativeinit方法  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">nativeInit</span><span class="params">(InputManagerService service,</span></span></span><br><span class="line"><span class="function"><span class="params">            Context context, MessageQueue messageQueue)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>是个native方法，跟着看native层中的实现</p>
+<p><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> jlong <span class="title">nativeInit</span><span class="params">(JNIEnv* env, jclass <span class="comment">/* clazz */</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">        jobject serviceObj, jobject contextObj, jobject messageQueueObj)</span> </span>&#123;</span><br><span class="line">    sp&lt;MessageQueue&gt; messageQueue = android_os_MessageQueue_getMessageQueue(env, messageQueueObj);</span><br><span class="line">    <span class="keyword">if</span> (messageQueue == NULL) &#123;</span><br><span class="line">        jniThrowRuntimeException(env, <span class="string">"MessageQueue is not initialized."</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NativeInputManager* im = <span class="keyword">new</span> NativeInputManager(contextObj, serviceObj,</span><br><span class="line">            messageQueue-&gt;getLooper());</span><br><span class="line">    im-&gt;incStrong(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> reinterpret_cast&lt;jlong&gt;(im);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里主要工作new了一个NativeInputManager对象，下面接着看NativeInputManager的构造函数  </p>
+<p><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NativeInputManager::NativeInputManager(jobject contextObj,</span><br><span class="line">        jobject serviceObj, <span class="keyword">const</span> sp&lt;Looper&gt;&amp; looper) :</span><br><span class="line">        mLooper(looper), mInteractive(<span class="keyword">true</span>) &#123;</span><br><span class="line">    JNIEnv* env = jniEnv();</span><br><span class="line"></span><br><span class="line">    mContextObj = env-&gt;NewGlobalRef(contextObj);</span><br><span class="line">    mServiceObj = env-&gt;NewGlobalRef(serviceObj);</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">AutoMutex <span class="title">_l</span><span class="params">(mLock)</span></span>;</span><br><span class="line">        mLocked.systemUiVisibility = ASYSTEM_UI_VISIBILITY_STATUS_BAR_VISIBLE;</span><br><span class="line">        mLocked.pointerSpeed = <span class="number">0</span>;</span><br><span class="line">        mLocked.pointerGesturesEnabled = <span class="keyword">true</span>;</span><br><span class="line">        mLocked.showTouches = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    mInteractive = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    sp&lt;EventHub&gt; eventHub = <span class="keyword">new</span> EventHub();</span><br><span class="line">    mInputManager = <span class="keyword">new</span> InputManager(eventHub, <span class="keyword">this</span>, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要工作: 创建了EventHub对象以及InputManager对象</p>
+<p>接着看InputManager的构造函数<br><code>frameworks\native\services\inputflinger\InputManager.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">InputManager::InputManager(</span><br><span class="line">        <span class="keyword">const</span> sp&lt;EventHubInterface&gt;&amp; eventHub,</span><br><span class="line">        <span class="keyword">const</span> sp&lt;InputReaderPolicyInterface&gt;&amp; readerPolicy,</span><br><span class="line">        <span class="keyword">const</span> sp&lt;InputDispatcherPolicyInterface&gt;&amp; dispatcherPolicy) &#123;</span><br><span class="line">    mDispatcher = <span class="keyword">new</span> InputDispatcher(dispatcherPolicy);</span><br><span class="line">    mReader = <span class="keyword">new</span> InputReader(eventHub, readerPolicy, mDispatcher);</span><br><span class="line">    initialize();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InputManager::initialize() &#123;</span><br><span class="line">    mReaderThread = <span class="keyword">new</span> InputReaderThread(mReader);</span><br><span class="line">    mDispatcherThread = <span class="keyword">new</span> InputDispatcherThread(mDispatcher);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新建了两个对象: InputDispatcher和InputReader，接着调用了initialize()，initialize()中分别new了两个线程: InputReaderThread和InputDispatcherThread，那这两个线程是在什么时机起来的呢?</p>
+<p>故事回到了文章开始的地方，InputManagerService创建完之后会调用InputManagerService的start方法，这个start方法中又去调用了nativeStart方法<br><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">nativeStart</span><span class="params">(JNIEnv* env, jclass <span class="comment">/* clazz */</span>, jlong ptr)</span> </span>&#123;</span><br><span class="line">    NativeInputManager* im = reinterpret_cast&lt;NativeInputManager*&gt;(ptr);</span><br><span class="line">    <span class="comment">//注意这里的getInputManager()返回的是一个InputManager对象</span></span><br><span class="line">    status_t result = im-&gt;getInputManager()-&gt;start();</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        jniThrowRuntimeException(env, <span class="string">"Input manager could not be started."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里NativeInputManager的getInputManager()返回的是一个InputManager对象，紧接着调用了start方法<br>所以接下来看下InputManager的start方法主要做了啥</p>
+<p><code>frameworks\native\services\inputflinger\InputManager.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">status_t InputManager::start() &#123;</span><br><span class="line">    status_t result = mDispatcherThread-&gt;run(<span class="string">"InputDispatcher"</span>, PRIORITY_URGENT_DISPLAY);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    result = mReaderThread-&gt;run(<span class="string">"InputReader"</span>, PRIORITY_URGENT_DISPLAY);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里启动了InputManager中initialize()创建的InputReaderThread和InputDispatcherThread这两个线程</p>
+<p>至此InputManagerService的创建流程讨论完毕，流程还是比较简单的，下文将讨论EventHub</p>
 <hr>
-<font color="#000000" size="2" face="楷体">住所，晚上，听着歌，洗漱完毕准备休息</font>
+<font color="#000000" size="2" face="楷体">住所，电脑前，高考第一天，好紧张</font>
+
       
     </div>
     
@@ -469,7 +483,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/" title="一个滑动冲突问题的分析流程">http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/</a>
+    <a href="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/" title="Android输入系统系列(1)----InputManagerService">http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -491,8 +505,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/04/月度小结-20180604/" rel="next" title="月度小结--20180604">
-                <i class="fa fa-chevron-left"></i> 月度小结--20180604
+              <a href="/2018/06/06/一个滑动冲突问题的分析流程/" rel="next" title="一个滑动冲突问题的分析流程">
+                <i class="fa fa-chevron-left"></i> 一个滑动冲突问题的分析流程
               </a>
             
           </div>
@@ -500,10 +514,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/" rel="prev" title="Android输入系统系列(1)----InputManagerService">
-                Android输入系统系列(1)----InputManagerService <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

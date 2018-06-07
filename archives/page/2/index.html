@@ -88,17 +88,16 @@
 
 
 
-<meta name="description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
-<meta property="og:type" content="article">
-<meta property="og:title" content="一个滑动冲突问题的分析流程">
-<meta property="og:url" content="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/index.html">
+<meta name="description" content="Nothing for nothing">
+<meta property="og:type" content="website">
+<meta property="og:title" content="李海洲的成长之路">
+<meta property="og:url" content="http://lihaizhou.top/archives/page/2/index.html">
 <meta property="og:site_name" content="李海洲的成长之路">
-<meta property="og:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta property="og:description" content="Nothing for nothing">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-06T14:53:32.956Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个滑动冲突问题的分析流程">
-<meta name="twitter:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta name="twitter:title" content="李海洲的成长之路">
+<meta name="twitter:description" content="Nothing for nothing">
 
 
 
@@ -128,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/"/>
+  <link rel="canonical" href="http://lihaizhou.top/archives/page/2/"/>
 
 
 
 
 
-  <title>一个滑动冲突问题的分析流程 | 李海洲的成长之路</title>
+  <title>归档 | 李海洲的成长之路</title>
   
 
 
@@ -153,7 +152,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left page-archive">
     <div class="headband"></div>
 	
 	<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
@@ -303,227 +302,78 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  
+  
+  
+  <div class="post-block archive">
+    <div id="posts" class="posts-collapse">
+      <span class="archive-move-on"></span>
 
-  
+      <span class="archive-page-counter">
+        
+        
+        
+          
+        
+        嗯..! 目前共计 11 篇日志。 继续努力。
+      </span>
 
-  
-  
-  
+      
+
+        
+        
+        
+
+        
+          
+          <div class="collection-title">
+            <h1 class="archive-year" id="archive-year-2018">2018</h1>
+          </div>
+        
+        
+
+        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="steven li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲的成长之路">
-    </span>
-
-    
-      <header class="post-header">
-
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2018/05/04/第一篇文章--顿悟/" itemprop="url">
+              
+                <span itemprop="name">忧虑下的感悟</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">一个滑动冲突问题的分析流程</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-06T21:58:15+08:00">
-                2018-06-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/06/06/一个滑动冲突问题的分析流程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/06/一个滑动冲突问题的分析流程/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,154
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  4
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p><strong>问题需求</strong><br>原先效果是用户在<code>ViewPager</code>上长按会弹出一个<code>dialog</code>，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出<code>dialog</code></p>
-<p><strong>初步分析</strong><br>外边的<code>ViewPager</code>是可以左右滑动的，现在希望单个界面即子<code>view</code>接收到触摸事件后能接管本次事件序列中后续事件，即子<code>View</code>接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间<code>Android</code>默认是<code>400ms</code>后会识别为长按事件，此时子<code>View</code>的长按事件被触发。那么问题来了，怎么才能在子<code>view</code>接收到触摸事件并能接管本次事件序列呢？<br>这就要说到老生常谈的事件拦截了，正常拦截事件有外部拦截和内部拦截两种，这里因为代码中子view已写好现成的手势判断的相关方法，故这里为简单起见，采用内部拦截法来实现。</p>
-<p><strong>修改方法</strong><br><code>LauncherPagerAdapter.java</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> mTouchSlop = <span class="number">40</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = LayoutInflater.from(mContext).inflate(R.layout.launcher_item_layout, <span class="keyword">null</span>);</span><br><span class="line">        ViewGroup parent = (ViewGroup) view.getParent();</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">	<span class="comment">//Add begin</span></span><br><span class="line">        view.setOnTouchListener(<span class="keyword">new</span> View.OnTouchListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">                    <span class="comment">//省略部分代码</span></span><br><span class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                        <span class="keyword">if</span> (Math.abs(event.getY() - mDownY) &lt;= ((<span class="keyword">float</span>) mTouchSlop) &amp;&amp; Math.abs(event.getX() - mDownX) &lt;= ((<span class="keyword">float</span>) mTouchSlop)) &#123;</span><br><span class="line">                                view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>); <span class="comment">//当出现上下左右距离不超过40时，父view不拦截事件, 交给子view</span></span><br><span class="line">                         &#125;</span><br><span class="line">                         <span class="keyword">break</span>;</span><br><span class="line">                        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(Math.abs(event.getX() - mDownX) &gt; ((<span class="keyword">float</span>) mTouchSlop))&#123;</span><br><span class="line">                               view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">false</span>); <span class="comment">//当出现左右距离超过40时，父view拦截事件并自行消耗</span></span><br><span class="line">                          &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">	 <span class="comment">//Add end</span></span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-<p>这样的话，再对子<code>view</code>添加长按事件处理，也能顺利的接收到长按事件了。效果上便达到了微小长按滑动也会进入长按事件的处理逻辑中，注意此时微小的向左或向右滑动，<code>viewpager</code>本身并不会移动了，修改之前<code>Viewpager</code>会跟着滑动。</p>
-<p>这个问题里用的是内部拦截法，其实也可以自定义<code>Viewpager</code>中重写<code>canScrool()</code>方法，这里就不介绍了，相比而言稍稍麻烦了一点</p>
-<p>下面顺便说下滑动冲突的一般解决思路，这是个老生常谈的话题，解决方法已形成固定的流程，需要根据具体的实际业务需求灵活改变。</p>
-<p>先介绍几个事件分发处理的几个常见方法<br><code>dispatchTouchEvent</code><br>主要是用来分发事件<br><code>onInterceptTouchEvent</code><br>主要是用来拦截事件的(ViewGroup才有这个方法，View没有这个方法)<br><code>onTouchEvent</code><br>这个方法主要是用来处理事件的<br><code>requestDisallowInterceptTouchEvent(true)</code><br>这个方法能够影响父View是否拦截事件，true 表示父 View 不拦截事件，false 表示父 View 拦截事件</p>
-<p><strong>滑动冲突一般解决方法</strong><br>1.外部拦截法<br>一般是通过重写父控件的<code>onInterceptTouchEvent</code>方法，然后根据具体的需求，来决定父控件是否拦截事件。如果拦截返回返回true，不拦截返回false，比如说希望上下滑动不要拦截，那么就在父控件的<code>onInterceptTouchEvent</code>方法里的<code>MotionEvent.ACTION_MOVE</code>这个case块里返回false就好。如果希望指定位置不拦截，则再进行位置判断即可。</p>
-<p>对于外部拦截法我们的核心工作一般是做在<code>ACTION_MOVE</code>中，不过需要注意的是不要在<code>ACTION_DOWN</code>中返回 true，这里一旦为true，则同一个事件序列<code>ViewGroup</code>的<code>disPatchTouchEvent</code>就不会再调用<code>onInterceptTouchEvent</code>方法了 。那么本次的事件序列后续都由父view接管，子view对这次事件序列也就没有了机会去消耗事件。归纳起来就是一句话: 父控件一旦拦截了事件，那么同一个事件序列的所有事件都将交给它处理。</p>
-<p>2.内部拦截法<br>内部拦截法主要是通过调用父控件的 <code>requestDisallowInterceptTouchEvent</code>方法，传进去一个<code>boolean</code>参数值，true为请求父控件不拦截<br>需要注意的是父控件的<code>onInterceptTouchEvent</code>方法中的<code>ACTION_DOWN</code>事件不要拦截，一旦父控件拦截<code>ACTION_DOWN</code>事件，那么事件无法传递到子元素之中，内部拦截法也就无法起作用了</p>
-<p>Good night!</p>
-<hr>
-<font color="#000000" size="2" face="楷体">住所，晚上，听着歌，洗漱完毕准备休息</font>
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-      <div>
-    
-        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
-    
-</div>
-
-      
-    </div>
-	
-    
-	
-    
-
-    
-      <div>
-        <ul class="post-copyright">
-  <li class="post-copyright-author">
-    <strong>本文作者：</strong>
-    steven li
-  </li>
-  <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/" title="一个滑动冲突问题的分析流程">http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明： </strong>
-    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2018-05-04T08:30:00+08:00"
+              content="2018-05-04" >
+          05-04
+        </time>
       </div>
-    
 
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/06/04/月度小结-20180604/" rel="next" title="月度小结--20180604">
-                <i class="fa fa-chevron-left"></i> 月度小结--20180604
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/" rel="prev" title="Android输入系统系列(1)----InputManagerService">
-                Android输入系统系列(1)----InputManagerService <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+    </header>
   </article>
 
 
 
-    <div class="post-spread">
       
+
     </div>
   </div>
+  
+  
+  
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/archives/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span>
+  </nav>
+
+
 
 
           </div>
@@ -531,13 +381,6 @@
 
 
           
-
-  
-    <div class="comments" id="comments">
-    </div>
-  
-
-
 
         </div>
         
@@ -765,10 +608,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 

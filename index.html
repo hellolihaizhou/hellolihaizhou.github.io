@@ -317,6 +317,197 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/07/Android输入系统系列-1-InputManagerService/" itemprop="url">Android输入系统系列(1)----InputManagerService</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-07T19:42:10+08:00">
+                2018-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/07/Android输入系统系列-1-InputManagerService/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  973
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近项目中遇到事件没有传到上层的问题，问题虽解掉了，问题处理中感知input系统有些东西有些遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析</p>
+<p>以下讨论基于<code>Android 7.1.1</code>代码</p>
+<p>InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中创建<br><code>frameworks\base\services\java\com\android\server\SystemServer.java</code>  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Starts a miscellaneous grab bag of stuff that has yet to be refactored</span></span><br><span class="line"><span class="comment">    * and organized.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startOtherServices</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    .....</span><br><span class="line">    InputManagerService inputManager = <span class="keyword">null</span>;</span><br><span class="line">    .....</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartInputManagerService"</span>);</span><br><span class="line">    <span class="comment">//创建InputManagerService对象</span></span><br><span class="line">    inputManager = <span class="keyword">new</span> InputManagerService(context);</span><br><span class="line">    Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line">    traceBeginAndSlog(<span class="string">"StartWindowManagerService"</span>);</span><br><span class="line">    wm = WindowManagerService.main(context, inputManager,</span><br><span class="line">                    mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL,</span><br><span class="line">                    !mFirstBoot, mOnlyCore);</span><br><span class="line">     ServiceManager.addService(Context.WINDOW_SERVICE, wm);</span><br><span class="line">     <span class="comment">//添加到ServiceManager中</span></span><br><span class="line">     ServiceManager.addService(Context.INPUT_SERVICE, inputManager);</span><br><span class="line">     Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      traceBeginAndSlog(<span class="string">"StartVrManagerService"</span>);</span><br><span class="line">      mSystemServiceManager.startService(VrManagerService.class);</span><br><span class="line">      Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line"></span><br><span class="line">      mActivityManagerService.setWindowManager(wm);</span><br><span class="line"></span><br><span class="line">      inputManager.setWindowManagerCallbacks(wm.getInputMonitor());</span><br><span class="line">      <span class="comment">//调用了InputManagerService的start方法</span></span><br><span class="line">      inputManager.start();</span><br><span class="line">      .....</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里创建了InputManagerService对象，下面看下InputManagerService的构造方法<br><code>frameworks\base\services\core\java\com\android\server\input\InputManagerService.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputManagerService</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mContext = context;</span><br><span class="line">        <span class="keyword">this</span>.mHandler = <span class="keyword">new</span> InputManagerHandler(DisplayThread.get().getLooper());</span><br><span class="line"></span><br><span class="line">        mUseDevInputEventForAudioJack =</span><br><span class="line">                context.getResources().getBoolean(R.bool.config_useDevInputEventForAudioJack);</span><br><span class="line">        Slog.i(TAG, <span class="string">"Initializing input manager, mUseDevInputEventForAudioJack="</span></span><br><span class="line">                + mUseDevInputEventForAudioJack);</span><br><span class="line">        <span class="comment">//这里调用了InputManagerHandler对象的getLooper()获取主线程的looper后进而调用getQueue()得到消息队列</span></span><br><span class="line">        <span class="comment">//并作为参数传进了nativeInit函数中</span></span><br><span class="line">        mPtr = nativeInit(<span class="keyword">this</span>, mContext, mHandler.getLooper().getQueue());</span><br><span class="line"></span><br><span class="line">        String doubleTouchGestureEnablePath = context.getResources().getString(</span><br><span class="line">                R.string.config_doubleTouchGestureEnableFile);</span><br><span class="line">        mDoubleTouchGestureEnableFile = TextUtils.isEmpty(doubleTouchGestureEnablePath) ? <span class="keyword">null</span> :</span><br><span class="line">            <span class="keyword">new</span> File(doubleTouchGestureEnablePath);</span><br><span class="line"></span><br><span class="line">        LocalServices.addService(InputManagerInternal.class, <span class="keyword">new</span> LocalService());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>接着看nativeinit方法  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">nativeInit</span><span class="params">(InputManagerService service,</span></span></span><br><span class="line"><span class="function"><span class="params">            Context context, MessageQueue messageQueue)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>是个native方法，跟着看native层中的实现</p>
+<p><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> jlong <span class="title">nativeInit</span><span class="params">(JNIEnv* env, jclass <span class="comment">/* clazz */</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">        jobject serviceObj, jobject contextObj, jobject messageQueueObj)</span> </span>&#123;</span><br><span class="line">    sp&lt;MessageQueue&gt; messageQueue = android_os_MessageQueue_getMessageQueue(env, messageQueueObj);</span><br><span class="line">    <span class="keyword">if</span> (messageQueue == NULL) &#123;</span><br><span class="line">        jniThrowRuntimeException(env, <span class="string">"MessageQueue is not initialized."</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NativeInputManager* im = <span class="keyword">new</span> NativeInputManager(contextObj, serviceObj,</span><br><span class="line">            messageQueue-&gt;getLooper());</span><br><span class="line">    im-&gt;incStrong(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> reinterpret_cast&lt;jlong&gt;(im);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里主要工作new了一个NativeInputManager对象，下面接着看NativeInputManager的构造函数  </p>
+<p><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NativeInputManager::NativeInputManager(jobject contextObj,</span><br><span class="line">        jobject serviceObj, <span class="keyword">const</span> sp&lt;Looper&gt;&amp; looper) :</span><br><span class="line">        mLooper(looper), mInteractive(<span class="keyword">true</span>) &#123;</span><br><span class="line">    JNIEnv* env = jniEnv();</span><br><span class="line"></span><br><span class="line">    mContextObj = env-&gt;NewGlobalRef(contextObj);</span><br><span class="line">    mServiceObj = env-&gt;NewGlobalRef(serviceObj);</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">AutoMutex <span class="title">_l</span><span class="params">(mLock)</span></span>;</span><br><span class="line">        mLocked.systemUiVisibility = ASYSTEM_UI_VISIBILITY_STATUS_BAR_VISIBLE;</span><br><span class="line">        mLocked.pointerSpeed = <span class="number">0</span>;</span><br><span class="line">        mLocked.pointerGesturesEnabled = <span class="keyword">true</span>;</span><br><span class="line">        mLocked.showTouches = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    mInteractive = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    sp&lt;EventHub&gt; eventHub = <span class="keyword">new</span> EventHub();</span><br><span class="line">    mInputManager = <span class="keyword">new</span> InputManager(eventHub, <span class="keyword">this</span>, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要工作: 创建了EventHub对象以及InputManager对象</p>
+<p>接着看InputManager的构造函数<br><code>frameworks\native\services\inputflinger\InputManager.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">InputManager::InputManager(</span><br><span class="line">        <span class="keyword">const</span> sp&lt;EventHubInterface&gt;&amp; eventHub,</span><br><span class="line">        <span class="keyword">const</span> sp&lt;InputReaderPolicyInterface&gt;&amp; readerPolicy,</span><br><span class="line">        <span class="keyword">const</span> sp&lt;InputDispatcherPolicyInterface&gt;&amp; dispatcherPolicy) &#123;</span><br><span class="line">    mDispatcher = <span class="keyword">new</span> InputDispatcher(dispatcherPolicy);</span><br><span class="line">    mReader = <span class="keyword">new</span> InputReader(eventHub, readerPolicy, mDispatcher);</span><br><span class="line">    initialize();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InputManager::initialize() &#123;</span><br><span class="line">    mReaderThread = <span class="keyword">new</span> InputReaderThread(mReader);</span><br><span class="line">    mDispatcherThread = <span class="keyword">new</span> InputDispatcherThread(mDispatcher);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新建了两个对象: InputDispatcher和InputReader，接着调用了initialize()，initialize()中分别new了两个线程: InputReaderThread和InputDispatcherThread，那这两个线程是在什么时机起来的呢?</p>
+<p>故事回到了文章开始的地方，InputManagerService创建完之后会调用InputManagerService的start方法，这个start方法中又去调用了nativeStart方法<br><code>frameworks\base\services\core\jni\com_android_server_input_InputManagerService.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">nativeStart</span><span class="params">(JNIEnv* env, jclass <span class="comment">/* clazz */</span>, jlong ptr)</span> </span>&#123;</span><br><span class="line">    NativeInputManager* im = reinterpret_cast&lt;NativeInputManager*&gt;(ptr);</span><br><span class="line">    <span class="comment">//注意这里的getInputManager()返回的是一个InputManager对象</span></span><br><span class="line">    status_t result = im-&gt;getInputManager()-&gt;start();</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        jniThrowRuntimeException(env, <span class="string">"Input manager could not be started."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里NativeInputManager的getInputManager()返回的是一个InputManager对象，紧接着调用了start方法<br>所以接下来看下InputManager的start方法主要做了啥</p>
+<p><code>frameworks\native\services\inputflinger\InputManager.cpp</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">status_t InputManager::start() &#123;</span><br><span class="line">    status_t result = mDispatcherThread-&gt;run(<span class="string">"InputDispatcher"</span>, PRIORITY_URGENT_DISPLAY);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    result = mReaderThread-&gt;run(<span class="string">"InputReader"</span>, PRIORITY_URGENT_DISPLAY);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里启动了InputManager中initialize()创建的InputReaderThread和InputDispatcherThread这两个线程</p>
+<p>至此InputManagerService的创建流程讨论完毕，流程还是比较简单的，下文将讨论EventHub</p>
+<hr>
+<font color="#000000" size="2" face="楷体">住所，电脑前，高考第一天，好紧张</font>
+
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2058,201 +2249,13 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/04/第一篇文章--顿悟/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="steven li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲的成长之路">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/04/第一篇文章--顿悟/" itemprop="url">忧虑下的感悟</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-04T08:30:00+08:00">
-                2018-05-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/04/第一篇文章--顿悟/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/04/第一篇文章--顿悟/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  752
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  3
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>这是该网址写的第一篇文章，想写点东西上来，算是对过去的一些回顾以及对接下来一段时间的计划想法</p>
-<p><strong>过去一年状态</strong><br>过去的一年，经历了一些事，比较大的事：<code>无锡置业</code>，<code>重回单身狗</code>，<code>换了工作</code></p>
-<ul>
-<li><p>无锡置业<br>买房对我的影响还是比较大的，开始的一段时间积蓄一夜回到解放前，不过心里也踏实了许多，算是明智的选择</p>
-</li>
-<li><p>重回单身狗<br>这件事对我的触动很大，比较长的一段时间都比较沮丧，觉得自己很是没用。后来有些事情慢慢想通了，也就放下了。她是个好姑娘，单纯而又善良，祝愿她能过得开心</p>
-</li>
-<li><p>换工作<br>当时正准备买房了，离职一方面是薪资的考虑，上家公司是那种典型的国企氛围从不加班，这在做通讯行业里很是少见。没有条条框框的规则，项目周期比较长，所以工作内容没有压力，只是氛围稍稍沉闷了点，总得来说还是很不错。</p>
-</li>
-</ul>
-<p><strong>当前状态</strong><br>现在的公司是个小公司，整个氛围比较轻松，也不沉闷。工作内容的话，除了项目开始时自己写了一两个模块，后面的工作主要是维护自己写的代码。<br>总得来说工作内容比较简单，说简单倒不是因为我技术好，的确是工作内容比较简单。</p>
-<p>现在开始逐渐意识到，现状的处境其实很危险，像是在温水煮青蛙，没有足够的挑战，时间久了，人会变得懒散，缺乏足够的驱动力去学习，一直呆在大缸里，等有一天想跳出去看看外边的世界，却发现已经没有了力气。</p>
-<p>过去的一年过得真的是太安逸，也太懒散。想起毕业那会，也是努力的奋斗过，每周都会列出学习计划，为什么后来就没有坚持下来了呢。是膨胀了？ 好像是的，身体的发福让我日益膨胀，迷失自我。</p>
-<p><strong>后续改善计划</strong><br>接下来的时间会通过该网址持续更新技术文章，多思考多总结。具体的行动计划大纲如下</p>
-<ol>
-<li><p>每天学习时间满4小时</p>
-</li>
-<li><p>每周写两篇技术文章</p>
-</li>
-<li><p>每个月写一个月度总结</p>
-</li>
-</ol>
-<p>鉴于过往的经历，很多时候计划是列出了，执行的时候却不能至始至终的执行，可恶的惰性啊。</p>
-<p>后面每个月的月度总结会说明本月的执行情况，如果月度总结也没写的话，那我多半是废了，无可救药了。</p>
-<p><strong>以此文为证！You can do it ！come on！ steven！</strong></p>
-<p><strong>厚积而薄发！</strong></p>
-<hr>
-<font color="#000000" size="2" face="楷体">写于2018.5.4号11号线地铁上, 站着, 打完本文</font>
-
-          
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-    </div>
-	
-    
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -2300,7 +2303,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2375,7 +2378,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共16.4k字</span>
+  <span class="post-count">Steven的博客共17.4k字</span>
 </div>
         
 

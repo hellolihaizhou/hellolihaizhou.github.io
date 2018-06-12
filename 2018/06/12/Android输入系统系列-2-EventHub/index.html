@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="李海洲的成长之路">
 <meta property="og:description" content="上篇文章中说到eventhub是在NativeInputManager的构造函数new出来 一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理 12345678910111213141516171819202122232425262728293031323334353637EventHub::Even">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-12T14:52:58.729Z">
+<meta property="og:updated_time" content="2018-06-12T14:55:11.206Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android输入系统系列(2)----EventHub">
 <meta name="twitter:description" content="上篇文章中说到eventhub是在NativeInputManager的构造函数new出来 一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理 12345678910111213141516171819202122232425262728293031323334353637EventHub::Even">
@@ -447,7 +447,6 @@
 <p>这个函数非常长，做的事情主要是打开设备，获取设备的信息包括设备名称，id等。然后根据这些信息判断设备的类型，并根据设备的不同，进行不同的初始化，接着为设备创建一个Device对象。并将设备对象的句柄加入到epoll的监控中。最后调用addDeviceLocked（）函数把Device对象添加到EventHub的mDevices列表中</p>
 <hr>
 <font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，听着飘洋过海来看你</font>
-
       
     </div>
     

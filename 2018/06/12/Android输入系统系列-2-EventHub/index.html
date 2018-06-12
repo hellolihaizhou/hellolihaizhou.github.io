@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta name="description" content="上篇文章中说到eventhub是在NativeInputManager的构造函数new出来 一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理 12345678910111213141516171819202122232425262728293031323334353637EventHub::Even">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个滑动冲突问题的分析流程">
-<meta property="og:url" content="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/index.html">
+<meta property="og:title" content="Android输入系统系列(2)----EventHub">
+<meta property="og:url" content="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/index.html">
 <meta property="og:site_name" content="李海洲的成长之路">
-<meta property="og:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta property="og:description" content="上篇文章中说到eventhub是在NativeInputManager的构造函数new出来 一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理 12345678910111213141516171819202122232425262728293031323334353637EventHub::Even">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-06T14:53:32.956Z">
+<meta property="og:updated_time" content="2018-06-12T14:52:58.729Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个滑动冲突问题的分析流程">
-<meta name="twitter:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
+<meta name="twitter:title" content="Android输入系统系列(2)----EventHub">
+<meta name="twitter:description" content="上篇文章中说到eventhub是在NativeInputManager的构造函数new出来 一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理 12345678910111213141516171819202122232425262728293031323334353637EventHub::Even">
 
 
 
@@ -128,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/"/>
 
 
 
 
 
-  <title>一个滑动冲突问题的分析流程 | 李海洲的成长之路</title>
+  <title>Android输入系统系列(2)----EventHub | 李海洲的成长之路</title>
   
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="steven li">
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一个滑动冲突问题的分析流程</h1>
+          <h1 class="post-title" itemprop="name headline">Android输入系统系列(2)----EventHub</h1>
         
 
         <div class="post-meta">
@@ -346,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-06T21:58:15+08:00">
-                2018-06-06
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-12T22:11:02+08:00">
+                2018-06-12
               </time>
             
 
@@ -365,8 +365,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/06/06/一个滑动冲突问题的分析流程/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/06/一个滑动冲突问题的分析流程/" itemprop="commentCount"></span>
+                <a href="/2018/06/12/Android输入系统系列-2-EventHub/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/12/Android输入系统系列-2-EventHub/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,154
+                  1,286
                 </span>
               
 
@@ -404,7 +404,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  6
                 </span>
               
             </div>
@@ -425,20 +425,29 @@
       
 
       
-        <p><strong>问题需求</strong><br>原先效果是用户在<code>ViewPager</code>上长按会弹出一个<code>dialog</code>，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出<code>dialog</code></p>
-<p><strong>初步分析</strong><br>外边的<code>ViewPager</code>是可以左右滑动的，现在希望单个界面即子<code>view</code>接收到触摸事件后能接管本次事件序列中后续事件，即子<code>View</code>接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间<code>Android</code>默认是<code>400ms</code>后会识别为长按事件，此时子<code>View</code>的长按事件被触发。那么问题来了，怎么才能在子<code>view</code>接收到触摸事件并能接管本次事件序列呢？<br>这就要说到老生常谈的事件拦截了，正常拦截事件有外部拦截和内部拦截两种，这里因为代码中子view已写好现成的手势判断的相关方法，故这里为简单起见，采用内部拦截法来实现。</p>
-<p><strong>修改方法</strong><br><code>LauncherPagerAdapter.java</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> mTouchSlop = <span class="number">40</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = LayoutInflater.from(mContext).inflate(R.layout.launcher_item_layout, <span class="keyword">null</span>);</span><br><span class="line">        ViewGroup parent = (ViewGroup) view.getParent();</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">	<span class="comment">//Add begin</span></span><br><span class="line">        view.setOnTouchListener(<span class="keyword">new</span> View.OnTouchListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouch</span><span class="params">(View v, MotionEvent event)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">switch</span> (event.getAction()) &#123;</span><br><span class="line">                    <span class="comment">//省略部分代码</span></span><br><span class="line">                    <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                        <span class="keyword">if</span> (Math.abs(event.getY() - mDownY) &lt;= ((<span class="keyword">float</span>) mTouchSlop) &amp;&amp; Math.abs(event.getX() - mDownX) &lt;= ((<span class="keyword">float</span>) mTouchSlop)) &#123;</span><br><span class="line">                                view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>); <span class="comment">//当出现上下左右距离不超过40时，父view不拦截事件, 交给子view</span></span><br><span class="line">                         &#125;</span><br><span class="line">                         <span class="keyword">break</span>;</span><br><span class="line">                        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(Math.abs(event.getX() - mDownX) &gt; ((<span class="keyword">float</span>) mTouchSlop))&#123;</span><br><span class="line">                               view.getParent().requestDisallowInterceptTouchEvent(<span class="keyword">false</span>); <span class="comment">//当出现左右距离超过40时，父view拦截事件并自行消耗</span></span><br><span class="line">                          &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">	 <span class="comment">//Add end</span></span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-<p>这样的话，再对子<code>view</code>添加长按事件处理，也能顺利的接收到长按事件了。效果上便达到了微小长按滑动也会进入长按事件的处理逻辑中，注意此时微小的向左或向右滑动，<code>viewpager</code>本身并不会移动了，修改之前<code>Viewpager</code>会跟着滑动。</p>
-<p>这个问题里用的是内部拦截法，其实也可以自定义<code>Viewpager</code>中重写<code>canScrool()</code>方法，这里就不介绍了，相比而言稍稍麻烦了一点</p>
-<p>下面顺便说下滑动冲突的一般解决思路，这是个老生常谈的话题，解决方法已形成固定的流程，需要根据具体的实际业务需求灵活改变。</p>
-<p>先介绍几个事件分发处理的几个常见方法<br><code>dispatchTouchEvent</code><br>主要是用来分发事件<br><code>onInterceptTouchEvent</code><br>主要是用来拦截事件的(ViewGroup才有这个方法，View没有这个方法)<br><code>onTouchEvent</code><br>这个方法主要是用来处理事件的<br><code>requestDisallowInterceptTouchEvent(true)</code><br>这个方法能够影响父View是否拦截事件，true 表示父 View 不拦截事件，false 表示父 View 拦截事件</p>
-<p><strong>滑动冲突一般解决方法</strong><br>1.外部拦截法<br>一般是通过重写父控件的<code>onInterceptTouchEvent</code>方法，然后根据具体的需求，来决定父控件是否拦截事件。如果拦截返回返回true，不拦截返回false，比如说希望上下滑动不要拦截，那么就在父控件的<code>onInterceptTouchEvent</code>方法里的<code>MotionEvent.ACTION_MOVE</code>这个case块里返回false就好。如果希望指定位置不拦截，则再进行位置判断即可。</p>
-<p>对于外部拦截法我们的核心工作一般是做在<code>ACTION_MOVE</code>中，不过需要注意的是不要在<code>ACTION_DOWN</code>中返回 true，这里一旦为true，则同一个事件序列<code>ViewGroup</code>的<code>disPatchTouchEvent</code>就不会再调用<code>onInterceptTouchEvent</code>方法了 。那么本次的事件序列后续都由父view接管，子view对这次事件序列也就没有了机会去消耗事件。归纳起来就是一句话: 父控件一旦拦截了事件，那么同一个事件序列的所有事件都将交给它处理。</p>
-<p>2.内部拦截法<br>内部拦截法主要是通过调用父控件的 <code>requestDisallowInterceptTouchEvent</code>方法，传进去一个<code>boolean</code>参数值，true为请求父控件不拦截<br>需要注意的是父控件的<code>onInterceptTouchEvent</code>方法中的<code>ACTION_DOWN</code>事件不要拦截，一旦父控件拦截<code>ACTION_DOWN</code>事件，那么事件无法传递到子元素之中，内部拦截法也就无法起作用了</p>
-<p>Good night!</p>
+        <p>上篇文章中说到eventhub是在NativeInputManager的构造函数new出来</p>
+<p>一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">EventHub::EventHub(<span class="keyword">void</span>) :</span><br><span class="line">        mBuiltInKeyboardId(NO_BUILT_IN_KEYBOARD), mNextDeviceId(<span class="number">1</span>), mControllerNumbers(),</span><br><span class="line">        mOpeningDevices(<span class="number">0</span>), mClosingDevices(<span class="number">0</span>),</span><br><span class="line">        mNeedToSendFinishedDeviceScan(<span class="keyword">false</span>),</span><br><span class="line">        mNeedToReopenDevices(<span class="keyword">false</span>), mNeedToScanDevices(<span class="keyword">true</span>),</span><br><span class="line">        mPendingEventCount(<span class="number">0</span>), mPendingEventIndex(<span class="number">0</span>), mPendingINotify(<span class="keyword">false</span>) &#123;</span><br><span class="line">    acquire_wake_lock(PARTIAL_WAKE_LOCK, WAKE_LOCK_ID);</span><br><span class="line">    <span class="comment">//创建一个epoll句柄</span></span><br><span class="line">    mEpollFd = epoll_create(EPOLL_SIZE_HINT);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(mEpollFd &lt; <span class="number">0</span>, <span class="string">"Could not create epoll instance.  errno=%d"</span>, errno);</span><br><span class="line">    <span class="comment">//创建一个Inotify对象</span></span><br><span class="line">    mINotifyFd = inotify_init();</span><br><span class="line">    <span class="comment">//监视/dev/input目录变化</span></span><br><span class="line">    <span class="keyword">int</span> result = inotify_add_watch(mINotifyFd, DEVICE_PATH, IN_DELETE | IN_CREATE);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result &lt; <span class="number">0</span>, <span class="string">"Could not register INotify for %s.  errno=%d"</span>,</span><br><span class="line">            DEVICE_PATH, errno);</span><br><span class="line"></span><br><span class="line">    struct epoll_event eventItem;</span><br><span class="line">    memset(&amp;eventItem, <span class="number">0</span>, sizeof(eventItem));</span><br><span class="line">    eventItem.events = EPOLLIN;</span><br><span class="line">    eventItem.data.u32 = EPOLL_ID_INOTIFY;</span><br><span class="line">    <span class="comment">//将inotify的句柄加入到epoll的监测中</span></span><br><span class="line">    result = epoll_ctl(mEpollFd, EPOLL_CTL_ADD, mINotifyFd, &amp;eventItem);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result != <span class="number">0</span>, <span class="string">"Could not add INotify to epoll instance.  errno=%d"</span>, errno);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> wakeFds[<span class="number">2</span>];</span><br><span class="line">    <span class="comment">//创建匿名管道</span></span><br><span class="line">    result = pipe(wakeFds);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result != <span class="number">0</span>, <span class="string">"Could not create wake pipe.  errno=%d"</span>, errno);</span><br><span class="line"></span><br><span class="line">    mWakeReadPipeFd = wakeFds[<span class="number">0</span>];</span><br><span class="line">    mWakeWritePipeFd = wakeFds[<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//将管道读端和写端设成非阻塞模式</span></span><br><span class="line">    result = fcntl(mWakeReadPipeFd, F_SETFL, O_NONBLOCK);</span><br><span class="line">    result = fcntl(mWakeWritePipeFd, F_SETFL, O_NONBLOCK);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EventHub的构造函数首先创建了epoll句柄，然后创建了一个inotify句柄和一个匿名管道，并将inotify的句柄和管道的”读端”句柄都加入到epoll的监测中。</p>
+<p>这里说明下inotify的作用<br>inotify是Linux中监视目录和文件变化的一种机制，这里监视的是/dev/input，Andorid中的FileObserver就是封装的inotify，可以直接在java中使用</p>
+<p>既然EventHub最终需要将消息传给上层，那么EventHub中的消息又是如何获取的呢？从它的构造函数来看，并没有看到与设备关联的动作。其实是通过EventHub的getEvents()函数  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">size_t EventHub::getEvents(<span class="keyword">int</span> timeoutMillis, RawEvent* buffer, size_t bufferSize) &#123;</span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">       <span class="keyword">if</span> (mNeedToScanDevices) &#123;</span><br><span class="line">            mNeedToScanDevices = <span class="keyword">false</span>;</span><br><span class="line">            scanDevicesLocked();</span><br><span class="line">            mNeedToSendFinishedDeviceScan = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里通过mNeedToScanDevices变量控制来判断扫描是否完成</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> EventHub::scanDevicesLocked() &#123;</span><br><span class="line">    status_t res = scanDirLocked(DEVICE_PATH);</span><br><span class="line">    <span class="keyword">if</span>(res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">"scan dir failed for %s\n"</span>, DEVICE_PATH);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mDevices.indexOfKey(VIRTUAL_KEYBOARD_ID) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        createVirtualKeyboardLocked();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里调用了scanDirLocked函数，接着看这个函数做了什么</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">status_t EventHub::scanDirLocked(<span class="keyword">const</span> <span class="keyword">char</span> *dirname)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">char</span> devname[PATH_MAX];</span><br><span class="line">    <span class="keyword">char</span> *filename;</span><br><span class="line">    DIR *dir;</span><br><span class="line">    struct dirent *de;</span><br><span class="line">    dir = opendir(dirname);</span><br><span class="line">    <span class="keyword">if</span>(dir == NULL)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    strcpy(devname, dirname);</span><br><span class="line">    filename = devname + strlen(devname);</span><br><span class="line">    *filename++ = <span class="string">'/'</span>;</span><br><span class="line">    <span class="keyword">while</span>((de = readdir(dir))) &#123;</span><br><span class="line">        <span class="keyword">if</span>(de-&gt;d_name[<span class="number">0</span>] == <span class="string">'.'</span> &amp;&amp;</span><br><span class="line">          (de-&gt;d_name[<span class="number">1</span>] == <span class="string">'\0'</span> ||</span><br><span class="line">            (de-&gt;d_name[<span class="number">1</span>] == <span class="string">'.'</span> &amp;&amp; de-&gt;d_name[<span class="number">2</span>] == <span class="string">'\0'</span>)))</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        strcpy(filename, de-&gt;d_name);</span><br><span class="line">        openDeviceLocked(devname);</span><br><span class="line">    &#125;</span><br><span class="line">    closedir(dir);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的参数dirname对应的是DEVICE_PATH，定义如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *DEVICE_PATH = <span class="string">"/dev/input"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>由此可知，scanDirLocked函数的作用是扫描/dev/input目录</p>
+<p>我手里的手机上/dev/input目录如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/dev/input # ls</span><br><span class="line">event0 event1 event2 event3 event4 event5 event6</span><br></pre></td></tr></table></figure>
+<p>在dev/input下存放的并不是设备，而是event文件，这些event文件对应的设备信息在文件proc/bus/input/devices中可以查到<br>这里贴出其中一个打印片段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">I: Bus=<span class="number">0019</span> Vendor=<span class="number">2454</span> Product=<span class="number">6500</span> Version=<span class="number">0010</span></span><br><span class="line">N: Name=<span class="string">"mtk-kpd"</span></span><br><span class="line">P: Phys=</span><br><span class="line">S: Sysfs=/devices/platform/<span class="number">10010000</span>.kp/input/input1</span><br><span class="line">U: Uniq=</span><br><span class="line">H: Handlers=gpufreq_ib event1</span><br><span class="line">B: PROP=<span class="number">0</span></span><br><span class="line">B: EV=<span class="number">3</span></span><br><span class="line">B: KEY=<span class="number">140000</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>scanDirLocked函数打开/dev/input目录后，对目录下的每个文件都调用openDeviceLocked()函数<br>看下这个函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">status_t EventHub::openDeviceLocked(<span class="keyword">const</span> <span class="keyword">char</span> *devicePath) &#123;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    <span class="comment">// Get device name.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGNAME(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get device name for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.name.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check to see if the device is on our excluded list</span></span><br><span class="line">    <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; mExcludedDevices.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> String8&amp; item = mExcludedDevices.itemAt(i);</span><br><span class="line">        <span class="keyword">if</span> (identifier.name == item) &#123;</span><br><span class="line">            ALOGI(<span class="string">"ignoring event id %s driver %s\n"</span>, devicePath, item.string());</span><br><span class="line">            close(fd);</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device driver version.</span></span><br><span class="line">    <span class="keyword">int</span> driverVersion;</span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGVERSION, &amp;driverVersion)) &#123;</span><br><span class="line">        ALOGE(<span class="string">"could not get driver version for %s, %s\n"</span>, devicePath, strerror(errno));</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device identifier.</span></span><br><span class="line">    struct input_id inputId;</span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGID, &amp;inputId)) &#123;</span><br><span class="line">        ALOGE(<span class="string">"could not get device input id for %s, %s\n"</span>, devicePath, strerror(errno));</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    identifier.bus = inputId.bustype;</span><br><span class="line">    identifier.product = inputId.product;</span><br><span class="line">    identifier.vendor = inputId.vendor;</span><br><span class="line">    identifier.version = inputId.version;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device physical location.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGPHYS(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get location for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.location.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device unique id.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGUNIQ(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get idstring for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.uniqueId.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数非常长，做的事情主要是打开设备，获取设备的信息包括设备名称，id等。然后根据这些信息判断设备的类型，并根据设备的不同，进行不同的初始化，接着为设备创建一个Device对象。并将设备对象的句柄加入到epoll的监控中。最后调用addDeviceLocked（）函数把Device对象添加到EventHub的mDevices列表中</p>
 <hr>
-<font color="#000000" size="2" face="楷体">住所，晚上，听着歌，洗漱完毕准备休息</font>
+<font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，听着飘洋过海来看你</font>
+
       
     </div>
     
@@ -469,7 +478,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/" title="一个滑动冲突问题的分析流程">http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/</a>
+    <a href="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/" title="Android输入系统系列(2)----EventHub">http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -491,8 +500,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/04/月度小结-20180604/" rel="next" title="月度小结--20180604">
-                <i class="fa fa-chevron-left"></i> 月度小结--20180604
+              <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/" rel="next" title="Android输入系统系列(1)----InputManagerService">
+                <i class="fa fa-chevron-left"></i> Android输入系统系列(1)----InputManagerService
               </a>
             
           </div>
@@ -500,10 +509,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/07/Android输入系统系列-1-InputManagerService/" rel="prev" title="Android输入系统系列(1)----InputManagerService">
-                Android输入系统系列(1)----InputManagerService <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

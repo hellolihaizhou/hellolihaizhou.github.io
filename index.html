@@ -317,6 +317,192 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/12/Android输入系统系列-2-EventHub/" itemprop="url">Android输入系统系列(2)----EventHub</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-12T22:11:02+08:00">
+                2018-06-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/12/Android输入系统系列-2-EventHub/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/06/12/Android输入系统系列-2-EventHub/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,286
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>上篇文章中说到eventhub是在NativeInputManager的构造函数new出来</p>
+<p>一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">EventHub::EventHub(<span class="keyword">void</span>) :</span><br><span class="line">        mBuiltInKeyboardId(NO_BUILT_IN_KEYBOARD), mNextDeviceId(<span class="number">1</span>), mControllerNumbers(),</span><br><span class="line">        mOpeningDevices(<span class="number">0</span>), mClosingDevices(<span class="number">0</span>),</span><br><span class="line">        mNeedToSendFinishedDeviceScan(<span class="keyword">false</span>),</span><br><span class="line">        mNeedToReopenDevices(<span class="keyword">false</span>), mNeedToScanDevices(<span class="keyword">true</span>),</span><br><span class="line">        mPendingEventCount(<span class="number">0</span>), mPendingEventIndex(<span class="number">0</span>), mPendingINotify(<span class="keyword">false</span>) &#123;</span><br><span class="line">    acquire_wake_lock(PARTIAL_WAKE_LOCK, WAKE_LOCK_ID);</span><br><span class="line">    <span class="comment">//创建一个epoll句柄</span></span><br><span class="line">    mEpollFd = epoll_create(EPOLL_SIZE_HINT);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(mEpollFd &lt; <span class="number">0</span>, <span class="string">"Could not create epoll instance.  errno=%d"</span>, errno);</span><br><span class="line">    <span class="comment">//创建一个Inotify对象</span></span><br><span class="line">    mINotifyFd = inotify_init();</span><br><span class="line">    <span class="comment">//监视/dev/input目录变化</span></span><br><span class="line">    <span class="keyword">int</span> result = inotify_add_watch(mINotifyFd, DEVICE_PATH, IN_DELETE | IN_CREATE);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result &lt; <span class="number">0</span>, <span class="string">"Could not register INotify for %s.  errno=%d"</span>,</span><br><span class="line">            DEVICE_PATH, errno);</span><br><span class="line"></span><br><span class="line">    struct epoll_event eventItem;</span><br><span class="line">    memset(&amp;eventItem, <span class="number">0</span>, sizeof(eventItem));</span><br><span class="line">    eventItem.events = EPOLLIN;</span><br><span class="line">    eventItem.data.u32 = EPOLL_ID_INOTIFY;</span><br><span class="line">    <span class="comment">//将inotify的句柄加入到epoll的监测中</span></span><br><span class="line">    result = epoll_ctl(mEpollFd, EPOLL_CTL_ADD, mINotifyFd, &amp;eventItem);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result != <span class="number">0</span>, <span class="string">"Could not add INotify to epoll instance.  errno=%d"</span>, errno);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> wakeFds[<span class="number">2</span>];</span><br><span class="line">    <span class="comment">//创建匿名管道</span></span><br><span class="line">    result = pipe(wakeFds);</span><br><span class="line">    LOG_ALWAYS_FATAL_IF(result != <span class="number">0</span>, <span class="string">"Could not create wake pipe.  errno=%d"</span>, errno);</span><br><span class="line"></span><br><span class="line">    mWakeReadPipeFd = wakeFds[<span class="number">0</span>];</span><br><span class="line">    mWakeWritePipeFd = wakeFds[<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//将管道读端和写端设成非阻塞模式</span></span><br><span class="line">    result = fcntl(mWakeReadPipeFd, F_SETFL, O_NONBLOCK);</span><br><span class="line">    result = fcntl(mWakeWritePipeFd, F_SETFL, O_NONBLOCK);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EventHub的构造函数首先创建了epoll句柄，然后创建了一个inotify句柄和一个匿名管道，并将inotify的句柄和管道的”读端”句柄都加入到epoll的监测中。</p>
+<p>这里说明下inotify的作用<br>inotify是Linux中监视目录和文件变化的一种机制，这里监视的是/dev/input，Andorid中的FileObserver就是封装的inotify，可以直接在java中使用</p>
+<p>既然EventHub最终需要将消息传给上层，那么EventHub中的消息又是如何获取的呢？从它的构造函数来看，并没有看到与设备关联的动作。其实是通过EventHub的getEvents()函数  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">size_t EventHub::getEvents(<span class="keyword">int</span> timeoutMillis, RawEvent* buffer, size_t bufferSize) &#123;</span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">       <span class="keyword">if</span> (mNeedToScanDevices) &#123;</span><br><span class="line">            mNeedToScanDevices = <span class="keyword">false</span>;</span><br><span class="line">            scanDevicesLocked();</span><br><span class="line">            mNeedToSendFinishedDeviceScan = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里通过mNeedToScanDevices变量控制来判断扫描是否完成</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> EventHub::scanDevicesLocked() &#123;</span><br><span class="line">    status_t res = scanDirLocked(DEVICE_PATH);</span><br><span class="line">    <span class="keyword">if</span>(res &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">"scan dir failed for %s\n"</span>, DEVICE_PATH);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mDevices.indexOfKey(VIRTUAL_KEYBOARD_ID) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        createVirtualKeyboardLocked();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里调用了scanDirLocked函数，接着看这个函数做了什么</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">status_t EventHub::scanDirLocked(<span class="keyword">const</span> <span class="keyword">char</span> *dirname)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">char</span> devname[PATH_MAX];</span><br><span class="line">    <span class="keyword">char</span> *filename;</span><br><span class="line">    DIR *dir;</span><br><span class="line">    struct dirent *de;</span><br><span class="line">    dir = opendir(dirname);</span><br><span class="line">    <span class="keyword">if</span>(dir == NULL)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    strcpy(devname, dirname);</span><br><span class="line">    filename = devname + strlen(devname);</span><br><span class="line">    *filename++ = <span class="string">'/'</span>;</span><br><span class="line">    <span class="keyword">while</span>((de = readdir(dir))) &#123;</span><br><span class="line">        <span class="keyword">if</span>(de-&gt;d_name[<span class="number">0</span>] == <span class="string">'.'</span> &amp;&amp;</span><br><span class="line">          (de-&gt;d_name[<span class="number">1</span>] == <span class="string">'\0'</span> ||</span><br><span class="line">            (de-&gt;d_name[<span class="number">1</span>] == <span class="string">'.'</span> &amp;&amp; de-&gt;d_name[<span class="number">2</span>] == <span class="string">'\0'</span>)))</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        strcpy(filename, de-&gt;d_name);</span><br><span class="line">        openDeviceLocked(devname);</span><br><span class="line">    &#125;</span><br><span class="line">    closedir(dir);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的参数dirname对应的是DEVICE_PATH，定义如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *DEVICE_PATH = <span class="string">"/dev/input"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>由此可知，scanDirLocked函数的作用是扫描/dev/input目录</p>
+<p>我手里的手机上/dev/input目录如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/dev/input # ls</span><br><span class="line">event0 event1 event2 event3 event4 event5 event6</span><br></pre></td></tr></table></figure>
+<p>在dev/input下存放的并不是设备，而是event文件，这些event文件对应的设备信息在文件proc/bus/input/devices中可以查到<br>这里贴出其中一个打印片段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">I: Bus=<span class="number">0019</span> Vendor=<span class="number">2454</span> Product=<span class="number">6500</span> Version=<span class="number">0010</span></span><br><span class="line">N: Name=<span class="string">"mtk-kpd"</span></span><br><span class="line">P: Phys=</span><br><span class="line">S: Sysfs=/devices/platform/<span class="number">10010000</span>.kp/input/input1</span><br><span class="line">U: Uniq=</span><br><span class="line">H: Handlers=gpufreq_ib event1</span><br><span class="line">B: PROP=<span class="number">0</span></span><br><span class="line">B: EV=<span class="number">3</span></span><br><span class="line">B: KEY=<span class="number">140000</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>scanDirLocked函数打开/dev/input目录后，对目录下的每个文件都调用openDeviceLocked()函数<br>看下这个函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">status_t EventHub::openDeviceLocked(<span class="keyword">const</span> <span class="keyword">char</span> *devicePath) &#123;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    <span class="comment">// Get device name.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGNAME(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get device name for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.name.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check to see if the device is on our excluded list</span></span><br><span class="line">    <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; mExcludedDevices.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> String8&amp; item = mExcludedDevices.itemAt(i);</span><br><span class="line">        <span class="keyword">if</span> (identifier.name == item) &#123;</span><br><span class="line">            ALOGI(<span class="string">"ignoring event id %s driver %s\n"</span>, devicePath, item.string());</span><br><span class="line">            close(fd);</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device driver version.</span></span><br><span class="line">    <span class="keyword">int</span> driverVersion;</span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGVERSION, &amp;driverVersion)) &#123;</span><br><span class="line">        ALOGE(<span class="string">"could not get driver version for %s, %s\n"</span>, devicePath, strerror(errno));</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device identifier.</span></span><br><span class="line">    struct input_id inputId;</span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGID, &amp;inputId)) &#123;</span><br><span class="line">        ALOGE(<span class="string">"could not get device input id for %s, %s\n"</span>, devicePath, strerror(errno));</span><br><span class="line">        close(fd);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    identifier.bus = inputId.bustype;</span><br><span class="line">    identifier.product = inputId.product;</span><br><span class="line">    identifier.vendor = inputId.vendor;</span><br><span class="line">    identifier.version = inputId.version;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device physical location.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGPHYS(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get location for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.location.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get device unique id.</span></span><br><span class="line">    <span class="keyword">if</span>(ioctl(fd, EVIOCGUNIQ(sizeof(buffer) - <span class="number">1</span>), &amp;buffer) &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//fprintf(stderr, "could not get idstring for %s, %s\n", devicePath, strerror(errno));</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        buffer[sizeof(buffer) - <span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">        identifier.uniqueId.setTo(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数非常长，做的事情主要是打开设备，获取设备的信息包括设备名称，id等。然后根据这些信息判断设备的类型，并根据设备的不同，进行不同的初始化，接着为设备创建一个Device对象。并将设备对象的句柄加入到epoll的监控中。最后调用addDeviceLocked（）函数把Device对象添加到EventHub的mDevices列表中</p>
+<hr>
+<font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，听着飘洋过海来看你</font>
+
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/07/Android输入系统系列-1-InputManagerService/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2057,198 +2243,6 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="steven li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲的成长之路">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/11/一个定屏重启的问题分析/" itemprop="url">一个定屏重启的问题分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T17:26:17+08:00">
-                2018-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/11/一个定屏重启的问题分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/11/一个定屏重启的问题分析/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,256
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  6
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>问题平台</strong><br><code>Android 7.1.1</code>    <code>MT6739</code></p>
-<p><strong>问题现象</strong><br><code>界面定屏并重启</code></p>
-<p><strong>初步分析</strong><br>拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧<br>日志目录如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png" align="left" style=" width:300px;height:50 px"><br><br><br><br>看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6.png" align="left" style=" width:300px;height:23 px"><br><br></p>
-<p align="left">是一个JE的问题导致的重启，猜测是systemServer挂了</p>  
-
-<p><strong>Step1：分析日志</strong><br>拿出看家小工具GAT，对于db文件的分析离不开GAT，用GAT解析下来究竟发生了what让我们的小机器重启了呢，解析后文件目录如下</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E7%9B%AE%E5%BD%95.png" align="left" style=" width:900px;height:500 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>(这里将产品名称马赛克一下，我也不知道为什么这么做，反正就是这么做了，哈哈哈（￣︶￣）↗)</p>
-<p>这里可以看到果然是systemServer进程重启了，发生问题点在systemServer进程中，接着看原因，是个数组越界异常，下标为1，数组长度为2(见上图红色框)，唉？没越界啊，为什么会报越界呢？</p>
-<p>分析具体的堆栈代码之前，先看下日志判断下死机发生时用户当时具体做了些啥  </p>
-<p>首先看下main日志，找到IndexOutOfBoundsException发生时间点<code>09:43:33.818111</code><br>测试人员使用的是user版本，user版本的kernel日志不会打出每行时间戳，userdebug以及eng版本的kernel日志会有具体的时间戳，所以分析user版本的kernel日志会稍稍麻烦一点，通过搜索关键字”UTC”来查看时间戳，这份日志中UTC时间戳每隔二十秒打印<br>异常发生时间点09:43:33.818111，所以是在如下两行之间<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Line <span class="number">176236</span>: &lt;7&gt;[ 1762.546722]  (0)[249:wdtk-0][thread:249][RT:1762546695292] 2018-04-26 01:43:27.105173 UTC;android time 2018-04-26 09:43:27.105173</span><br><span class="line">Line 179752: &lt;7&gt;[ 1782.556698]  (0)[249:wdtk-0][thread:249][RT:1782556690801] 2018-04-26 01:43:47.115173 UTC;android time 2018-04-26 09:43:47.115173</span><br></pre></td></tr></table></figure></p>
-<p><code>9.43.27</code>这行往下数6s左右，大概在<code>178800</code>行附近，ok，去这个行数附近看看<br>在<code>178891</code>行看到了如下信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">7</span>&gt;[ <span class="number">1777.097776</span>] -(<span class="number">0</span>)[<span class="number">1085</span>:android.ui][signal][<span class="number">1085</span>:android.ui]send death sig <span class="number">9</span> to[<span class="number">1068</span>:system_server:R]</span><br></pre></td></tr></table></figure></p>
-<p>sig 9代表SIGNAL_KILL，这里杀掉了system_server进程，在此上面有大量连续的手指触摸日志信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923619</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">302</span>, y = <span class="number">148</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923695</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8490</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923712</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.925815</span>]  (<span class="number">1</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.933972</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934001</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934944</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x904</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935112</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">303</span>, y = <span class="number">143</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935157</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935169</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.938970</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock+++blocking=<span class="number">0</span> ,dst_mode=<span class="number">0</span>,dispmode = <span class="number">0</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939000</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;state = <span class="number">240</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939014</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;session_mode = <span class="number">1</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.942542</span>]  (<span class="number">0</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.946983</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947013</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8494</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947971</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x9</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.948138</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger [<span class="number">00</span>] up <span class="number">11111</span></span><br></pre></td></tr></table></figure></p>
-<p>可见当时测试人员与屏幕一直在互动，符合测试人员所说的当时在滑动屏幕</p>
-<p><strong>Step2：跟踪源码流程</strong><br>看具体的堆栈信息</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E5%85%B7%E4%BD%93%E5%A0%86%E6%A0%88.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br></p>
-<p>emmm…没有看到具体的应用堆栈信息，都是framework里的堆栈，其实看到这里心里大概有数了，应该不是应用的问题，而是系统层面的问题</p>
-<p>好的，撸起袖子打开源码，开始看具体的代码</p>
-<font color="#000000" size="2" face="楷体">libcore/ojluni/src/main/java/java/util/ArrayList.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= size)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBoundsMsg(index));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (E) elementData[index];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里抛出了越界异常，接着往下看</p>
-<font color="#000000" size="2" face="楷体">/frameworks/base/services/core/java/com/android/server/wm/DisplayContent.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Find the task whose outside touch area (for resizing) (x, y) falls within.</span></span><br><span class="line"><span class="comment"> * Returns null if the touch doesn't fall into a resizing area.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Task <span class="title">findTaskForControlPoint</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> delta = mService.dipToPixel(RESIZE_HANDLE_WIDTH_IN_DP, mDisplayMetrics);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> stackNdx = mStacks.size() - <span class="number">1</span>; stackNdx &gt;= <span class="number">0</span>; --stackNdx) &#123;</span><br><span class="line">        TaskStack stack = mStacks.get(stackNdx);</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里出现了异常，理论上不会出现越界的问题，不过如果是多线程访问的情况，鉴于这里并没有同步机制，<br>mStacks又是公用的，很多地方会对其增删修改，这样的话就难以保证不会出现异常了</p>
-<p><strong>问题小结：</strong><br>这个问题看起来是谷歌的bug，避免这种情况可以选择加同步机制。同步机制难免会牺牲性能，不过也增强了代码的稳定性<br>考虑到这个问题至今只是出现了一次，后续没有再出现过，选择忽略不做修改</p>
-<hr>
-<font color="#000000" size="2" face="楷体">本文写于公司，电脑前，慵懒的午后</font>
-
-          
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-    </div>
-	
-    
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2303,7 +2297,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2378,7 +2372,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共17.4k字</span>
+  <span class="post-count">Steven的博客共18.7k字</span>
 </div>
         
 

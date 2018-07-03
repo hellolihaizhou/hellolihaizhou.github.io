@@ -317,6 +317,203 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/17/一个无法开机问题的分析流程/" itemprop="url">一个无法开机问题的分析流程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-17T10:42:27+08:00">
+                2018-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/17/一个无法开机问题的分析流程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/17/一个无法开机问题的分析流程/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,836
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>问题平台<br><code>Android7.1.1</code>  <code>MT6739</code></p>
+<p>问题现象<br><code>走完一部分开机动画后停留在recovery界面，无法进入系统</code></p>
+<p>初步分析:<br>开机后进入<code>recovery</code> ，以往经验来看猜测是重要进程启动异常，可能被连续被kill</p>
+<p><strong>Step1 日志分析</strong><br>需要的日志：eng版本<code>uart log</code>+<code>main log</code>(如果已经进入Android的话)+<code>data/aee_exp</code>下的db文件(如果有db生成的话)</p>
+<p><strong>Step1.1  抓取串口日志</strong><br>首先说下串口日志的获取方式:<br>串口线中的白色接<code>TX</code>，黑色线接地，我这里是在windows下抓取，使用了一个<code>SSCOM</code>的工具，<code>MTK</code>平台上波特率需要选择<code>921600</code>, 这个工具使用之前需要安装<code>usb to serial</code>驱动，不然会出现识别不了设备的情况<br>这里需要说明的是需要使用eng版本获取日志，如果是user版本的话，需要做一些额外工作</p>
+<p><strong>Step1.2 分析串口日志</strong><br>首先先看下系统走到了哪一步，关键步骤都是会有对应的日志输出，从过往的项目以及分析经验，已形成了一套既定的分析流程<br>这里说下分析串口日志中的一些关键字如下  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、<span class="string">"Preparing for EL3 exit to normal world, LK"</span></span><br><span class="line">   如果串口log里面没有走到这里，说明在PL就卡住了，这句表示进入LK</span><br><span class="line"><span class="number">2</span>、<span class="string">"lk finished --&gt; jump to linux kernel"</span></span><br><span class="line">   如果串口log里面没有走到这里，但是上面走到了，说明在lk卡住了，这句表示进入kernel</span><br><span class="line"><span class="number">3</span>、<span class="string">"Kernel_init_done"</span></span><br><span class="line">   这句表示kernel初始化完成了，正准备启动init进程，如果这就没有走到：请搜索关键字initcall，</span><br><span class="line">   initcall是顺序执行例如module_init注册的init函数，看看卡在哪个call back上</span><br><span class="line"><span class="number">4</span>、<span class="string">"BOOTPROF"</span></span><br><span class="line">   这是开机过程中，每走过一个重要阶段都会打印的标志，例如上面Kernel_init_done这一句就会打上这个标志</span><br><span class="line"><span class="number">5</span>、<span class="string">"init: init first stage started"</span></span><br><span class="line">   这句表示init进程正常起来执行</span><br><span class="line"><span class="number">6</span>、<span class="string">"fs_mgr"</span> 和<span class="string">"e2fsck"</span></span><br><span class="line">   这里标志是在检查和mount 文件系统，如果失败会有如下log：fs_mgr_mount_all returned an error fs_mgr_mount_all returned unexpected error <span class="number">255</span></span><br><span class="line"><span class="number">7</span>、<span class="string">"zygote"</span></span><br><span class="line">   Starting service <span class="string">'zygote'</span>：这里表示要启动zygote,如果没有这一句表示zygote还没启动，则要检查之前的initrc执行情况，文件系统mount情况</span><br><span class="line"><span class="number">8</span>、<span class="string">"SysServerInit_START"</span></span><br><span class="line">   启动system_server</span><br><span class="line"><span class="number">9</span>、<span class="string">"system_server"</span></span><br><span class="line">   这里表示system_server有起来</span><br><span class="line"><span class="number">10</span>、<span class="string">"BOOT_Animation:END"</span></span><br><span class="line">   表示开机动画正常结束，进入安卓</span><br></pre></td></tr></table></figure>
+<p>我们的这份日志中1-9均有打印，说明已经进入了Android部分，在init进程起来后，如下片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[  <span class="number">29.560029</span>] &lt;<span class="number">1</span>&gt;.(<span class="number">1</span>)[<span class="number">1</span>:init]init: Service <span class="string">'healthd'</span> (pid <span class="number">310</span>) killed by signal <span class="number">11</span></span><br></pre></td></tr></table></figure>
+<p>后面紧跟着很多关键进程均打出sig 9即被kill掉<br>关于linux signal信号表对应关系如下(只列出部分)  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SIGHUP      <span class="number">1</span>           Term    终端的挂断或进程死亡</span><br><span class="line">SIGINT      <span class="number">2</span>           Term    来自键盘的中断信号</span><br><span class="line">SIGQUIT     <span class="number">3</span>           Core    来自键盘的离开信号</span><br><span class="line">SIGILL      <span class="number">4</span>           Core    非法指令</span><br><span class="line">SIGABRT     <span class="number">6</span>           Core    来自abort的异常信号</span><br><span class="line">SIGFPE      <span class="number">8</span>           Core    浮点例外</span><br><span class="line">SIGKILL     <span class="number">9</span>           Term    杀死</span><br><span class="line">SIGSEGV     <span class="number">11</span>          Core    段非法错误(内存引用无效)</span><br></pre></td></tr></table></figure>
+<p>这里大概明白问题出在了<code>healthd</code>上，这是与电量相关的进程，在user space中</p>
+<p>对于是否需要抓取logcat日志，可以看看串口日志中是否有如下片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Starting service <span class="string">'zygote'</span></span><br></pre></td></tr></table></figure>
+<p>这一步代表<code>zygote</code>起来了，这时候就必须要抓取logcat进一步分析，我们这笔问题中该日志片段有打印出来，所以需要抓取logcat进一步分析</p>
+<p><strong>Step1.3 分析logcat日志</strong><br>找到如下片段，说明<code>data/aee_exp</code>下面也有<code>db</code>文件生成了  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): Revision: <span class="string">'0'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): ABI: <span class="string">'arm'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.579</span> I/AEE_AED (  <span class="number">350</span>): pid: <span class="number">310</span>, <span class="attr">tid</span>: <span class="number">310</span>, <span class="attr">name</span>: healthd  &gt;&gt;&gt; <span class="regexp">/sbin/</span>healthd &lt;&lt;&lt;</span><br><span class="line">05-02 04:52:48.580 I/AEE_AED (  350): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r0 00000002  r1 00000002  r2 0000089c  r3 00000006</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r4 ffffffff  r5 00000001  r6 00000000  r7 00000002</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r8 becc68bc  r9 0008819e  sl ffffffff  fp becc6680</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    ip 00000002  sp becc6678  lr 0005d494  pc 0005e16c  cpsr 20070030</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): </span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): backtrace:</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #00 pc 0005e16c  /sbin/healthd</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #01 pc 0005d490  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #02 pc 00056c04  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #03 pc 00064ef4  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #04 pc 00027e00  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #05 pc 0000b291  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #06 pc 0000b10d  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #07 pc 000088c9  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #08 pc 00008d73  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #09 pc 00008c3f  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #10 pc 00008afb  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #11 pc 0005e055  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #12 pc 000086c8  /sbin/healthd</span><br></pre></td></tr></table></figure>
+<p>这里出现了段错误，这个时候需要拿出看家小工具<code>addr2line</code>来定位到代码出错的位置，这里顺便说下<code>Addr2line</code>的作用  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Addr2line （它是标准的 GNU Binutils 中的一部分）是一个可以将指令的地址和可执行映像转换成文件名、函数名和源代码行数的工具。这种功能对于将跟踪地址转换成更有意义的内容来说简直是太棒了</span><br></pre></td></tr></table></figure>
+<p>我这里的addr2line使用的是代码工程中的，代码工程下有很多addr2line，这里就随便用了一个目录下的addr2line，另外分析还需要<code>out/target/product/XXX/symbols/sbin/healthd</code>文件，注意这里的<code>healthd</code>文件必须和日志中是同一套代码，否则可能分析出来的代码位置会有偏差</p>
+<p>使用命令如下:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lihaizhou@ubuntu:~<span class="regexp">/Code/</span>sw710/<span class="number">6739</span>$ <span class="string">'/home/lihaizhou/Code/sw710/6739/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.8/bin/x86_64-linux-addr2line'</span> -e <span class="string">'/home/lihaizhou/Code/sw710/6739/out/target/product/lcsh6739_35_sw730/symbols/sbin/healthd'</span> <span class="number">0000</span>b291</span><br></pre></td></tr></table></figure>
+<p>得到如下结果  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/proc/self/cwd/system/core/healthd/BatteryMonitor.cpp:<span class="number">861</span></span><br></pre></td></tr></table></figure>
+<p>进到<code>BatteryMonitor.cpp</code>第861行，是一句最近添加的日志  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KLOG_INFO(LOG_TAG, <span class="string">"BatteryMonitor cmd_send props.batteryStatus '%s'\n"</span>, props.batteryStatus);</span><br></pre></td></tr></table></figure>
+<p><strong>Step2 问题解决</strong><br>仔细查看了这行日志, 发现是类型写错了，<code>props.batteryStatus</code>是整型，这里使用了字串类型打印，当然会报错了<br>ok，将类型修改为整型，重新编译烧录img到机器中，开机正常了</p>
+<p><strong>小结</strong><br>对系统启动流程以及<code>addr2line</code>的使用比较熟悉的话，这笔问题分析还是比较容易的，ok，这笔问题分析到此为止</p>
+<p>Have a good day！</p>
+<font color="#000000" size="3" face="楷体"><br>另:<br>关于串口日志MTK online有相关FAQ可以参考<br>FAQ15320 不同模式下如何保持uart log一直打开<br><a href="http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ15320" target="_blank" rel="noopener">http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ15320</a><br>FAQ03891如何在User版本开启串口(Uart),抓取上层Log,开启输入控制台<br><a href="http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ03891" target="_blank" rel="noopener">http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ03891</a></font>
+
+
+<hr>
+<font color="#000000" size="2" face="楷体">公司午休时间，电脑前，黑眼圈，脑袋一片空白，肚子有点饿，等外卖</font>
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1133,7 +1330,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1208,7 +1405,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共20.9k字</span>
+  <span class="post-count">Steven的博客共22.5k字</span>
 </div>
         
 

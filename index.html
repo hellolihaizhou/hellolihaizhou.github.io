@@ -317,6 +317,205 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/07/03/Android输入系统系列-3-读取RawEvent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/" itemprop="url">Android输入系统系列(3)----读取RawEvent</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-03T22:10:50+08:00">
+                2018-07-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/03/Android输入系统系列-3-读取RawEvent/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/03/Android输入系统系列-3-读取RawEvent/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,744
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前系列文章(1)中提到InputManager中的start方法里调用了ReaderThread-&gt;run，可是我们在InputReader中没有看到run方法<br>这一点和java中的线程运行方式有点区别，C下的线程运行是threadLoop这个方法，这是个虚函数，追溯到父类线程中是有run这个方法<br>层层往下跟就会跟到threadLoop方法，如果threadLoop返回false则会退出循环</p>
+<p>下面看下InputReader的threadLoop方法，可见这里返回true，说明是反复循环</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">frameworks\<span class="keyword">native</span>\services\inputflinger\InputReader.cpp</span><br><span class="line">bool InputReaderThread::threadLoop() &#123;</span><br><span class="line">    mReader-&gt;loopOnce();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面着重看下这里的loopOnce函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">frameworks\<span class="keyword">native</span>\services\inputflinger\InputReader.cpp</span><br><span class="line"><span class="keyword">void</span> InputReader::loopOnce() &#123;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    <span class="comment">//上文中讲过此处的getEvents，作用是获取Event，读取到的Event保存在mEventBuffer中，并返回Event的数量</span></span><br><span class="line">    size_t count = mEventHub-&gt;getEvents(timeoutMillis, mEventBuffer, EVENT_BUFFER_SIZE);</span><br><span class="line"></span><br><span class="line">    &#123; <span class="comment">// acquire lock</span></span><br><span class="line">        <span class="function">AutoMutex <span class="title">_l</span><span class="params">(mLock)</span></span>;</span><br><span class="line">        mReaderIsAliveCondition.broadcast();</span><br><span class="line">        <span class="comment">//判断读取到的event数量，大于0则进入processEventsLocked处理</span></span><br><span class="line">        <span class="keyword">if</span> (count) &#123;</span><br><span class="line">            processEventsLocked(mEventBuffer, count);</span><br><span class="line">        &#125;</span><br><span class="line">         <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125; <span class="comment">// release lock</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Send out a message that the describes the changed input devices.</span></span><br><span class="line">    <span class="keyword">if</span> (inputDevicesChanged) &#123;</span><br><span class="line">        mPolicy-&gt;notifyInputDevicesChanged(inputDevices);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Flush queued events out to the listener.</span></span><br><span class="line">    <span class="comment">// This must happen outside of the lock because the listener could potentially call</span></span><br><span class="line">    <span class="comment">// back into the InputReader's methods, such as getScanCodeState, or become blocked</span></span><br><span class="line">    <span class="comment">// on another thread similarly waiting to acquire the InputReader lock thereby</span></span><br><span class="line">    <span class="comment">// resulting in a deadlock.  This situation is actually quite plausible because the</span></span><br><span class="line">    <span class="comment">// listener is actually the input dispatcher, which calls into the window manager,</span></span><br><span class="line">    <span class="comment">// which occasionally calls into the input reader.</span></span><br><span class="line">    mQueuedListener-&gt;flush();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上文介绍过EventHub的getEvent的大体流程就是:<br>读取每个设备的数据，形成RawEvent结构后放到readBuffer中，如果没有输入事件，将调用epoll_wait()函数阻塞等待</p>
+<p>所以InputReaderThread线程大部分时间都是在epoll_wait()上等待，如果某个设备上有事件上来，则唤醒线程，从设备中读取数据，读取到的数据形成RawEvent形式，存放在mEventBuffer中，然后调用processEventsLocked进行处理</p>
+<p>下面来看看processEventsLocked这一函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InputReader::processEventsLocked(<span class="keyword">const</span> RawEvent* rawEvents, size_t count) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> RawEvent* rawEvent = rawEvents; count;) &#123;</span><br><span class="line">        int32_t type = rawEvent-&gt;type;</span><br><span class="line">        size_t batchSize = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (type &lt; EventHubInterface::FIRST_SYNTHETIC_EVENT) &#123;</span><br><span class="line">            int32_t deviceId = rawEvent-&gt;deviceId;</span><br><span class="line">            <span class="keyword">while</span> (batchSize &lt; count) &#123;</span><br><span class="line">                <span class="keyword">if</span> (rawEvent[batchSize].type &gt;= EventHubInterface::FIRST_SYNTHETIC_EVENT</span><br><span class="line">                        || rawEvent[batchSize].deviceId != deviceId) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                batchSize += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">#if DEBUG_RAW_EVENTS</span><br><span class="line">            ALOGD(<span class="string">"BatchSize: %d Count: %d"</span>, batchSize, count);</span><br><span class="line">#endif</span><br><span class="line">            processEventsForDeviceLocked(deviceId, rawEvent, batchSize);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">switch</span> (rawEvent-&gt;type) &#123;</span><br><span class="line">            <span class="keyword">case</span> EventHubInterface::DEVICE_ADDED:</span><br><span class="line">                addDeviceLocked(rawEvent-&gt;when, rawEvent-&gt;deviceId);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> EventHubInterface::DEVICE_REMOVED:</span><br><span class="line">                removeDeviceLocked(rawEvent-&gt;when, rawEvent-&gt;deviceId);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> EventHubInterface::FINISHED_DEVICE_SCAN:</span><br><span class="line">                handleConfigurationChangedLocked(rawEvent-&gt;when);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                ALOG_ASSERT(<span class="keyword">false</span>); <span class="comment">// can't happen</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        count -= batchSize;</span><br><span class="line">        rawEvent += batchSize;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的RawEvent分为两类，一类是设备发生变化的Event，包括添加设备，移除设备和扫描设备。另一类是设备自身产生的Event，例如键盘的按键Event，对于这一类Event，会从RawEvent数组中取出连续的同类Event，通过processEventsForDeviceLocked函数进行一并处理，这也是接下来讨论的重点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InputReader::processEventsForDeviceLocked(int32_t deviceId,</span><br><span class="line">        <span class="keyword">const</span> RawEvent* rawEvents, size_t count) &#123;</span><br><span class="line">    ssize_t deviceIndex = mDevices.indexOfKey(deviceId);</span><br><span class="line">    <span class="keyword">if</span> (deviceIndex &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGW(<span class="string">"Discarding event for unknown deviceId %d."</span>, deviceId);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    InputDevice* device = mDevices.valueAt(deviceIndex);</span><br><span class="line">    <span class="keyword">if</span> (device-&gt;isIgnored()) &#123;</span><br><span class="line">        <span class="comment">//ALOGD("Discarding event for ignored deviceId %d.", deviceId);</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    device-&gt;process(rawEvents, count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里根据传进来的deviceId生成InputDevice对象，关键代码在最后一句，这里调用了InputDevice的process函数<br>frameworks\native\services\inputflinger\InputReader.cpp</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InputDevice::process(<span class="keyword">const</span> RawEvent* rawEvents, size_t count) &#123;</span><br><span class="line">    <span class="comment">// Process all of the events in order for each mapper.</span></span><br><span class="line">    <span class="comment">// We cannot simply ask each mapper to process them in bulk because mappers may</span></span><br><span class="line">    <span class="comment">// have side-effects that must be interleaved.  For example, joystick movement events and</span></span><br><span class="line">    <span class="comment">// gamepad button presses are handled by different mappers but they should be dispatched</span></span><br><span class="line">    <span class="comment">// in the order received.</span></span><br><span class="line">    size_t numMappers = mMappers.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> RawEvent* rawEvent = rawEvents; count--; rawEvent++) &#123;</span><br><span class="line">#if DEBUG_RAW_EVENTS</span><br><span class="line">        ALOGD(<span class="string">"Input event: device=%d type=0x%04x code=0x%04x value=0x%08x when=%lld"</span>,</span><br><span class="line">                rawEvent-&gt;deviceId, rawEvent-&gt;type, rawEvent-&gt;code, rawEvent-&gt;value,</span><br><span class="line">                rawEvent-&gt;when);</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (mDropUntilNextSync) &#123;</span><br><span class="line">            <span class="keyword">if</span> (rawEvent-&gt;type == EV_SYN &amp;&amp; rawEvent-&gt;code == SYN_REPORT) &#123;</span><br><span class="line">                mDropUntilNextSync = <span class="keyword">false</span>;</span><br><span class="line">#if DEBUG_RAW_EVENTS</span><br><span class="line">                ALOGD(<span class="string">"Recovered from input event buffer overrun."</span>);</span><br><span class="line">#endif</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">#if DEBUG_RAW_EVENTS</span><br><span class="line">                ALOGD(<span class="string">"Dropped input event while waiting for next input sync."</span>);</span><br><span class="line">#endif</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rawEvent-&gt;type == EV_SYN &amp;&amp; rawEvent-&gt;code == SYN_DROPPED) &#123;</span><br><span class="line">            ALOGI(<span class="string">"Detected input event buffer overrun for device %s."</span>, getName().string());</span><br><span class="line">            mDropUntilNextSync = <span class="keyword">true</span>;</span><br><span class="line">            reset(rawEvent-&gt;when);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; numMappers; i++) &#123;</span><br><span class="line">                InputMapper* mapper = mMappers[i];</span><br><span class="line">                mapper-&gt;process(rawEvent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看这个函数开头的一段注解，大意就是根据不同的Input设备消息调用不同的inputMapper,因为Input设备有很多种，所以Inputmapper也有很多种，这个函数的作用是根据不同的Input设备调用对应的InputMapper的process来处理<br>InputReader.cpp这支文件中有很多不同类型的InputMapper，这里例举其中的KeyboardInputMapper进行说明<br>frameworks\native\services\inputflinger\InputReader.cpp</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> KeyboardInputMapper::process(<span class="keyword">const</span> RawEvent* rawEvent) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (rawEvent-&gt;type) &#123;</span><br><span class="line">    <span class="keyword">case</span> EV_KEY: &#123; <span class="comment">//按键消息</span></span><br><span class="line">        int32_t scanCode = rawEvent-&gt;code;</span><br><span class="line">        int32_t usageCode = mCurrentHidUsage;</span><br><span class="line">        mCurrentHidUsage = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (isKeyboardOrGamepadKey(scanCode)) &#123;</span><br><span class="line">            processKey(rawEvent-&gt;when, rawEvent-&gt;value != <span class="number">0</span>, scanCode, usageCode);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看processKey这个函数，这个函数比较长</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> KeyboardInputMapper::processKey(nsecs_t when, bool down, int32_t scanCode,</span><br><span class="line">        int32_t usageCode) &#123;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">    <span class="function">NotifyKeyArgs <span class="title">args</span><span class="params">(when, getDeviceId()</span>, mSource, policyFlags,</span></span><br><span class="line"><span class="function">            down ? AKEY_EVENT_ACTION_DOWN : AKEY_EVENT_ACTION_UP,</span></span><br><span class="line"><span class="function">            AKEY_EVENT_FLAG_FROM_SYSTEM, keyCode, scanCode, keyMetaState, downTime)</span>;</span><br><span class="line">    getListener()-&gt;notifyKey(&amp;args);</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数主要工作是将扫描码转换为键盘码，然后调用了getListener()-&gt;notifyKey(&amp;args); </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">InputListenerInterface* InputReader::ContextImpl::getListener() &#123;</span><br><span class="line">    <span class="keyword">return</span> mReader-&gt;mQueuedListener.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> QueuedInputListener::notifyKey(<span class="keyword">const</span> NotifyKeyArgs* args) &#123;</span><br><span class="line">    mArgsQueue.push(<span class="keyword">new</span> NotifyKeyArgs(*args));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里只是将args参数放到了mArgsQueue中</p>
+<p>往上看最开始的InputReader::loopOnce()中mQueuedListener-&gt;flush();</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> QueuedInputListener::flush() &#123;</span><br><span class="line">    size_t count = mArgsQueue.size();</span><br><span class="line">    <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        NotifyArgs* args = mArgsQueue[i];</span><br><span class="line">        args-&gt;notify(mInnerListener);</span><br><span class="line">        delete args;</span><br><span class="line">    &#125;</span><br><span class="line">    mArgsQueue.clear();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里和mArgsQueue牵扯上了，这里的flush()函数作用是将mArgsQueue中的NotifyArgs都拿出来，调用它们的notify函数<br>这里还是以Key为例，实际的对象类型是NotifyKeyArgs</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> NotifyKeyArgs::notify(<span class="keyword">const</span> sp&lt;InputListenerInterface&gt;&amp; listener) <span class="keyword">const</span> &#123;</span><br><span class="line">    listener-&gt;notifyKey(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的listener指针在构造InputReader是作为参数的，追踪源码得知这一listener实际是指向InputDispatcher的指针</p>
+<p>接着看InputDispatcher的notifyKey<br>\frameworks\native\services\inputflinger\InputDispatcher.cpp</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InputDispatcher::notifyKey(<span class="keyword">const</span> NotifyKeyArgs* args) &#123;</span><br><span class="line"><span class="comment">//省略部分代码</span></span><br><span class="line">    KeyEvent event;</span><br><span class="line">    event.initialize(args-&gt;deviceId, args-&gt;source, args-&gt;action,</span><br><span class="line">            flags, keyCode, args-&gt;scanCode, metaState, <span class="number">0</span>,</span><br><span class="line">            args-&gt;downTime, args-&gt;eventTime);</span><br><span class="line"></span><br><span class="line">    mPolicy-&gt;interceptKeyBeforeQueueing(&amp;event, <span class="comment">/*byref*/</span> policyFlags);</span><br><span class="line"></span><br><span class="line">    bool needWake;</span><br><span class="line">    &#123; <span class="comment">// acquire lock</span></span><br><span class="line">        mLock.lock();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (shouldSendKeyToInputFilterLocked(args)) &#123;</span><br><span class="line">            mLock.unlock();</span><br><span class="line"></span><br><span class="line">            policyFlags |= POLICY_FLAG_FILTERED;</span><br><span class="line">            <span class="keyword">if</span> (!mPolicy-&gt;filterInputEvent(&amp;event, policyFlags)) &#123;</span><br><span class="line">                <span class="keyword">return</span>; <span class="comment">// event was consumed by the filter</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            mLock.lock();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int32_t repeatCount = <span class="number">0</span>;</span><br><span class="line">        KeyEntry* newEntry = <span class="keyword">new</span> KeyEntry(args-&gt;eventTime,</span><br><span class="line">                args-&gt;deviceId, args-&gt;source, policyFlags,</span><br><span class="line">                args-&gt;action, flags, keyCode, args-&gt;scanCode,</span><br><span class="line">                metaState, repeatCount, args-&gt;downTime);</span><br><span class="line"></span><br><span class="line">        needWake = enqueueInboundEventLocked(newEntry);</span><br><span class="line">        mLock.unlock();</span><br><span class="line">    &#125; <span class="comment">// release lock</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (needWake) &#123;</span><br><span class="line">        mLooper-&gt;wake();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里利用函数的参数NotifyKeyArgs创建了KeyEntry对象，然后调用函数enqueueInboundEventLocked将创建好的KeyEntry对象加入到队列中，这里顺便看下enqueueInboundEventLocked函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bool InputDispatcher::enqueueInboundEventLocked(EventEntry* entry) &#123;</span><br><span class="line">    bool needWake = mInboundQueue.isEmpty();</span><br><span class="line">    mInboundQueue.enqueueAtTail(entry);</span><br><span class="line">    traceInboundQueueLengthLocked();</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以看到创建好的KeyEntry对象是被加入到了mInboundQueue队列中去了</p>
+<p>自此，读取消息流程分析结束</p>
+<hr>
+<font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，听着歌，最近有点丧</font>
+
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/06/12/Android输入系统系列-2-EventHub/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2065,183 +2264,6 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="steven li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲的成长之路">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="url">低内存引发的一点思考</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T20:37:55+08:00">
-                2018-05-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,255
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  5
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>问题平台</strong><br><code>Android 7.1.1</code>  <code>MT6739</code></p>
-<p><strong>问题现象</strong><br><code>需要常驻的进程经常被kill，界面操作不流畅</code></p>
-<p><strong>日志分析</strong><br>鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样</p>
-<p><strong>LMK机制简介</strong><br>在系统内存不足的情况下，系统开始依据自身的一套进程回收机制来判断要kill掉哪些进程，以腾出内存来供给需要的app。<br>总的来说，进程的<code>oom_adj</code>越大，表示此进程优先级越低，越容易被杀回收；越小，表示进程优先级越高，越不容易被杀回收，kill进程是通过发送SIGKILL信息。这套杀进程回收内存的机制就叫<code>Low Memory Killer</code> ，简称<code>LMK</code>，它是基于Linux内核的<code>OOM Killer</code>机制诞生<br>如果LMK都无法释放出足够的内存空间，那么当为新的进程分配应用程序时将发生<code>Out of Memory</code>异常，这时候<code>OOM_killer</code>开始工作，<code>OOM_killer</code>会在系统内存耗尽的情况下，启用自己算法有选择性的kill 掉一些进程</p>
-<p><strong>常见的提升应用存活率</strong><br>这种问题老生常谈，网上资料一抓一大把，其中不乏各种旁门左道，诸如一像素，互相唤醒，防杀死重启服务之类。<br>这些方法不一定通用，是否奏效依赖Android版本以及手机厂商。<br>比较常规的做法是标记为系统应用，相比于三方应用来讲，系统应用的优先级高一些，当然这个做法前提是有条件且需要。<br>另外一种常见的方式是加入<code>android:persistent=&quot;true&quot;</code>属性，这种方式只对系统应用奏效，这样做的目的是使进程持续占据 Memory不被杀死，现在的512内存手表项目中的Launcher里使用了，该种方式的使用务必谨慎，切记不可滥用<br>还有一个就是降低应用的占用内存，LMK工作时往往会先挑肥的来kill</p>
-<p><strong>如何判断某个应用的进程的oom_adj</strong><br>两个shell命令即可<br>1.<code>ps | grep PackageName</code><br>获取到指定应用的进程ID<br>2.<code>cat /proc/</code><br>进程ID/oom_adj获取到<code>oom_adj</code>数值</p>
-<p><strong>如何判别LMK是否太频繁呢</strong><br>这个其实没有什么标准，从过往的情况来看，看<code>kernel日志</code>中LMK触发的次数，1分钟超过20次就是非常多了</p>
-<p><strong>LMK kill进程顺序的判别依据</strong><br>根据adj的值以及占用内存值<br>现在不少程序会做成进程组形式，以前的项目上有遇到过，一个进程被kill了，另一个好兄弟再把它唤起来，这种互相唤醒的好基友方式会导致RAM无法真正释放，释放的 RAM 马上被吃掉。</p>
-<p><strong>如何修改系统层级的LMK阈值</strong><br>这种修改做法比较少见，之前项目有过一次调整了minfree的值<br>LMK的阈值分两个数组，一个是adj数组，描述process对应的oom_adj，另外一个是minfree数组，描述process所对应的memory的阈值<br>上层可以直接通过读写:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/sys/<span class="keyword">module</span>/lowmemorykiller/parameters/adj</span><br><span class="line">/sys/<span class="keyword">module</span>/lowmemorykiller/parameters/minfree</span><br></pre></td></tr></table></figure></p>
-<p>来进行调整，<code>minfree</code>以KB 为单位<br>当AMS起来后，将根据屏幕分辨率以及内存大小通过调用<code>updateOomLevel</code>方法(<font color="#000000" size="2" face="楷体">Frameworks/base/services/java/com/android/server/am/ProcessList.java</font>)来调整默认的LMK的阈值</p>
-<p><strong>分析LMK问题的常用shell命令</strong><br>如下是分析LMK问题时常用的命令，看名字比较好理解就不一一解释了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">adb shell ps -t &gt; ps.txt</span><br><span class="line">adb shell procrank -s &gt; procrank.txt  </span><br><span class="line">adb shell cat /proc/sys/vm/swappiness  </span><br><span class="line">adb shell cat /proc/meminfo &gt; meminfo.txt</span><br><span class="line">adb shell cat /proc/buddyinfo &gt; buddyinfo.txt</span><br><span class="line">adb shell dumpsys meminfo &gt; dumpsysmemoryinfo.txt</span><br><span class="line">adb shell cat /sys/<span class="keyword">module</span>/lowmemorykiller/parameters/adj &gt; adj.txt</span><br><span class="line">adb shell cat /sys/<span class="keyword">module</span>/lowmemorykiller/parameters/minfree &gt; minfree.txt</span><br></pre></td></tr></table></figure></p>
-<p><strong>小结</strong><br>优先从应用自身角度触发，尽可能降低应用的占用内存，不可一上来就搞一些旁门左道，慎重调整进程的优先级！切记切记<br>像我现在遇到的这个512内存的项目，很多不需要常驻的进程也将自己的优先级设置的很高，打印出来的adj清一色都很低，几乎和systemUI持平，这点实在太不可取，这导致了LMK触发时有些该杀的进程没有kill，反而一些很重要的进程被kill<br>原则上不是用户可以感知的进程没必要将优先级拉的很高，除非是慎重考虑再三觉得十分重要的进程，可以考虑拉高优先级</p>
-<hr>
-<font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，顶着酷似三胖的发型</font>
-          
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-    </div>
-	
-    
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2296,7 +2318,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2371,7 +2393,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共18.7k字</span>
+  <span class="post-count">Steven的博客共20.4k字</span>
 </div>
         
 

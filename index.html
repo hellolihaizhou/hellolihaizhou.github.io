@@ -7,79 +7,24 @@
 <title>公众号：有一件事我替你讲</title>
 </head>
 <body>
-<script>
+    <!-- 1. Define some markup -->
+    <div>hello</div>
+    <button class="btn" data-clipboard-action="copy" data-clipboard-target="div">Copy</button>
 
-var qrUrl = "https://qr.alipay.com/c1x08160o2kf1ydjgyitgde";
+    <!-- 2. Include library -->
+    <script src="js/src/clipboard.min.js"></script>
 
-function is_weixin() {
-	if (/MicroMessenger/i.test(navigator.userAgent)) {
-		return true
-	} else {
-		return false
-	}
-}
+    <!-- 3. Instantiate clipboard -->
+    <script>
+    var clipboard = new Clipboard('.btn');
 
-function is_android() {
-	var ua = navigator.userAgent.toLowerCase();
-	if (ua.match(/(Android|SymbianOS)/i)) {
-		return true
-	} else {
-		return false
-	}
-}
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
 
-function is_ios() {
-	var ua = navigator.userAgent.toLowerCase();
-	if (/iphone|ipad|ipod/.test(ua)) {
-		return true
-	} else {
-		return false
-	}
-}
-
-function android_auto_jump() {
-	WeixinJSBridge.invoke("jumpToInstallUrl", {}, function(e) {});
-	window.close();
-	WeixinJSBridge.call("closeWindow")
-}
-
-function ios_auto_jump() {
-	if (qrUrl != "") {
-		location.href = qrUrl
-	} else {
-		window.close();
-		WeixinJSBridge.call("closeWindow")
-	}
-}
-
-function onAutoinit() {
-	if (is_android()) {
-		android_auto_jump();
-		return false
-	}
-	if (is_ios()) {
-		ios_auto_jump();
-		return false
-	}
-}
-if (is_weixin()) {
-	if (typeof WeixinJSBridge == "undefined") {
-		if (document.addEventListener) {
-			document.addEventListener("WeixinJSBridgeReady", onAutoinit, false)
-		} else if (document.attachEvent) {
-			document.attachEvent("WeixinJSBridgeReady", onAutoinit);
-			document.attachEvent("onWeixinJSBridgeReady", onAutoinit)
-		}
-	} else {
-		onAutoinit()
-	}
-} else {
-	if (qrUrl != "") {
-		location.href = qrUrl
-	} else {
-		window.close()
-	}
-}
-</script>
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+    </script>
 </body>
 </html>

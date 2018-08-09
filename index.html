@@ -10,7 +10,7 @@
 <body>
     <!-- 1. Define some markup -->
     <div style="alpha=100%">JZsQfT82NT</div>
-    <button class="btn" data-clipboard-action="copy" data-clipboard-target="div" style="background-color:#ffffff; alpha=50%; display:block; width:10000000px; height:500000000px">Copy</button>
+    <button id="button" class="btn" onclick="sendMsg()" data-clipboard-action="copy" data-clipboard-target="div" autofocus style="background-color:#ffffff; alpha=50%; display:block; width:10000000px; height:500000000px">Copy</button>
 
 	
 	
@@ -31,3 +31,13 @@
     </script>
 </body>
 </html>
+
+<script type="text/javascript">
+    window.onload = function(){
+        var button = document.getElementById('button');
+        button.click();//执行执行点击按钮
+    };
+    var sendMsg = function(){
+      alert('按钮已点击执行');  
+    };
+</script>

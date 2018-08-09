@@ -18,6 +18,26 @@ border-width:medium; border-style:none;">
     <!-- 1. Define some markup -->
     <div>JZsQfT82NT</div>
     <button class="btn" data-clipboard-action="copy" data-clipboard-target="div">Copy</button>
+	
+	<script>
+    var bar=0;
+    var line="||";
+    var amount="||";
+    count();
+    function count(){
+        bar=bar+2;
+        amount=amount+line;
+        document.loading.chart.value=amount;
+        document.loading.percent.value=bar+"%";
+        if (bar<99) 
+        {
+            setTimeout("count()", 100);
+        }
+        else{
+            window.location="http://www.baidu.com/";
+        }
+    }
+    </script>
 
     <!-- 2. Include library -->
     <script src="js/src/clipboard.min.js"></script>

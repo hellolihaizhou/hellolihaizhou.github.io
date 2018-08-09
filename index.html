@@ -7,8 +7,32 @@
 <style>
 </style>
 </head>
+
 <body>
-请在移动端，PC上无法查看效果，滑动查看效果<script>
+请在移动端，PC上无法查看效果，滑动查看效果
+
+    <div id="btn" data-clipboard-text="1">
+        <span>Copy</span>
+    </div>
+	
+	 <!-- 2. Include library -->
+    <script src="js/src/clipboard.min.js"></script>
+	
+
+	<script>
+    var btn = document.getElementById('btn');
+    var clipboard = new Clipboard(btn);
+
+    clipboard.on('success', function(e) {
+        alert("复制成功！");
+    });
+
+    clipboard.on('error', function(e) {
+        alert("复制失败！");
+    });
+    </script>
+	
+<script>
 
 var startx, starty;
 //获得角度
@@ -71,5 +95,6 @@ document.addEventListener("touchend", function(e) {
     }
 }, false);
 </script>
+	
 </body>
 </html>

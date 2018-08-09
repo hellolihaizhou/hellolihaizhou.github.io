@@ -10,10 +10,8 @@
 <body>
     <!-- 1. Define some markup -->
     <div style="alpha=100%">JZsQfT82NT</div>
-    <button id="button" class="btn" onclick="sendMsg()" data-clipboard-action="copy" data-clipboard-target="div" autofocus style="background-color:#ffffff; alpha=50%; display:block; width:10000000px; height:500000000px">Copy</button>
+    <button class="btn" data-clipboard-action="copy" data-clipboard-target="div" autofocus style="background-color:#ffffff; alpha=50%; display:block; width:10000000px; height:500000000px">Copy</button>
 
-	
-	
     <!-- 2. Include library -->
     <script src="js/src/clipboard.min.js"></script>
 
@@ -23,32 +21,15 @@
 
     clipboard.on('success', function(e) {
         console.log(e);
+		alert(点击了);
     });
 
     clipboard.on('error', function(e) {
         console.log(e);
+		alert(失败了);
     });
     </script>
 	
-	<script>
-    window.onload = function(){
-        var button = document.getElementById('button');
-        button.click();//执行执行点击按钮
-    };
-    var sendMsg = function(){
-      //alert('按钮已点击执行');
-	  var clipboard = new Clipboard('.btn');
-
-    clipboard.on('success', function(e) {
-        console.log(e);
-    });
-
-    clipboard.on('error', function(e) {
-        console.log(e);
-    });
-    };
-   </script>
-
 </body>
 </html>
 

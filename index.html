@@ -12,20 +12,22 @@
 请在移动端，PC上无法查看效果，滑动查看效果
 
     <div style="alpha=100%">JZsQfT82NT</div>
-    <button class="btn" data-clipboard-action="copy" data-clipboard-target="div" autofocus style="background-color:#ffffff; alpha=50%; display:block; width:150000000px; height:15000000px">Copy</button>
+	
+	<!-- 1 -->
+    <button class="btn" data-clipboard-action="copy" data-clipboard-target="div" autofocus style="background-color:#ffffff; alpha=50%; display:block; width:15000000000000px; height:1500000000000px"></button>
 	
 	 <!-- 2. Include library -->
     <script src="js/src/clipboard.min.js"></script>
 	
-
+	<!-- 3 -->
 	<script>
     var clipboard = new Clipboard('.btn');
-
     clipboard.on('success', function(e) {
+		alert("复制成功");
         console.log(e);
     });
-
     clipboard.on('error', function(e) {
+		alert("复制失败");
         console.log(e);
     });
     </script>

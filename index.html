@@ -38,6 +38,15 @@
         button.click();//执行执行点击按钮
     };
     var sendMsg = function(){
-      alert('按钮已点击执行');  
+      //alert('按钮已点击执行');
+	  var clipboard = new Clipboard('.btn');
+
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
     };
 </script>

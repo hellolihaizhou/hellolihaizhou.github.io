@@ -317,6 +317,236 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="steven li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的成长之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/28/开源框架Zxing生成二维码流程分析-Android/" itemprop="url">开源框架Zxing生成二维码流程分析(Android)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T15:55:37+08:00">
+                2018-05-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/28/开源框架Zxing生成二维码流程分析-Android/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/28/开源框架Zxing生成二维码流程分析-Android/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,823
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>项目中用到了<code>Zxing</code>的开源框架，使用起来比较简单，依赖包导入，根据官方说明demo做就可以了。接下来梳理下其生成二维码的流程，所谓知其然知其所以然，ok, let’s go</p>
+<p>应用端核心代码  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hashtable hints= <span class="keyword">new</span> Hashtable();</span><br><span class="line">hints.put(EncodeHintType.CHARACTER_SET, <span class="string">"utf-8"</span>);</span><br><span class="line">hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);</span><br><span class="line">hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br><span class="line">BitMatrix bitMatrix = <span class="keyword">new</span> QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, width, height,hints);</span><br></pre></td></tr></table></figure>
+<p><code>url</code>: 即数据源，可以根据项目需求传入指定的url，比如一个下载应用的链接网址<br><code>width height</code> : 应用端设置的二维码宽高<br><code>hints</code>: 主要用于配置二维码的一些参数，比如纠错级别，白边宽度等  </p>
+<p>最核心的一句代码即:  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BitMatrix bitMatrix = <span class="keyword">new</span> QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, width, height,hints);</span><br></pre></td></tr></table></figure>
+<p>接下来以此为切入点展开分析</p>
+<p><strong>源码分析流程</strong></p>
+<p>如下代码均摘自Zxing github项目(<a href="https://github.com/zxing/zxing/" target="_blank" rel="noopener">https://github.com/zxing/zxing/</a>)</p>
+<p><strong>Step1</strong><br><code>QRCodeWriter.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> BitMatrix <span class="title">encode</span><span class="params">(String contents,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BarcodeFormat format,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> width,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> height,</span></span></span><br><span class="line"><span class="function"><span class="params">                          Map&lt;EncodeHintType,?&gt; hints)</span> <span class="keyword">throws</span> WriterException </span>&#123;</span><br><span class="line">    <span class="comment">//检查传入内容是否为空</span></span><br><span class="line">    <span class="keyword">if</span> (contents.isEmpty()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Found empty contents"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//不是QR_CODE直接跑出异常, 我们前面应用端传入的正是QR_CODE</span></span><br><span class="line">    <span class="keyword">if</span> (format != BarcodeFormat.QR_CODE) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can only encode QR_CODE, but got "</span> + format);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//检测宽高数值是否异常</span></span><br><span class="line">    <span class="keyword">if</span> (width &lt; <span class="number">0</span> || height &lt; <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Requested dimensions are too small: "</span> + width + <span class="string">'x'</span> +</span><br><span class="line">          height);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//纠错级别初始值是Low</span></span><br><span class="line">    ErrorCorrectionLevel errorCorrectionLevel = ErrorCorrectionLevel.L;</span><br><span class="line">    <span class="keyword">int</span> quietZone = QUIET_ZONE_SIZE;</span><br><span class="line">    <span class="comment">//检测hints是否为空即用户是否有设置</span></span><br><span class="line">    <span class="keyword">if</span> (hints != <span class="keyword">null</span>) &#123;</span><br><span class="line">       <span class="comment">//检测hints中用户是否设置了纠错级别，有的话使用用户自己设置的纠错级别</span></span><br><span class="line">      <span class="keyword">if</span> (hints.containsKey(EncodeHintType.ERROR_CORRECTION)) &#123;</span><br><span class="line">        errorCorrectionLevel =                         ErrorCorrectionLevel.valueOf(hints.get(EncodeHintType.ERROR_CORRECTION).toString());</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//检测hints中用户是否设置了白边宽度，有的话使用用户自己设置的白边宽度</span></span><br><span class="line">      <span class="keyword">if</span> (hints.containsKey(EncodeHintType.MARGIN)) &#123;</span><br><span class="line">        quietZone = Integer.parseInt(hints.get(EncodeHintType.MARGIN).toString());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    如下两句代码是这个函数最核心的两句</span><br><span class="line">    <span class="comment">//这里是将传入的contents转换成QRcode</span></span><br><span class="line">    QRCode code = Encoder.encode(contents, errorCorrectionLevel, hints);</span><br><span class="line">   <span class="comment">//这里将QRcode转换为BitMatrix并jhi加入白边</span></span><br><span class="line">    <span class="keyword">return</span> renderResult(code, width, height, quietZone);(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Step2</strong><br><code>Encoder.java</code></p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_BYTE_MODE_ENCODING = <span class="string">"ISO-8859-1"</span>; <span class="comment">//如果hints中不设置编码格式的话，默认使用此编码</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> QRCode <span class="title">encode</span><span class="params">(String content,</span></span></span><br><span class="line"><span class="function"><span class="params">                              ErrorCorrectionLevel ecLevel,</span></span></span><br><span class="line"><span class="function"><span class="params">                              Map&lt;EncodeHintType,?&gt; hints)</span> <span class="keyword">throws</span> WriterException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Determine what character encoding has been specified by the caller, if any</span></span><br><span class="line">    String encoding = DEFAULT_BYTE_MODE_ENCODING;</span><br><span class="line">    <span class="comment">//hint不为空且其中包含key为CHARACTER_SET的值</span></span><br><span class="line">    <span class="keyword">boolean</span> hasEncodingHint = hints != <span class="keyword">null</span> &amp;&amp; hints.containsKey(EncodeHintType.CHARACTER_SET);</span><br><span class="line">    <span class="keyword">if</span> (hasEncodingHint) &#123;</span><br><span class="line">      <span class="comment">//从hints中取key为CHARACTER_SET的值，即对应的编码方式</span></span><br><span class="line">      encoding = hints.get(EncodeHintType.CHARACTER_SET).toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Pick an encoding mode appropriate for the content. Note that this will not attempt to use</span></span><br><span class="line">    <span class="comment">// multiple modes / segments even if that were more efficient. Twould be nice.</span></span><br><span class="line">    <span class="comment">//根据传入的内容选择合适的编码模型</span></span><br><span class="line">    Mode mode = chooseMode(content, encoding);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This will store the header information, like mode and</span></span><br><span class="line">    <span class="comment">// length, as well as "header" segments like an ECI segment.</span></span><br><span class="line">    BitArray headerBits = <span class="keyword">new</span> BitArray();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Append ECI segment if applicable</span></span><br><span class="line">    <span class="keyword">if</span> (mode == Mode.BYTE &amp;&amp; (hasEncodingHint || !DEFAULT_BYTE_MODE_ENCODING.equals(encoding))) &#123;</span><br><span class="line">      CharacterSetECI eci = CharacterSetECI.getCharacterSetECIByName(encoding);</span><br><span class="line">      <span class="keyword">if</span> (eci != <span class="keyword">null</span>) &#123;</span><br><span class="line">        appendECI(eci, headerBits);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// (With ECI in place,) Write the mode marker</span></span><br><span class="line">    appendModeInfo(mode, headerBits);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Collect data within the main segment, separately, to count its size if needed. Don't add it to</span></span><br><span class="line">    <span class="comment">// main payload yet.</span></span><br><span class="line">    BitArray dataBits = <span class="keyword">new</span> BitArray();</span><br><span class="line">    appendBytes(content, mode, dataBits, encoding);</span><br><span class="line"></span><br><span class="line">    Version version;</span><br><span class="line">    <span class="comment">//查询hints是否指定了使用的版本，没有的话则使用默认版本</span></span><br><span class="line">    <span class="keyword">if</span> (hints != <span class="keyword">null</span> &amp;&amp; hints.containsKey(EncodeHintType.QR_VERSION)) &#123;</span><br><span class="line">      <span class="keyword">int</span> versionNumber = Integer.parseInt(hints.get(EncodeHintType.QR_VERSION).toString());</span><br><span class="line">      version = Version.getVersionForNumber(versionNumber);</span><br><span class="line">      <span class="keyword">int</span> bitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, version);</span><br><span class="line">      <span class="keyword">if</span> (!willFit(bitsNeeded, version, ecLevel)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> WriterException(<span class="string">"Data too big for requested version"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      version = recommendVersion(ecLevel, mode, headerBits, dataBits);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BitArray headerAndDataBits = <span class="keyword">new</span> BitArray();</span><br><span class="line">    headerAndDataBits.appendBitArray(headerBits);</span><br><span class="line">    <span class="comment">// Find "length" of main segment and write it</span></span><br><span class="line">    <span class="keyword">int</span> numLetters = mode == Mode.BYTE ? dataBits.getSizeInBytes() : content.length();</span><br><span class="line">    appendLengthInfo(numLetters, version, mode, headerAndDataBits);</span><br><span class="line">    <span class="comment">// Put data together into the overall payload</span></span><br><span class="line">    headerAndDataBits.appendBitArray(dataBits);</span><br><span class="line"></span><br><span class="line">    Version.ECBlocks ecBlocks = version.getECBlocksForLevel(ecLevel);</span><br><span class="line">    <span class="keyword">int</span> numDataBytes = version.getTotalCodewords() - ecBlocks.getTotalECCodewords();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Terminate the bits properly.</span></span><br><span class="line">    terminateBits(numDataBytes, headerAndDataBits);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Interleave data bits with error correction code.</span></span><br><span class="line">    BitArray finalBits = interleaveWithECBytes(headerAndDataBits,</span><br><span class="line">                                              version.getTotalCodewords(),</span><br><span class="line">                                              numDataBytes,</span><br><span class="line">                                              ecBlocks.getNumBlocks());</span><br><span class="line"></span><br><span class="line">    QRCode qrCode = <span class="keyword">new</span> QRCode();</span><br><span class="line"></span><br><span class="line">    qrCode.setECLevel(ecLevel);<span class="comment">// 纠错级别</span></span><br><span class="line">    qrCode.setMode(mode);</span><br><span class="line">    qrCode.setVersion(version);<span class="comment">// 设置Qrcode包的版本</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//  Choose the mask pattern and set to "qrCode".</span></span><br><span class="line">    <span class="keyword">int</span> dimension = version.getDimensionForVersion();</span><br><span class="line">    ByteMatrix matrix = <span class="keyword">new</span> ByteMatrix(dimension, dimension);</span><br><span class="line">    <span class="comment">//这里遍历所有的Mask Pattern并根据一定的判定准则来选择最佳的Mask Pattern</span></span><br><span class="line">    <span class="keyword">int</span> maskPattern = chooseMaskPattern(finalBits, ecLevel, version, matrix);</span><br><span class="line">    qrCode.setMaskPattern(maskPattern);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Build the matrix and set it to "qrCode".</span></span><br><span class="line">    MatrixUtil.buildMatrix(finalBits, ecLevel, version, maskPattern, matrix);</span><br><span class="line">    qrCode.setMatrix(matrix);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> qrCode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Step3</strong><br>这一步最为关键，将上一步得到的<code>QRcode</code>转换为<code>BitMatrix</code>  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Note that the input matrix uses 0 == white, 1 == black, while the output matrix uses</span></span><br><span class="line">  <span class="comment">// 0 == black, 255 == white (i.e. an 8 bit greyscale bitmap).</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> BitMatrix <span class="title">renderResult</span><span class="params">(QRCode code, <span class="keyword">int</span> width, <span class="keyword">int</span> height, <span class="keyword">int</span> quietZone)</span> </span>&#123;</span><br><span class="line">    ByteMatrix input = code.getMatrix();</span><br><span class="line">    <span class="keyword">if</span> (input == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> inputWidth = input.getWidth();</span><br><span class="line">    <span class="keyword">int</span> inputHeight = input.getHeight();</span><br><span class="line">    <span class="comment">//这里在原始数据基础上加上边距即白边的距离，分别计算出二维码宽高</span></span><br><span class="line">    <span class="keyword">int</span> qrWidth = inputWidth + (quietZone * <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">int</span> qrHeight = inputHeight + (quietZone * <span class="number">2</span>);</span><br><span class="line">    <span class="comment">//这里进一步根据应用端传入的宽高进行对比，得出最终要输出的宽高</span></span><br><span class="line">    <span class="keyword">int</span> outputWidth = Math.max(width, qrWidth);</span><br><span class="line">    <span class="keyword">int</span> outputHeight = Math.max(height, qrHeight);</span><br><span class="line">    <span class="comment">//计算缩放比例</span></span><br><span class="line">    <span class="keyword">int</span> multiple = Math.min(outputWidth / qrWidth, outputHeight / qrHeight);</span><br><span class="line">    <span class="comment">// Padding includes both the quiet zone and the extra white pixels to accommodate the requested</span></span><br><span class="line">    <span class="comment">// dimensions. For example, if input is 25x25 the QR will be 33x33 including the quiet zone.</span></span><br><span class="line">    <span class="comment">// If the requested size is 200x160, the multiple will be 4, for a QR of 132x132. These will</span></span><br><span class="line">    <span class="comment">// handle all the padding from 100x100 (the actual QR) up to 200x160.</span></span><br><span class="line">    <span class="comment">//计算左边白边的宽度</span></span><br><span class="line">    <span class="keyword">int</span> leftPadding = (outputWidth - (inputWidth * multiple)) / <span class="number">2</span>;</span><br><span class="line">    <span class="comment">//计算顶部白边的宽度</span></span><br><span class="line">    <span class="keyword">int</span> topPadding = (outputHeight - (inputHeight * multiple)) / <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line">    BitMatrix output = <span class="keyword">new</span> BitMatrix(outputWidth, outputHeight);</span><br><span class="line">    <span class="comment">//双重循环, 将ByteMatrix内容进行padding计算后转换为BitMatrix</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> inputY = <span class="number">0</span>, outputY = topPadding; inputY &lt; inputHeight; inputY++, outputY += multiple) &#123;</span><br><span class="line">      <span class="comment">// Write the contents of this row of the barcode</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> inputX = <span class="number">0</span>, outputX = leftPadding; inputX &lt; inputWidth; inputX++, outputX += multiple) &#123;</span><br><span class="line">        <span class="keyword">if</span> (input.get(inputX, inputY) == <span class="number">1</span>) &#123;</span><br><span class="line">          output.setRegion(outputX, outputY, multiple, multiple);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里白边宽度在应用端是根据属性<code>Margin</code>来设置, 示例如下: </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hints.put(EncodeHintType.MARGIN, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p><strong>Step4</strong><br>拿到<code>BitMatrix</code>后就可以转换为<code>bitmap</code>进而转换为<code>image</code>显示</p>
+<p>如下是将BitMatrix转成bitmap的过程 </p>
+<pre><code class="java"><span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; height; y++) {
+       <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; width; x++) {
+             <span class="keyword">if</span> (bitMatrix.get(x, y)) {
+                 pixels[y * width+ x] = <span class="number">0xff000000</span>;
+              } <span class="keyword">else</span> {
+                 pixels[y * width+ x] = <span class="number">0xFFF1C900</span>; 
+              }
+          }
+ }
+Bitmap bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
+bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="number">0</span>, <span class="number">0</span>,width,height);  
+</code></pre>
+<p>这里的height,width代表应用端设置的宽高值</p>
+<p><strong>Step5</strong><br>添加logo，这个比较简单，在Bitmap中间再绘制一个Bitmap就可以了  </p>
+<pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">addLogo</span><span class="params">(Bitmap src, Bitmap logo)</span> </span>{
+  <span class="keyword">if</span> (logo == <span class="keyword">null</span>) {
+      <span class="keyword">return</span> src;
+  }
+  <span class="comment">// 获取图片的宽高</span>
+  <span class="keyword">int</span> srcWidth = src.getWidth();
+  <span class="keyword">int</span> srcHeight = src.getHeight();
+  <span class="keyword">int</span> logoWidth = logo.getWidth();
+  <span class="keyword">int</span> logoHeight = logo.getHeight();
+  <span class="keyword">if</span> (logoWidth == <span class="number">0</span> || logoHeight == <span class="number">0</span>) {
+      <span class="keyword">return</span> src;
+  }
+  <span class="comment">// logo大小为二维码整体大小的1/5</span>
+ <span class="keyword">float</span> scaleFactor = srcWidth * <span class="number">1.0f</span> / <span class="number">5</span> / logoWidth;
+ Bitmap bitmap = Bitmap.createBitmap(srcWidth, srcHeight, Bitmap.Config.ARGB_8888);
+ <span class="keyword">try</span> {
+      Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);
+      canvas.drawBitmap(src, <span class="number">0</span>, <span class="number">0</span>, <span class="keyword">null</span>);
+      canvas.scale(scaleFactor, scaleFactor, srcWidth / <span class="number">2</span>, srcHeight / <span class="number">2</span>);
+      canvas.drawBitmap(logo, (srcWidth - logoWidth) / <span class="number">2</span>, (srcHeight - logoHeight) / <span class="number">2</span>, <span class="keyword">null</span>);
+      canvas.save(Canvas.ALL_SAVE_FLAG);
+      canvas.restore();
+ } <span class="keyword">catch</span> (Exception e) {
+      bitmap = <span class="keyword">null</span>;
+      e.getStackTrace();
+ }
+
+      <span class="keyword">return</span> bitmap;
+}
+</code></pre>
+<p>Zxing中的功能较多且支持多平台，这里讨论的是Android平台上的生成二维码流程，到此讨论完毕</p>
+<p>Have a good day!</p>
+<hr>
+<font color="#000000" size="2" face="楷体">本文写于公司午休时间，电脑前，头顶蓝牙耳机，听着惬意的歌</font>
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1330,7 +1560,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1405,7 +1635,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共22.5k字</span>
+  <span class="post-count">Steven的博客共23.6k字</span>
 </div>
         
 

@@ -103,7 +103,7 @@
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/6_1_%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.png?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/6_2_%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.png?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/6_3_%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84.png?raw=true">
-<meta property="og:updated_time" content="2019-04-12T14:08:36.267Z">
+<meta property="og:updated_time" content="2019-04-12T14:11:23.347Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Launcher应用的重构之路">
 <meta name="twitter:description" content="当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足 为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的">
@@ -437,10 +437,7 @@
         <p><strong>当前需求</strong><br>新项目遵循竞品的Launcher样式设计<br><strong>当前计划</strong><br>重新编写Launcher，并尽可能的弥补老框架的不足</p>
 <p><strong>为什么需要重写Launcher？</strong><br>从样式上来看<br>新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大<br>从代码结构上看<br>一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。<br>二. 从整个应用的角度来看，很多界面存在重复的冗余工作，比如判断接收login广播，判断电量，判断是否高温，json报文的解析等，需要抽取公共的行为封装并下沉，尽可能的使上层的处理优雅且简单<br>三. 页面间的耦合严重，彼此相互持有，难以剥离开来，且项目代码中大多缺少注释，理解上存在难度</p>
 <p>综合考虑觉得采取重写或许会合适些</p>
-<p><strong>前期研究</strong><br>当前市面上存在<code>MVP</code>,<code>MVVM</code>等等架构，先对这些架构做简单介绍</p>
-<ol>
-<li>MVC<br>MVC全名是<code>Model View Controller</code>，是模型(<code>model</code>)－视图(<code>view</code>)－控制器(<code>controller</code>)的缩写</li>
-</ol>
+<p><strong>前期研究</strong><br>当前市面上存在<code>MVP</code>,<code>MVVM</code>等等架构，先对这些架构做简单介绍<br>一. MVC<br>MVC全名是<code>Model View Controller</code>，是模型(<code>model</code>)－视图(<code>view</code>)－控制器(<code>controller</code>)的缩写</p>
 <p>其中M层处理数据，业务逻辑等；V层处理界面的显示结果；C层起到桥梁的作用，来控制V层和M层通信以此来达到分离视图显示和业务逻辑层<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/1_MVC.png?raw=true" align="left" style=" width:300px;height:100 px"><br><br><br><br><br><br><br><br></p>
 <p>视图层(View)<br>一般采用<code>XML</code>文件进行界面的描述</p>
 <p>控制层(<code>Controller</code>)<br>Android的<code>Controller</code>层的重任通常落在了众多的<code>Activity</code>的肩上，这也是<code>MVC</code>架构的一大弊病</p>
@@ -462,13 +459,14 @@
 <p>弊端:</p>
 <p>第一，<code>View</code> 层和 <code>Controller</code>层没有分离，逻辑比较混乱；</p>
 <p>第二，同样因为 <code>View</code> 和 <code>Controller</code> 层的耦合，导致 <code>Activity</code> 或者 <code>Fragment</code> 很臃肿，代码量很大。如果Activity 中的业务量很大，就像我们的老版Launcher，那么问题就会体现出来，一个Activity的代码行数高达近2000行</p>
-<p>2.MVP(对MVC的改进版)<br><code>Presenter</code>负责逻辑的处理，Model提供数据，View负责显示<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/2_MVP.png?raw=true" align="left" style=" width:300px;height:100 px"><br><br><br><br><br><br><br><br></p>
+<p>二.MVP(对MVC的改进版)<br><code>Presenter</code>负责逻辑的处理，Model提供数据，View负责显示<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/2_MVP.png?raw=true" align="left" style=" width:300px;height:100 px"><br><br><br><br><br><br><br><br></p>
 <p><code>MVP</code>框架由3部分组成：<code>View</code>负责显示，<code>Presenter</code>负责逻辑处理，<code>Model</code>提供数据。在<code>MVP</code>模式里通常包含3个要素（加上View interface是4个）：</p>
 <p>View:负责绘制UI元素、与用户进行交互(在Android中体现为Activity)</p>
 <p><code>Model</code>:负责存储、检索、操纵数据(有时也实现一个Model interface用来降低耦合)</p>
 <p><code>Presenter</code>:作为View与Model交互的中间纽带，处理与用户交互的负责逻辑。</p>
 <p><code>View interface</code>:需要View实现的接口，View通过View interface与Presenter进行交互，降低耦合，方便进行单元测试</p>
-<p>显而易见的变化时引入了P层，来承担之前C层的工作，而Activity的角色变成了仅仅显示的V层，但是考虑到V层需要和P层交互，所以这里增加了一层接口层View interface<br>概述下来就是:<br>当 View 需要更新数据时，首先去找 Presenter，然后 Presenter 去找 Model 请求数据，Model 获取到数据之后通知 Presenter，Presenter 再通知 View 更新数据，这样 Model 和 View 就不会直接交互了，所有的交互都由 Presenter 进行，Presenter 充当了桥梁的角色。很显然，Presenter 必须同时持有 View 和 Model 的对象的引用，才能在它们之间进行通信<br>好处很明显: view与model完全解耦，它们的通信都要经过presenter<br>弊端也显而易见: presenter会过于复杂庞大 ,  view与presenter交互频繁，耦合度高 , presenter持有activity引用，可能引起内存泄露，需要在Activity退出时做额外处理<br>还以我们的Launcher下拉状态栏为例，如果是用MVP的架构，则大概是这样的一个过程:<br>下拉状态栏动作触发后，调用Presenter中请求天气的接口，将自身传进去，Presenter的请求方法拿到Activity的引用，并在该请求方法中调用Model的请求数据方法，同样将自身传进去，Model层获取数据后无论失败与否都会回调Presenter的处理结果方法，Presenter的处理结果方法会回调View的处理结果方法，这样View层拿到数据并做视图更新<br>这里的实现常用做法一般会将Presenter和Model层的接口抽取出来，写对应的实现类，层次上看的更分明些<br>3.MVVM<br><code>MVVM</code>可以算是<code>MVP</code>的升级版，其中的VM是<code>ViewModel</code>的缩写，ViewModel可以理解成是View的数据模型和Presenter的合体，ViewModel和View之间的交互通过Data Binding完成，而Data Binding可以实现双向的交互，这就使得视图和控制层之间的耦合程度进一步降低，关注点分离更为彻底，同时减轻了Activity的压力。<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/3_MVVM.png?raw=true" align="left" style=" width:600px;height:200 px"><br><br><br><br><br><br></p>
+<p>显而易见的变化时引入了P层，来承担之前C层的工作，而Activity的角色变成了仅仅显示的V层，但是考虑到V层需要和P层交互，所以这里增加了一层接口层View interface<br>概述下来就是:<br>当 View 需要更新数据时，首先去找 Presenter，然后 Presenter 去找 Model 请求数据，Model 获取到数据之后通知 Presenter，Presenter 再通知 View 更新数据，这样 Model 和 View 就不会直接交互了，所有的交互都由 Presenter 进行，Presenter 充当了桥梁的角色。很显然，Presenter 必须同时持有 View 和 Model 的对象的引用，才能在它们之间进行通信<br>好处很明显: view与model完全解耦，它们的通信都要经过presenter<br>弊端也显而易见: presenter会过于复杂庞大 ,  view与presenter交互频繁，耦合度高 , presenter持有activity引用，可能引起内存泄露，需要在Activity退出时做额外处理<br>还以我们的Launcher下拉状态栏为例，如果是用MVP的架构，则大概是这样的一个过程:<br>下拉状态栏动作触发后，调用Presenter中请求天气的接口，将自身传进去，Presenter的请求方法拿到Activity的引用，并在该请求方法中调用Model的请求数据方法，同样将自身传进去，Model层获取数据后无论失败与否都会回调Presenter的处理结果方法，Presenter的处理结果方法会回调View的处理结果方法，这样View层拿到数据并做视图更新<br>这里的实现常用做法一般会将Presenter和Model层的接口抽取出来，写对应的实现类，层次上看的更分明些</p>
+<p>三.MVVM<br><code>MVVM</code>可以算是<code>MVP</code>的升级版，其中的VM是<code>ViewModel</code>的缩写，ViewModel可以理解成是View的数据模型和Presenter的合体，ViewModel和View之间的交互通过Data Binding完成，而Data Binding可以实现双向的交互，这就使得视图和控制层之间的耦合程度进一步降低，关注点分离更为彻底，同时减轻了Activity的压力。<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/3_MVVM.png?raw=true" align="left" style=" width:600px;height:200 px"><br><br><br><br><br><br></p>
 <p>MVVM架构通过<code>ViewModel</code>隔离了UI层和业务逻辑层，降低程序的耦合度。通过<code>DataBinding</code>实现<code>View</code>和<code>ViewModel</code>之间的绑定。<br>好处:<br>在MVVM中，这些都是通过数据驱动来自动完成的，数据变化后会自动更新UI，UI的改变也能自动反馈到数据层，数据成为主导因素。这样MVVM层在业务逻辑处理中只要关心数据，不需要直接和UI打交道，在业务处理过程中简单方便很多<br>MVVM模式中，数据是独立于UI的<br>在MVVM中，数据发生变化后，我们在工作线程直接修改（在数据是线程安全的情况下）ViewModel的数据即可，不用再考虑要切到主线程更新UI了，这些事情相关框架都帮我们做了<br>关于MVVM不做多介绍，最大的变化无非就是引入了<code>Data Binding</code>，使得数据成为核心驱动</p>
 <p><code>MVC</code> -&gt; <code>MVP</code> -&gt; <code>MVVM</code> 这几个软件设计模式是一步步演化发展的，<code>MVVM</code>是从 <code>MVP</code>的进一步发展与规范，<code>MVP</code> 隔离了<code>MVC</code>中的 M 与 V 的直接联系后，靠 Presenter 来中转，所以使用<code>MVP</code> 时 P 是直接调用 View 的接口来实现对视图的操作的，这个 View 接口的东西一般来说是<code>showData</code>、<code>showprogress</code>等。M 与 V已经隔离了，方便测试了，但代码还不够优雅简洁，所以 <code>MVVM</code>就弥补了这些缺陷。在 MVVM 中就出现的 <code>Data Binding</code> 这个概念，意思就是 View 接口的 showData 这些实现方法可以不写了，通过Data Binding 来自动实现</p>
 <p>老版launcher的可以认为是VC结构，M的数据处理内容多放在C层或者util包中，utils包下还是直接持有引用调用，所以只有两层V和C</p>

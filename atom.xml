@@ -60,53 +60,6 @@
   </entry>
   
   <entry>
-    <title>小米一面二面记录</title>
-    <link href="http://lihaizhou.top/2018/11/18/%E5%B0%8F%E7%B1%B3%E4%B8%80%E9%9D%A2%E4%BA%8C%E9%9D%A2%E8%AE%B0%E5%BD%95/"/>
-    <id>http://lihaizhou.top/2018/11/18/小米一面二面记录/</id>
-    <published>2018-11-18T14:43:26.000Z</published>
-    <updated>2018-11-18T15:15:09.400Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong><strong>一面</strong></strong><br>这次电话面试，没有准备，面的不太好，面试官很nice，很有耐心，差不多电话面试了一个小时<br>依据回忆大致列了出来一面的题目如下:</p><p><strong>View的绘制流程</strong><br>回答:measure，layout，draw<br><code>回答参考样式</code>:<br>View的整个绘制流程可以分为以下三个阶段：</p><p>measure: 判断是否需要重新计算View的大小，需要的话则计算；<br>layout: 判断是否需要重新计算View的位置，需要的话则计算；<br>draw: 判断是否需要重新绘制View，需要的话则重绘制<br>涉及的东西比较多，完整清晰的描述下来比较困难，这里不写了</p><p><strong>JNI有用过吗？讲一讲</strong><br>回答: debug问题用过，项目中也有用过，自己开发的没有过<br>面试官: emmmmm…….</p><p><strong>谈谈设计模式</strong><br>回答: 说了单例，build，观察者，责任链<br><code>回答参考样式</code>:<br>单例模式<br>private Singleton(){}<br>private static class SingletonHolder{<br>    public static Singleton instance = new Singleton();<br>}<br>public static Singleton newInstance(){<br>    return SingletonHolder.instance;<br>}<br>在装载该内部类时才会去创建单例对象，起到了一个延迟加载的目的，另外因为是静态的，所以还是线程安全</p><p>builder模式<br>Android源码中，我们最常用到的Builder模式就是AlertDialog.Builder，大致如下<br>AlertDialog.Builder builder = new AlertDialog.Builder(context);<br>        builder.setIcon(R.drawable.icon);<br>        builder.setTitle(“Title”);<br>        builder.setMessage(“Message”);<br>        builder.create().show();<br>我个人的理解是不采用这种模式，需要写多个构造函数，调用的地方根据需要传进不同数目的参数，参数含义看不出，可读性差</p><p>采用这种模式后，可读性增强，减少了很多重复的代码，结构清晰，配置的意义一目了然</p><p>观察者模式<br>观察者模式就是：当一个对象的状态发送改变时，所有依赖于它的对象都能得到通知并被自动更新<br>我个人的理解就是接口回调，自己的开发的Launcher中也用到了这种模式，广播接收到电量变化后通知所有的监测者，所有的监测着存在一个数组中，监测者通过注册接口add自身进来，并实现这个接口重写接口的方法，还有Android的广播机制，其本质也是观察者模式，监测者接收变化是一个被动接收的过程<br>其他还有不少种，不一一列举了，面试的时候一般说个两三种也差不多了，说太多面试官也会累的吧，哈哈哈</p><p><strong>内存泄露和内存优化如何处理的，谈一谈</strong><br>回答: blabla<br>这个比较简单<br><code>回答参考样式</code>:<br>内存泄露</p><p>对于Java来说，就是new出来的Object放在Heap上无法被GC回收（内存中存在无法被回收的对象）；内存泄漏发生时的主要表现为内存抖动，可用内存慢慢变少</p><p>Step1: 用AndroidStudio的Memory Monitor大致判断下是否有问题<br>AndroidStudio自带的Memory Monitor可以方便的观察堆内存的分配情况，并且可以粗略的观察有没有Memory Leak,其实就是看看是否有内存抖动，还有是否存在一些该降下来的时候没有降下来</p><p>官网上介绍的很详细关于这个工具的使用(<a href="https://developer.android.google.cn/studio/profile/memory-profiler" target="_blank" rel="noopener">https://developer.android.google.cn/studio/profile/memory-profiler</a>)<br>点击Memory Monitor的Dump Java Heap，会生成一个.hprof文件，AndroidStudio会自动使用HeapViewer打开，会有一个可视化界面出来，这里限于篇幅，不贴截图了<br>主要关注Total Count这个信息点，看看Activity的实例数目是否正常，内存泄露一般都是指的Activity泄露了<br>这个工具的话只能大概看出是否有问题，具体的问题点需要借助于MAT来分析</p><p>Step2: MAT分析问题的具体点<br>使用MAT打开这个hprof文件后，重点关注Histogram这项，这项可以列出内存中每个对象的名字、数量以及大小使用Histogram大致步骤</p><p>点击Histogram并在顶部的Regex中输入比如MainActivity进行正则匹配，会将包含“MainActivity”的所有对象全部列出了出来，其中第一行就是MainActivity的实例。<br>对着想查看的对象点击右键 -&gt; List objects -&gt; with incoming references 查看具体MainActivity实例。<br>对想要查看的对象实例点击右键-&gt; Path To Gc Roots -&gt; exclude weak reference（排除掉软引用）。<br>PS：如果图标的左下角有个圆圈，这代表这个引用可以被Gc Roots引用到，所以不能被回收，从而它所持有的其它引用也无法被回收了，还有其包含的资源<br>         不过有圆圈并不代表一定是导致内存泄漏的原因，有些对象就是需要在内存中存活的，需要区别对待</p><p>其他工具：LeakCanary</p><p>LeakCanary是square出品的一个检测内存泄漏的库，集成到App之后便无需关心，在发生内存泄漏之后会Toast、通知栏弹出等方式提示，可以指出泄漏的引用路径，而且可以抓取当前的堆栈信息供详细分析</p><p>这个工具用起来很简单，泄漏后会看到通知栏提示打开看下就知道泄漏点在哪里</p><p><strong>如何做到进程互斥，比如File文件的读取</strong><br>回答:项目中有用到过file文件读取写值，只有一个用，所以没有考虑多进程同步写的情况<br>面试官: emmmmmmmm……..ok……….<br>个人理解，应该做不到，就像SharePreference这种文件共享，也做不到多进程同步安全</p><p><strong>项目中有用到什么跨进程吗？</strong><br>回答: blabla<br>这个比较简单，一般做为起个开头的作用，后面面试官一般会细问<br><code>回答参考样式</code>:<br>这个问题<br>Content Provider<br>Content Provider提供了一种在多个应用程序之间数据共享的方式（跨进程共享数据）<br>广播（Broadcast）<br>广播是一种被动跨进程通讯的方式，在应用程序中发送广播比较简单。只需要调用sendBroadcast方法即可。该方法需要一个Intent对象。通过Intent对象可以发送需要广播的数据。<br>Service</p><p>利用AIDL Service实现跨进程通信<br>优势是不会像广播那样在手机中的广播较多时会有明显的时延，甚至有广播发送不成功的情况出现</p><p><strong>binder的framework机制</strong><br>回答: blabla一堆<br><code>回答参考样式</code><br>Binder服务的类别<br>实名服务：<br>Android的实名Binder服务都是系统提供的，如AMS，PMS，WMS等，实名服务可以通过ServiceManager查询到<br>匿名服务：<br>普通应用开发的Binder服务，鉴于这种服务不能通过ServiceManager查询到，使用者又是如何得到该服务的引用对象呢？<br>Android通过framework提供了一种启动java匿名Binder服务的方法，首先某个应用通过bindService()方法发出一个Intent，Framework根据Intent找到对应的组件Service并启动它，包在组件Service中的Binder服务也将同时创建出来。随后framework会把服务的Ibinder对象通过ConnectivityManager的回调方法onServiceConnected()传回到应用，这样应用就得到匿名Binder服务的引用对象，也就能使用组件Service中的匿名Binder服务了，在这里Android的framework使用intent代替了Binder服务的名称来查找对应的服务，同时也承担了ServiceManager的工作，解析intent并传回服务的引用对象<br>应用层实际需要使用的是代理对象，所以在使用前需要将引用对象转换为代理对象，转换方式举例如下：<br>ICameraService service = ICameraService.Stub.asInterface(binder);<br>这里的这个asInterface作用是通过引用对象这个参数来新创建一个Binder代理对象，代理对象中包含了引用对象<br>一般的对象作为参数传递没有太大的问题，只需要实现序列化和反序列化就能实现。但是，当Binder对象作为参数传递时，就会面临实体对象和引用对象相互转换的问题，为了能够让上层使用方便，这个转换过程在驱动中自动完成<br>回答参考样式:<br>对Binder调用的过程如下：<br>1.客户端从某个线程中发起调用，将参数打包后通过ioctl()函数传递给驱动<br>2.客户端挂起并等待ioctl()返回函数的结果<br>3.驱动记录下调用进程的信息，然后根据调用的Binder对象信息寻找服务所在的进程<br>4.驱动找到服务进程后先查看进程中是否有空闲进程，没有则通知服务进程创建<br>5.得到空闲进程后根据驱动中保存的BBinder对象的指针调用相应的函数<br>6.函数返回后再通过ioctl()把结果打包传递给驱动<br>7.驱动根据返回信息查找调用者线程<br>8.找到调用者线程后唤醒它，并通过ioctl()函数把结果传递回去<br>9.客户端的线程得到返回结果后继续运行</p><p><strong>Handler的机制</strong><br>回答: 回答的差不多<br><code>回答参考样式</code>:<br>1、handler封装消息的发送（主要包括消息发送给谁）<br>2、Looper——消息封装的载体<br>（1）内部包含一个MessageQueue，所有的Handler发送的消息都走向这个消息队列；<br>（2）Looper.Looper方法，一个死循环，不断地从MessageQueue取消息，如果有消息就处理消息，没有消息就阻塞。<br>延伸为什么looper死循环不会卡死<br>主线程Looper从消息队列读取消息，当读完所有消息时，主线程阻塞，阻塞最终是通过epoll机制实现。子线程往消息队列发送消息，并且往管道文件写数据，主线程即被唤醒，从管道文件读取数据，主线程被唤醒只是为了读取消息，当消息读取完毕，再次睡眠。因此loop的循环并不会对CPU性能有过多的消耗。<br>3、MessageQueue，一个消息队列，添加消息，处理消息<br>4、handler内部与Looper关联，handler-&gt;Looper-&gt;MessageQueue, handler发送消息就是向MessageQueue队列发送消息。<br>总结：handler负责发送消息，Looper负责接收handler发送的消息，并把消息回传给handler自己, MessageQueue存储消息的容器。</p><p><strong>window,activity, viewrootimpl之间的关系，window在activity viewrootimpl之间扮演了什么角色，一个activity对应几个viewrootImpl，dialog有没有viewrootImpl</strong><br>回答: 不知道，【这个知识点比较重要的，研究过时间久了就忘了<br><code>回答参考样式</code>:<br>ViewRootImpl是实际管理Window中所有View的类,每个Activity中ViewRootImpl数量取决于调用mWindowManager.addView的调用次数<br>window是一个抽象的概念，每一个window都对应一个view和ViewRootImpl，window通过ViewRootImpl和View建立联系，因此window并不是实际存在，是以View形式存在的<br>1：Activity构造的时候会初始化一个Window，准确的说是PhoneWindow。<br>2：这个PhoneWindow有一个“ViewRoot”，这个“ViewRoot”是一个View或者说ViewGroup，是最初始的根视图。<br>3：“ViewRoot”通过addView方法来一个个的添加View。比如TextView，Button等<br>4：这些View的事件监听，是由WindowManagerService来接受消息，并且回调Activity函数。比如onClickListener，onKeyDown等</p><p><strong>线程同步的方式，synchronized的原理，作用普通对象和静态方法的区别</strong><br>回答: synchronized或者lock，一个是类锁一个是对象锁，作用域不同，静态方法持有的是类锁，普通方法是对象锁<br><code>回答参考样式</code>:<br>synchronized，Lock<br>先谈谈synchronized<br>普通方法加synchronized是对类的当前实例进行加锁，类的两个不同实例就没有这种约束了，相当于this.synchronized。<br>static方法加 synchronized控制类的所有实例的访问<br>再谈谈Lock<br>Lock能完成Synchronized所实现的所有功能，Synchronized会自动释放锁，但是Lock要手工释放，并且必须在finally从句中释放<br>Lock和synchronized有以下几点不同：</p><p>1）Lock是一个接口，而synchronized是Java中的关键字，synchronized是内置的语言实现；<br>2）synchronized在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生；而Lock在发生异常时，如没有主动通过unLock()去释放锁，则很可能造成死锁现象，因此使用Lock时需要在finally块中释放锁；<br>3）Lock可以让等待锁的线程响应中断，而synchronized却不行，使用synchronized时，等待的线程会一直等待下去，不能够响应中断；<br>4）通过Lock可以知道有没有成功获取锁，而synchronized却无法办到。<br>5）Lock可以提高多个线程进行读操作的效率。<br>在性能上来说，如果竞争资源不激烈，两者的性能是差不多的，而当竞争资源非常激烈时（即有大量线程同时竞争），此时Lock的性能要远远优于synchronized。所以说，在具体使用时要根据适当情况选择</p><p><strong>java的内存模型讲一讲</strong><br>回答: 静态方法区，堆，栈，以及各自存放的数据类型，回头想了想这不是内存结构吗<br><code>回答参考样式</code>:<br>先说下内存结构<br>栈是与线程对应起来的，Java栈数据不是线程共有的，所以不需要关心其数据一致性，也不会存在同步锁的问题。<br>堆是JVM所管理的内存中国最大的一块，是被所有Java线程锁共享的，不是线程安全的，在JVM启动时创建。堆是存储Java对象的地方，这一点Java虚拟机规范中描述是：所有的对象实例以及数组都要在堆上分配。Java堆是GC管理的主要区域<br>方法区存放了要加载的类的信息（名称、修饰符等）、类中的静态常量、类中定义为final类型的常量、类中的Field信息、类中的方法信息，当在程序中通过Class对象的getName.isInterface等方法来获取信息时，这些数据都来源于方法区。方法区是被Java线程锁共享的，方法区也是堆中的一部分，就是我们通常所说的Java堆中的永久区 Permanet Generation<br>再开始谈内存模型<br>涉及内容较多，面试时谈谈主内存和工作内存<br>Java内存模型(即Java Memory Model，简称JMM)本身是一种抽象的概念，并不真实存在，它描述的是一组规则或规范，通过这组规范定义了程序中各个变量（包括实例字段，静态字段和构成数组对象的元素）的访问方式。由于JVM运行程序的实体是线程，而每个线程创建时JVM都会为其创建一个工作内存(有些地方称为栈空间)，用于存储线程私有的数据，而Java内存模型中规定所有变量都存储在主内存，主内存是共享内存区域，所有线程都可以访问，但线程对变量的操作(读取赋值等)必须在工作内存中进行，首先要将变量从主内存拷贝的自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，工作内存中存储着主内存中的变量副本拷贝<br>主内存<br>主要存储的是Java实例对象，所有线程创建的实例对象都存放在主内存中，不管该实例对象是成员变量还是方法中的本地变量(也称局部变量)，当然也包括了共享的类信息、常量、静态变量。由于是共享数据区域，多条线程对同一个变量进行访问可能会发现线程安全问题。<br>工作内存<br>主要存储当前方法的所有本地变量信息(工作内存中存储着主内存中的变量副本拷贝)，每个线程只能访问自己的工作内存，即线程中的本地变量对其它线程是不可见的</p><p><strong>加载类的流程，比如普通方法，静态方法，构造函数的加载顺序</strong><br>回答:先静态再构造再普通<br><code>回答参考样式</code>:<br>加载时<br>静态代码块&gt;静态属性&gt;静态方法&gt;普通属性&gt;普通代码块&gt;构造方法&gt;普通方法<br>执行时<br>静态代码块&gt;静态属性&gt;普通代码块&gt;构造方法, 静态方法和普通方法会在调用的时候才会执行</p><p><strong>单例模式怎么用，静态内部类的方式，如果带参数context呢？</strong><br>回答: 静态内部类，优点答上，如果带参数没答上，当时回答了带个Application的Context不就好了，哈哈哈哈，傻爆了，容易产生生命周期不一致，内存泄露等问题<br>静态内部类写法如下，这个一般都烂熟于心了<br>public class SingleTon{<br>  private SingleTon(){}<br>  private static class SingleTonHoler{<br>     private static SingleTon INSTANCE = new SingleTon();<br> }<br>  public static SingleTon getInstance(){<br>    return SingleTonHoler.INSTANCE;<br>  }<br>}</p><p><code>回答参考样式</code>:<br>静态内部类的优点：<br>外部类加载时不需要立即加载内部类，内部类不被加载则不去初始化INSTANCE，故而不占内存。即当SingleTon第一次被加载时，并不需要去加载SingleTonHoler，只有当getInstance()方法第一次被调用时，才会去初始化INSTANCE,第一次调用getInstance()方法会导致虚拟机加载SingleTonHoler类，这种方法不仅能确保线程安全，也能保证单例的唯一性，同时也延迟了单例的实例化。<br>静态内部类的缺点:<br>传参的问题，由于是静态内部类的形式去创建单例的，故外部无法传递参数进去，例如Context这种参数，所以，我们创建单例时，可以在静态内部类与DCL模式里自己斟酌。</p><p><strong>知道threadlocal吗？</strong><br>答: 不知道，当时听着非常耳熟<br>后来想了下，Hanlder机制中的looper不就是用的这玩意嘛，先看下threadLocal的官方解释，然后再看下Looper源码<br>Threadlocal官方解释如下:<br>Implements a thread-local storage, that is, a variable for which each thread<br>has its own value. All threads share the same {@code ThreadLocal} object,<br>but each sees a different value when accessing it, and changes made by one<br>thread do not affect the other threads. The implementation supports<br>{@code null} values</p><p>意思是实现了一个线程本地存储，每个线程都有自己独立的变量。所有的线程都共享者这一个ThreadLocal对象，<br>但是各自访问的是不同的值，并且当一个线程的值发生改变之后，不会影响其他的线程的值。<br>说白了就是每个线程都有个变量的拷贝，各自修改互不影响<br>看了下looper源码，的确如此<br>ThreadLocal是个泛型，T指代的是在线程中存取值的类型，这个例子里的T对应的就是Looper<br><code>回答参考样式</code>:<br>Android Handler机制中的Looper对象存储便是通过threadLocal存储，所以可以认为Looper对象是和线程绑定的。子线程中创建一个Looper时，一般是通过调用Looper.prepare方法来在线程中新建一个Looper的对象，其原理采用的便是ThreadLocal作为存储结构，创建的这个looper对象只会存储在当前线程中，这里的存储是通过ThreadLocal的set方法，将值set进各自线程的map中，key为当前的ThreadLocal对象。我们这个例子里，ThreadLocal是静态的，也就是多线程访问的都是同一份</p><p><strong>startservice和bindservice有什么区别</strong><br>当时回答: 和Activity的生命周期一个是同步，一个不同步，回答草率了<br><code>回答参考样式</code>:<br>1.startservice开启的服务.一旦服务开启, 这个服务和开启他的调用者之间就没有任何的关系了.<br>调用者不可以访问 service里面的方法. 调用者如果被系统回收了或者调用了ondestroy方法, service还会继续存在<br>2.bindService开启的服务,服务开启之后,调用者和服务之间还存在着联系 , 一旦调用者挂掉了.service也会跟着挂掉，退出activity时必须调用unbindService方法，否则会报ServiceConnection泄漏的错误<br>startService()和bindService()两种模式是完全独立的，可以绑定一个已经通过startService()方法启动的服务。例如：一 个后台播放音乐服务可以通过startService(intend)对象来播放音乐。可能用户在播放过程中要执行一些操作比如获取歌曲的一些信息，此时 activity可以通过调用bindServices()方法与Service建立连接。这种情况下，stopServices()方法实际上不会停止服务，直到最后一次绑定关闭。</p><p>数据结构部分</p><ol><li>如何判断一个链表是否是一个环<br>回答: 不知道<br>面试官: emmmmmm…..</li><li>二分查找<br>回答：巴拉巴拉说的差不多</li></ol><p>隔了几天，礼拜五下午两点小米二面</p><p>谈谈进程和线程的区别，说下概念<br>启动Service的方式<br>线程同步的方式，synchronized和lock的区别，死锁的条件<br>读取文件如何做到进程互斥<br>ANR问题怎么分析<br>电量优化怎么做的<br>Activity的启动模式，举个例子比如A启动B，生命周期是怎么样的<br>跨进程的方式有哪些，contentprovider和广播如何选择，基于什么考虑</p><p>算法题<br>一个数组如何区分正负数<br>一个台阶，一次走一格或者走两格，有多少种走法</p><p>当时从公司出来加上一路跑下楼梯，到了外边，正好在下小雨，风又很大，好几次面试官说的啥都没听清，期间还冷场了，不知道面试官刚刚是否问了问题，面试官也没吱声，总的比较简单，感觉像是在网上找的面试题，but还是挂了！临了面试官说了到时候有需要会通知，凉了</p><p>总结下来<br>算法是最大的硬伤，二面问的算法问题，很眼熟啊，可以肯定的是网上稍微搜搜Android常见面试算法题肯定能搜到，看来还是要准备下<br>感谢一面的哥们，让我通过了，二面的仁兄没让我过，也实属正常，毕竟确实菜鸟</p><p>因时间问题，整篇文章后续会持续改善答案包括排版样式</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;strong&gt;&lt;strong&gt;一面&lt;/strong&gt;&lt;/strong&gt;&lt;br&gt;这次电话面试，没有准备，面的不太好，面试官很nice，很有耐心，差不多电话面试了一个小时&lt;br&gt;依据回忆大致列了出来一面的题目如下:&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;View的绘制流程&lt;/stro
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>月度小结--20180828</title>
-    <link href="http://lihaizhou.top/2018/08/28/%E6%9C%88%E5%BA%A6%E5%B0%8F%E7%BB%93-20180828/"/>
-    <id>http://lihaizhou.top/2018/08/28/月度小结-20180828/</id>
-    <published>2018-08-28T02:18:16.000Z</published>
-    <updated>2018-10-08T10:59:01.007Z</updated>
-    
-    <content type="html"><![CDATA[<p>好长一段时间没有更新了，这段时间一些事搞得心神不宁，智商也常常掉线，当然了这不是没有更新的借口，好吧，还是懒啊，是可恶的惰性！  </p><p>这一个多月,一直在维护老项目，总的来说比较清闲</p><p>这段时间的近况大致如下:</p><ul><li><strong><code>姐姐的定亲</code></strong><br>姐姐定亲日子安排在了国庆节，到时候去趟镇江，一想到老姐终于快要嫁出去了，实属不易啊，但愿一切顺利，拜托拜托！<br>前阵子老妈电话里特意嘱咐我，到时候要穿的体面点，发型弄一弄，人看着要精神点。一顿昂昂昂的答应后，翻了翻衣柜，只有零星的几件衣服，春夏秋冬都在眼前，尽收眼底。其中还夹杂着几件公司的文化衫，翻来翻去找不到一件合适的衣服，已经记不得上次买衣服是什么时候了，这大概就是一个单身屌丝的苦逼生活把，哈哈哈，生活不易</li></ul><ul><li><strong><code>日益发酵的焦虑感</code></strong><br>前段时间一个华为的兄弟出来创业了，问我有没有兴趣一起。考虑再三，想到房贷背着，便婉言谢绝了。<br>不过这事儿倒又提醒了我，像是在我耳边打了个一个响指，反思下现在的处境，日复一日的搬砖，每天公司住所两点一线，搭着拥挤的地铁，究竟是为了什么？我的人生目标是什么？这样的日子看上去没问题，一切顺利的话，每月还能攒下一些。<br>其实不然，隐藏着很大的危机在里面，就是抗风险能力太弱，就像一块有了裂纹的玻璃，禁不住一点点的敲打。一旦停止工作，便没有了收入来源，接踵而至的账单可能便难以付清。<br>如何能够提升自己的抗风险能力呢？答案肯定是<code>钱</code>，接下来的一段时间，将好好思考副业的问题，幸好现在的公司很轻松有大把的时间，不能再白白浪费掉时间了，下个月在更新这个进展，目标是起码先有方向。</li></ul><ul><li><strong><code>读书的重要性</code></strong><br>不一定是技术方面的，接下来的时间读书的重心在经济类理财类。<br>现在逐渐开始意识到读书的重要性，与一些前辈交谈时，时常会钦佩对方的知识面是如此广泛，回头想想，也许是自己的知识面太狭窄了，后悔以前没有多看书，现在大脑经常短路，语言表达能力堪忧，就像我现在正在打的这些字，我在说的啥，我想表达啥，读着都费劲，这就是！不读书的结果！哈哈哈，苦笑~</li></ul><p>如上便是这段时间的一些事以及感悟，啰里啰嗦，也许以后回过头再看会觉得可笑，不过确实我现在真实的处境和想法</p><p><strong>时间飞逝，且行且珍惜</strong></p><hr><font color="#000000" size="2" face="楷体">草稿写于住所，公司电脑前，听着一首土味情歌</font>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;好长一段时间没有更新了，这段时间一些事搞得心神不宁，智商也常常掉线，当然了这不是没有更新的借口，好吧，还是懒啊，是可恶的惰性！  &lt;/p&gt;
-&lt;p&gt;这一个多月,一直在维护老项目，总的来说比较清闲&lt;/p&gt;
-&lt;p&gt;这段时间的近况大致如下:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>对优化代码的一点思考</title>
     <link href="http://lihaizhou.top/2018/07/03/%E5%AF%B9%E4%BC%98%E5%8C%96%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%82%B9%E6%80%9D%E8%80%83/"/>
     <id>http://lihaizhou.top/2018/07/03/对优化代码的一点思考/</id>
@@ -229,28 +182,6 @@
       
       
         &lt;p&gt;&lt;strong&gt;问题需求&lt;/strong&gt;&lt;br&gt;原先效果是用户在&lt;code&gt;ViewPager&lt;/code&gt;上长按会弹出一个&lt;code&gt;dialog&lt;/code&gt;，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出&lt;code&gt;dia
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>月度小结--20180604</title>
-    <link href="http://lihaizhou.top/2018/06/04/%E6%9C%88%E5%BA%A6%E5%B0%8F%E7%BB%93-20180604/"/>
-    <id>http://lihaizhou.top/2018/06/04/月度小结-20180604/</id>
-    <published>2018-06-04T13:41:11.000Z</published>
-    <updated>2018-06-04T14:45:00.781Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>前言</strong><br>本文距个人主页搭建完成已经一个月了，这两年总觉得时间过得真的太快了，一眨眼2018年已经开始进入了下半年。时间的流逝是任何人都无法阻止的，那么就让逝去的光阴多点值得回忆的东西吧</p><p><strong>近一个月</strong><br>1.搬家了，坐标从浦东挪到了浦西的闵行，毕业后第一次住在浦西，新的住所很不错，我很喜欢，是毕业至今住的最舒服的住所。到公司也比较近，晚上有时候还可以搭班车回家。室友有一个一岁多的胖猫叫<code>橘子</code>，我喜欢叫<code>胖橘</code>，他很胖不过超级乖，属于那种任人摆布型。<br>2.开始了健身计划，每周三次，周末打打乒乓球，一个多月下来感觉体力明显比之前好一些，精力更充沛了。<br>3.开始每周更新笔记，记录工作中的一些问题的分析流程，厘清的过程加深理解。  </p><p>工作至今，发现一个现象，与不同类型的同事协作开发，会有不同的体验，大体遇到如下几类：</p><p>1.技术能力强，做事积极，态度和蔼，同这种同事共事往往会比较舒服，不仅仅是协作开发效率会比较高。更重要的是，这类同事做事比较有保障，做事方式有条理，沉着冷静。对于问题的解决，会慢慢厘清，最后会输出清晰有效的解决方案。这类型同事往往懂得技术积累，懂得提升自己。同这样的同事协作开发的话，不仅仅身心愉悦，往往会对自己产生一种正面的影响。</p><p>2.技术薄弱，做事积极，容易慌乱，这里指工作两年以上的同事，遇到过很多或多或少存在遇事慌乱，缺乏条理性，将问题当作一种负担看待，遇事急于解决或将问题抛出去，问题的结果往往不尽如人意，见过不少同事遇到出现应用异常，第一反应就是上去不管三七二十一直接<code>try-catch</code>起来，让人哭笑不得，同这样的同事协作开发的话，会比较尴尬。</p><p>3.技术薄弱，做事无厘头，这类同事在分析问题上比较跳跃，遇问题急于上网查询答案，所做的简单需求往往一堆bug，代码没有规范可言，这类同事如果刚毕业能够理解，后面有矫正的机会。工作至今，遇到过一些工作几年的同事也是如此，比较令人费解。同这样的同事协作开发的话，会比较尴尬。</p><p>4.技术一般，做事激进，这类同事做事比较风风火火，遇事不退缩，急于在最短时间内解决掉，仿佛问题的存在就是定时炸弹，这类同事做起事来比较高调，加班也比较猛，往往深得领导喜欢。但其实仔细观察下来，问题的解决速度是很快，但方案往往不是最优，很多时候埋了一些坑进去。同这样的同事协作开发的话，总觉得不太靠谱。</p><p>5.技术一般，做事稳当，这类同事能够应付平时的日常需求开发，遇到棘手问题，往往难以梳理清楚并解决，做事完全是以完成为目标，不太会去主动想办法提升个人能力，这类型同事比较常见，同这样的同事协作开发的话，一般项目进度不成问题。</p><p>6.技术尚可，做事圆滑，这类同事一般在公司工作有些年头，头衔较高，对应的薪水也比较高，遇事不会慌乱，态度也比较和蔼，就是在问题的解决上不会完全投入，属于能拖则拖，能给芯片商比如联发科高通分析的，决不自己分析，平时比较低调，属于混日子型，同这类同事协作开发往往只能在一旁干着急。</p><p>今后的日子里，努力像第一类同事学习并努力成为这样的人</p><p><strong>一点闲话</strong><br>渐渐的发现，呆在一个环境时间久了，会容易受到周围环境以及身边同事的做事方式影响，会慢慢被同化，现在相信一个公司对人的塑造是多少会有影响的，可能是好的方向，也可能是不好的方向。<br>就我个人而言，我觉得自己并不是一个自我驱动力很强的人，倘若处在一个很安逸没有挑战的环境中，必然会变得懒散，不思进取。可能会在某个周末的清晨大梦初醒一般，开始懊悔虚度年华，于是立马像打了鸡血一般，猛立目标并付诸行动，一个礼拜后发现还是虚度年华舒服啊，于是计划不了了之了。<br>这次与以往不同的是，以笔记的形式记录下来，逼迫自己坚持下来，但愿能够一直保持。  </p><p>谨以此文，与君共勉</p><p>Come on! Steven!</p><p>最后附一张胖橘照片<br><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/06/04/%E6%9C%88%E5%BA%A6%E5%B0%8F%E7%BB%93-20180604/pangju.jpg?raw=true" align="left" style=" width:300px;height:80 px"> <br><br><br><br><br><br><br><br><br><br><br><br><br></p><hr><font color="#000000" size="2" face="楷体">住所，电脑前，听着罗大佑的恋曲1990，惬意</font>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;strong&gt;前言&lt;/strong&gt;&lt;br&gt;本文距个人主页搭建完成已经一个月了，这两年总觉得时间过得真的太快了，一眨眼2018年已经开始进入了下半年。时间的流逝是任何人都无法阻止的，那么就让逝去的光阴多点值得回忆的东西吧&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;近一个月&lt;/stro
       
     
     </summary>
@@ -411,28 +342,6 @@
         &lt;p&gt;&lt;strong&gt;问题平台&lt;/strong&gt;&lt;br&gt;&lt;code&gt;Android 7.1.1&lt;/code&gt;    &lt;code&gt;MT6739&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;问题现象&lt;/strong&gt;&lt;br&gt;&lt;code&gt;界面定屏并重启&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;s
-      
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>忧虑下的感悟</title>
-    <link href="http://lihaizhou.top/2018/05/04/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0--%E9%A1%BF%E6%82%9F/"/>
-    <id>http://lihaizhou.top/2018/05/04/第一篇文章--顿悟/</id>
-    <published>2018-05-04T00:30:00.000Z</published>
-    <updated>2018-05-13T13:15:18.161Z</updated>
-    
-    <content type="html"><![CDATA[<p>这是该网址写的第一篇文章，想写点东西上来，算是对过去的一些回顾以及对接下来一段时间的计划想法</p><p><strong>过去一年状态</strong><br>过去的一年，经历了一些事，比较大的事：<code>无锡置业</code>，<code>重回单身狗</code>，<code>换了工作</code></p><ul><li><p>无锡置业<br>买房对我的影响还是比较大的，开始的一段时间积蓄一夜回到解放前，不过心里也踏实了许多，算是明智的选择</p></li><li><p>重回单身狗<br>这件事对我的触动很大，比较长的一段时间都比较沮丧，觉得自己很是没用。后来有些事情慢慢想通了，也就放下了。她是个好姑娘，单纯而又善良，祝愿她能过得开心</p></li><li><p>换工作<br>当时正准备买房了，离职一方面是薪资的考虑，上家公司是那种典型的国企氛围从不加班，这在做通讯行业里很是少见。没有条条框框的规则，项目周期比较长，所以工作内容没有压力，只是氛围稍稍沉闷了点，总得来说还是很不错。</p></li></ul><p><strong>当前状态</strong><br>现在的公司是个小公司，整个氛围比较轻松，也不沉闷。工作内容的话，除了项目开始时自己写了一两个模块，后面的工作主要是维护自己写的代码。<br>总得来说工作内容比较简单，说简单倒不是因为我技术好，的确是工作内容比较简单。</p><p>现在开始逐渐意识到，现状的处境其实很危险，像是在温水煮青蛙，没有足够的挑战，时间久了，人会变得懒散，缺乏足够的驱动力去学习，一直呆在大缸里，等有一天想跳出去看看外边的世界，却发现已经没有了力气。</p><p>过去的一年过得真的是太安逸，也太懒散。想起毕业那会，也是努力的奋斗过，每周都会列出学习计划，为什么后来就没有坚持下来了呢。是膨胀了？ 好像是的，身体的发福让我日益膨胀，迷失自我。</p><p><strong>后续改善计划</strong><br>接下来的时间会通过该网址持续更新技术文章，多思考多总结。具体的行动计划大纲如下</p><ol><li><p>每天学习时间满4小时</p></li><li><p>每周写两篇技术文章</p></li><li><p>每个月写一个月度总结</p></li></ol><p>鉴于过往的经历，很多时候计划是列出了，执行的时候却不能至始至终的执行，可恶的惰性啊。</p><p>后面每个月的月度总结会说明本月的执行情况，如果月度总结也没写的话，那我多半是废了，无可救药了。</p><p><strong>以此文为证！You can do it ！come on！ steven！</strong></p><p><strong>厚积而薄发！</strong></p><hr><font color="#000000" size="2" face="楷体">写于2018.5.4号11号线地铁上, 站着, 打完本文</font>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;这是该网址写的第一篇文章，想写点东西上来，算是对过去的一些回顾以及对接下来一段时间的计划想法&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;过去一年状态&lt;/strong&gt;&lt;br&gt;过去的一年，经历了一些事，比较大的事：&lt;code&gt;无锡置业&lt;/code&gt;，&lt;code&gt;重回单身狗&lt;/code&gt;，
       
     
     </summary>

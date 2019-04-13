@@ -317,6 +317,194 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="追击的树袋熊">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Qiu&Lee&Dai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/" itemprop="url">一个屏幕滑动无响应问题的分析流程</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-29T19:19:15+08:00">
+                2018-05-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/29/一个屏幕滑动无响应问题的分析流程/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,048
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>问题现象<br><code>在应用中出现屏幕右滑无响应</code></p>
+<p>复现概率:<br><code>once</code></p>
+<p>问题平台:<br><code>Android N</code>  <code>MT6739</code></p>
+<p><strong>Step1 初步分析</strong><br>考虑到当时按<code>power</code>键能够退出应用回到待机(项目中对<code>power</code>键功能进行了定制)，说明没有发生死机<br>刚接到问题的时候，第一反应是觉得可能发生了<code>ANR</code>，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将<code>data/anr</code>文件夹pull出来看下，内容为空。进到<code>event</code>日志中. 搜索<code>&quot;am_anr&quot;</code>关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生<code>ANR</code>。<br>那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之前经常出现内存不足的情况。进到<code>kernel</code>日志中看下<code>lowmemorykiller</code>杀进程的次数，只有四次且都不在问题发生的时间段，看来当时内存没有紧张<br>ok,大写的懵逼…下面开始分析日志  </p>
+<p><strong>Step2 日志分析</strong><br>测试同事反馈当时因为右滑无法退出(项目中对右滑进行了特殊处理代替虚拟按键返回键)，只能通过power键退出<br>ok,先找到按power键的时间点</p>
+<p><strong>step 2.1 main日志</strong><br>我们知道按键会先到<code>PhoneWindowManager</code>的<code>interceptKeyBeforeQueueing</code>函数进行处理，然后才会分发给应用，power键也不例外，只是power键会做特殊处理不会分发给应用<br>根据测试同事反馈的时间点，在<code>main</code>日志中搜到如下对应时间点的日志片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.019221</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">667518</span>, downTime=<span class="number">667326</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>这一处的日志便是<code>PhoneWindowManager</code>的<code>interceptKeyBeforeQueueing</code>函数中打印，问题点确定了在<code>18:12:42.019221</code>之前三四十秒的时间段内，ok，范围缩小了</p>
+<p><strong>step2.2 event日志</strong><br>这里顺便说下，<code>event</code>日志一般记录了各个<code>activity</code>周期及事件，我个人一般看<code>event</code>日志主要看当时的界面变化过程以及确定anr时间点</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.766062</span>  <span class="number">1038</span>  <span class="number">1091</span> I am_resume_activity: [<span class="number">0</span>,<span class="number">123117617</span>,<span class="number">8</span>,com.XXX.music/.MusicActivity]</span><br><span class="line">....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.130951</span>  <span class="number">1038</span>  <span class="number">1053</span> I am_pause_activity: [<span class="number">0</span>,<span class="number">123117617</span>,com.XXX.music/.MusicActivity]</span><br><span class="line">....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.223856</span>  <span class="number">1038</span>  <span class="number">1274</span> I am_resume_activity: [<span class="number">0</span>,<span class="number">69789570</span>,<span class="number">2</span>,com.XXX.launcher/.activity.MainActivity]</span><br></pre></td></tr></table></figure>
+<p>这里可以确定问题发生时界面停留在音乐应用，后面因为按了<code>power</code>键的缘故回到了待机界面</p>
+<p><strong>step2.3 sys日志</strong><br>对于<code>sys</code>日志呢，一般输出的是系统日志，一般在main日志里找不到可以在<code>sys</code>日志里找到</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Music应用开始播放音乐</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">10</span>:<span class="number">01.384340</span>  <span class="number">2827</span>  <span class="number">2827</span> E MusicActivity: Receive: 讲真的</span><br><span class="line">…..</span><br><span class="line"><span class="comment">//按power键点亮屏幕</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.771419</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">619270</span>, downTime=<span class="number">619127</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.843990</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherMainActivity: screen on</span><br><span class="line">......</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.195224</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.866527</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.866599</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">100.58091</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.874044</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">100.58091</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.883822</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">100.58091</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.893310</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">100.58091</span>-&gt;<span class="number">203.15353</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.895061</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.243408</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">4</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.414854</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.415105</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">0.0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.423284</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">0.0</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.423391</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromTop</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.611702</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.861078</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.861215</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">86.63901</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.868822</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">86.63901</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.878235</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">86.63901</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.888622</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">31.86722</span>,<span class="number">86.63901</span>-&gt;<span class="number">179.25311</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.888704</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">37.952528</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">4</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.195578</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.195683</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">0.0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.201532</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">0.0</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.201606</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromTop</span><br><span class="line">......</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">40.888861</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.131752</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.131874</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">95.60166</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.137845</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">95.60166</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.147534</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">95.60166</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.157208</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">95.60166</span>-&gt;<span class="number">209.12863</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.157279</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">......</span><br><span class="line"><span class="comment">//按power键返回待机界面</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.019221</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">667518</span>, downTime=<span class="number">667326</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.036468</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherService: goback to homescreen and clear all background apps</span><br><span class="line">......</span><br><span class="line"><span class="comment">//此时通过launcher菜单再次进入Music应用，提示处于高温下</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">21</span>:<span class="number">56.784003</span>  <span class="number">1558</span>  <span class="number">1558</span> I LauncherMainActivity: onItemClick, position = <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">21</span>:<span class="number">56.784848</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherMainActivity: isNetwrokOk = :<span class="literal">true</span>,isBinded = :<span class="literal">true</span>,isHighTemper = :<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>这段日志呢可以看出屏幕无响应的一段时间内，是有手势滑动发生的</p>
+<p><strong>step2.4 代码分析</strong><br>既然有手势滑动为什么界面不能退出呢，是不是我们自己写的判断条件出了问题，上面日志中这些片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">95.60166</span>-&gt;<span class="number">209.12863</span>) <span class="keyword">in</span> <span class="number">29</span></span><br></pre></td></tr></table></figure>
+<p>代表什么意思呢, 跟到代码里看一看<br><code>frameworks/base/services/core/java/com/android/server/policy/SystemGesturesPointerEventListener.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">detectSwipe</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">long</span> time, <span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> fromX = mDownX[i];</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> fromY = mDownY[i];</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> elapsed = time - mDownTime[i];</span><br><span class="line">        <span class="keyword">if</span> (DEBUG) Slog.d(TAG, <span class="string">"pointer "</span> + mDownPointerId[i]</span><br><span class="line">                + <span class="string">" moved ("</span> + fromX + <span class="string">"-&gt;"</span> + x + <span class="string">","</span> + fromY + <span class="string">"-&gt;"</span> + y + <span class="string">") in "</span> + elapsed);</span><br><span class="line">         <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>日志打印的代表<code>X坐标</code>,<code>Y坐标</code>的滑动变化以及滑动时间</p>
+<p>此时再来看看日志中问题发生时测试同事滑动轨迹,<code>Y坐标</code>看上去没有问题,<code>X坐标</code>看着有点奇怪，怎么都是从0开始的呢,且松开时移动距离非常小<br>那么如此小的移动距离，有没有满足滑动退出的条件呢？因为这一块判断条件是客制化的，需要<code>X坐标</code>滑动起码达到<code>60</code>才能满足滑动退出的条件，这里就不贴出具体代码</p>
+<p>小结：<br>在测试同事反应屏幕滑动无响应的时间段内，40秒的时间段内有四次手势发生，手指滑动的X坐标变化幅度很小<br>鉴于<code>SystemGesturesPointerEventListener.java</code>这支文件中的<code>detectSwipe</code>函数会对<code>X坐标</code>的变化幅度进行判断，至少达到<code>60</code>以上才会返回SWIPE_BACK(该type类型是根据项目客制化添加的)<br>很显然上面日志中X坐标变化幅度没有达到这个要求，也就导致了onPointerEvent函数中走不到inject back action逻辑中，从而系统判断没有返回事件发生<br>同测试同事沟通当时是正常的尝试滑动退出，故上面的X坐标变化历程显然有误，数值过小且起始点坐标与落下点坐标也与实际情况不符</p>
+<p><strong>综合下来: 判定是屏幕报点不准导致</strong></p>
+<p>Have a good day!</p>
+<hr>
+<font color="#000000" size="2" face="楷体">公司，上班前，听着歌，惬意</font>
+          
+        
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+    </div>
+	
+    
+	
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/28/开源框架Zxing生成二维码流程分析-Android/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1368,7 +1556,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1443,7 +1631,7 @@ bitmap.setPixels(pixels, <span class="number">0</span>,width, <span class="numbe
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共26.4k字</span>
+  <span class="post-count">Steven的博客共28.8k字</span>
 </div>
         
 

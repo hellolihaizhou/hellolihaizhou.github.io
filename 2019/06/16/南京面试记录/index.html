@@ -88,22 +88,17 @@
 
 
 
-<meta name="description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
+<meta name="description" content="大概是四月初开始找，前前后后经历了大概一个月左右，因为找工作的时候在上海还是在职，所以每次现场面真的是很辛苦，来回高铁费，心疼呐，还要绞尽脑汁想好如何请假，在此期间面试过不少家公司，另外，去年也面试过几家公司，一并记录下来 1.南京网眼 软件大道那里，出了地铁站没多远就到了，办公环境不错，人数不算多，算是创业型公司吧，公司的业务做出海项目 进去先是填了个人信息表，做了一份笔试题，正反面，忘了是两道">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于开源框架SlidingUpPanel二次开发">
-<meta property="og:url" content="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/index.html">
+<meta property="og:title" content="南京面试记录">
+<meta property="og:url" content="http://lihaizhou.top/2019/06/16/南京面试记录/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
+<meta property="og:description" content="大概是四月初开始找，前前后后经历了大概一个月左右，因为找工作的时候在上海还是在职，所以每次现场面真的是很辛苦，来回高铁费，心疼呐，还要绞尽脑汁想好如何请假，在此期间面试过不少家公司，另外，去年也面试过几家公司，一并记录下来 1.南京网眼 软件大道那里，出了地铁站没多远就到了，办公环境不错，人数不算多，算是创业型公司吧，公司的业务做出海项目 进去先是填了个人信息表，做了一份笔试题，正反面，忘了是两道">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true">
-<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true">
-<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E5%8E%BB%E6%8E%89%E5%BA%95%E9%83%A8%E9%BB%98%E8%AE%A4%E9%AB%98%E5%BA%A6.jpg?raw=true">
-<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%87%E4%BB%B6.png?raw=true">
-<meta property="og:updated_time" content="2019-04-13T08:44:40.970Z">
+<meta property="og:updated_time" content="2019-06-16T10:03:46.849Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于开源框架SlidingUpPanel二次开发">
-<meta name="twitter:description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
-<meta name="twitter:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true">
+<meta name="twitter:title" content="南京面试记录">
+<meta name="twitter:description" content="大概是四月初开始找，前前后后经历了大概一个月左右，因为找工作的时候在上海还是在职，所以每次现场面真的是很辛苦，来回高铁费，心疼呐，还要绞尽脑汁想好如何请假，在此期间面试过不少家公司，另外，去年也面试过几家公司，一并记录下来 1.南京网眼 软件大道那里，出了地铁站没多远就到了，办公环境不错，人数不算多，算是创业型公司吧，公司的业务做出海项目 进去先是填了个人信息表，做了一份笔试题，正反面，忘了是两道">
 
 
 
@@ -133,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2019/06/16/南京面试记录/"/>
 
 
 
 
 
-  <title>基于开源框架SlidingUpPanel二次开发 | Qiu&Lee&Dai</title>
+  <title>南京面试记录 | Qiu&Lee&Dai</title>
   
 
 
@@ -322,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/06/16/南京面试记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="追击的树袋熊">
@@ -339,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">基于开源框架SlidingUpPanel二次开发</h1>
+          <h1 class="post-title" itemprop="name headline">南京面试记录</h1>
         
 
         <div class="post-meta">
@@ -351,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-14T21:52:57+08:00">
-                2018-05-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-16T17:29:34+08:00">
+                2019-06-16
               </time>
             
 
@@ -374,8 +369,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/移动开发/" itemprop="url" rel="index">
-                    <span itemprop="name">移动开发</span>
+                  <a href="/categories/面试/" itemprop="url" rel="index">
+                    <span itemprop="name">面试</span>
                   </a>
                 </span>
 
@@ -392,8 +387,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/14/基于开源框架SlidingUpPanel二次开发/" itemprop="commentCount"></span>
+                <a href="/2019/06/16/南京面试记录/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/06/16/南京面试记录/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -415,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,736
+                  2,330
                 </span>
               
 
@@ -431,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  8
                 </span>
               
             </div>
@@ -452,57 +447,51 @@
       
 
       
-        <p><strong>项目需求</strong><br>写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕</p>
-<p><strong>初步分析</strong><br>最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。</p>
-<p><strong>设计框架</strong><br>下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂<br>github兜一圈，看看有没有类似的框架，茫茫大海中找到了一个<code>SlidingUpPanel</code>的开源框架<br>github主页地址: <a href="https://github.com/umano/AndroidSlidingUpPanel" target="_blank" rel="noopener">https://github.com/umano/AndroidSlidingUpPanel</a><br>确认过眼神，是需要找的框架，看了下介绍是一个能够向上滑动的时候往上飞出一个显示区域的控件，star较多且仍在维护，是个靠谱青年，so，就在此基础上进行修改吧，就这么愉快的决定了。</p>
-<p><strong>源码效果图</strong></p>
-<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br>最开始下面有一个栏目布局，随着手指拖动高度不断变化直到往上完全铺满屏幕</p>
-<p><strong>Step1：研究框架源码</strong><br>源码中有三支主要文件，如下</p>
-<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br>其中核心文件是<code>SlidingUpPanelLayout.java</code>，对应的是面板的UI界面，继承自ViewGroup，整支文件有1490行之多，好在代码结构清晰明了，阅读起来比较顺利，后面的修改主要针对<code>SlidingUpPanelLayout</code>这支文件以及布局文件</p>
-<p><strong>Step2：实做部分</strong><br>在阅读了源码流程之后，开始撸起袖子干活，主要的修改有下面一些点</p>
-<p><strong>面板默认状态修改</strong><br>PanelState提供的面板五种不同状态</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> PanelState &#123;</span><br><span class="line">     EXPANDED, <span class="comment">//全部展开状态</span></span><br><span class="line">     COLLAPSED, <span class="comment">//默认状态</span></span><br><span class="line">     ANCHORED, <span class="comment">//锚点</span></span><br><span class="line">     HIDDEN, <span class="comment">//隐藏状态</span></span><br><span class="line">     DRAGGING <span class="comment">//拖动状态</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>我们的systemUI样式只需要其中的<code>EXPANDED</code>，<code>HIDDEN</code>，<code>DRAGGING</code>这三种状态，其他两种状态相关牵扯到的代码都可以移除<br>源码默认的状态是<code>COLLAPSED</code>    </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Default initial state for the component</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> PanelState DEFAULT_SLIDE_STATE = PanelState.COLLAPSED;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> PanelState mSlideState = DEFAULT_SLIDE_STATE;</span><br></pre></td></tr></table></figure>
-<p>构造函数中从配置值获取了默认状态</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];</span><br></pre></td></tr></table></figure>
-<p>后面<code>onMeasure</code>,<code>onLayout</code>将根据<code>mSlideState</code>得值来绘制初始化界面</p>
-<p>我们systemUI初始化界面默认需要是<code>HIDDEN</code>状态，故后面更改xml中的配置值调整为hidden即可</p>
-<p><strong>去掉一栏布局部分(红色部分)</strong></p>
-<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E5%8E%BB%E6%8E%89%E5%BA%95%E9%83%A8%E9%BB%98%E8%AE%A4%E9%AB%98%E5%BA%A6.jpg?raw=true" align="left" style=" width:200px;height:200 px"><br><br><br><br><br><br><br><br><br><br><br></p>
-<p>对应<code>PanelHeight</code>这个的值，这个值在构造函数中会去xml中获取<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mPanelHeight = ta.getDimensionPixelSize(R.styleable.SystemUiPanel_umanoPanelHeight, -<span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
-<p>将布局文件中SlidingUpPanelLayout节点下的umanoPanelHeight样式值改为0dp即可  </p>
-<p><strong>默认划出面板方向</strong><br>github上给的demo例子里，是将<code>SlidingUpPanelLayout</code>设置<code>android:gravity=&quot;bottom&quot;</code>，改为<code>top</code>即可</p>
-<p><strong>添加手势事件</strong><br>源码中面板默认不是隐藏，有一定高度，根据点击事件响应展开还是隐藏，我们的systemUI中面板默认是完全隐藏状态，所以就没有了可见的view来响应事件，需要依据手指在顶部滑动的方向以及滑动距离来判断是否打开面板<br><code>SlidingUpPanelLayout</code>这支文件中添加手势滑动事件判断</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onLauncherTouchEvent</span><span class="params">(MotionEvent ev, <span class="keyword">boolean</span> result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (ev.getAction()) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">                pointDownY1 = ev.getY();</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                pointDownY2 = ev.getY();</span><br><span class="line">                <span class="keyword">if</span> (pointDownY2 - pointDownY1 &gt; FLIP_DISTANCE &amp;&amp; pointDownY1 &lt; FLIP_DISTANCE) &#123;</span><br><span class="line">                    setPanelState(PanelState.EXPANDED);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p><strong>隐藏状态下无法划出面板</strong><br>源码设计中对于隐藏状态是无法划出面板的  </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN: &#123;</span><br><span class="line">                mIsUnableToDrag = <span class="keyword">false</span>;</span><br><span class="line">                mInitialMotionX = x;</span><br><span class="line">                mInitialMotionY = y;</span><br><span class="line">                <span class="keyword">if</span> (!isViewUnder(mDragView, (<span class="keyword">int</span>) x, (<span class="keyword">int</span>) y)) &#123;</span><br><span class="line">                    mDragHelper.cancel();</span><br><span class="line">                    mIsUnableToDrag = <span class="keyword">true</span>;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;  </span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>将上面代码中if代码块全部注释掉<br>并将如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isTouchEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> mIsTouchEnabled &amp;&amp; mSlideableView != <span class="keyword">null</span> &amp;&amp; mSlideState != PanelState.HIDDEN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>去掉<code>mSlideState != PanelState.HIDDEN</code>判断条件<br>因为源码设计是当面板状态为hidden时，isTouchEnabled返回false，而setDragView中滑动面板前会先判断isTouchEnabled值，如果为false，直接return  </p>
-<p><strong>存在概率性卡在半拉状态</strong><br>项目上线后测试反馈过一个问题，测试步骤比较风骚，手指按住不放下拉到一半左右位置快速转过一个弧度上滑并松开，概率性出现面板卡在一个点上  </p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewDragStateChanged</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (mDragHelper != <span class="keyword">null</span> &amp;&amp; mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) &#123;</span><br><span class="line">         mSlideOffset = computeSlideOffset(mSlideableView.getTop());</span><br><span class="line">         <span class="comment">//applyParallaxForCurrentSlideOffset();</span></span><br><span class="line">         <span class="keyword">if</span> (mSlideOffset == <span class="number">1</span>) &#123;</span><br><span class="line">             updateObscuredViewVisibility();</span><br><span class="line">             setPanelStateInternal(PanelState.EXPANDED);</span><br><span class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mSlideOffset &lt; <span class="number">0</span>) &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.HIDDEN);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mSlideOffset == <span class="number">0</span>) &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.HIDDEN);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.ANCHORED);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>问题复现时，<code>mSlideOffset</code>大于0且小于1，此时会走到setPanelStateInternal(PanelState.ANCHORED);即将面板抛锚到固定点上，界面上表现为卡在一个半拉的状态，这显然不是我们的systemUI需要的，将此处更改为setPanelStateInternal(PanelState.HIDDEN);</p>
-<p><strong>核心API</strong><br>addPanelSlideListener(面板状态的监测)其中复写两个方法:onPanelSlide(获取到偏移量)和onPanelStateChanged(获取面板状态)<br>界面层主要用到了这个方法</p>
-<p><strong>移除无关代码</strong><br>如下修改均针对SlidingUpPanelLayout这支文件<br>1.将setDragView中将对mDragView的点击事件相关逻辑全部移除<br>2.构造函数中将setgravity相关代码移除<br>3.移除shadow所有的相关的代码<br>4.移除ANCHORED相关的代码逻辑，因为我们的systemUI并不要在下拉过程中卡在某一高度<br>5.移除drawChild以及draw(Canvas c)代码</p>
-<p><strong>布局文件</strong><br>如下是针对我们的项目定制修改后的布局(项目名相关打了马赛克，我也不知道为啥这么做，反正就是这么做了) </p>
-<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%87%E4%BB%B6.png?raw=true" align="left" style=" width:500px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>  </p>
-<p>id为dragView的内容代表滑动的内容，id为viewpager代表的是面板隐藏后的界面内容即不随手指滑动的内容  </p>
-<p>注:<br>SlidingUpPanelLayout为布局根元素，请确保它有且只有两个子view，第一个是主要布局，即固定不随手指滑动的区域，第二个滑动面板布局<br>如果子VIew不为2，则会抛出异常  </p>
-<pre><code class="java"><span class="meta">@Override</span>
- <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>{
-    <span class="comment">//省略部分代码</span>
-     <span class="keyword">final</span> <span class="keyword">int</span> childCount = getChildCount();
-     <span class="keyword">if</span> (childCount != <span class="number">2</span>) {
-         <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Sliding up panel layout must have exactly 2 children!"</span>);
-     }
-    <span class="comment">//省略部分代码</span>
- }
-</code></pre>
-<p>起初遇到这个异常，看了源码才知道有这个限制，不过可以修改源码突破这个这个限制，有源码了不起嘛？嗨呀嗨呀，十分了不起，有源码真的可以为所欲为，哈哈哈</p>
-<hr>
-<font color="#000000" size="2" face="楷体">住所，晚上，汗衫，电脑前，听着歌，胖橘在门外叫</font>
+        <p>大概是四月初开始找，前前后后经历了大概一个月左右，因为找工作的时候在上海还是在职，所以每次现场面真的是很辛苦，来回高铁费，心疼呐，还要绞尽脑汁想好如何请假，在此期间面试过不少家公司，另外，去年也面试过几家公司，一并记录下来</p>
+<p><strong>1.南京网眼</strong></p>
+<p>软件大道那里，出了地铁站没多远就到了，办公环境不错，人数不算多，算是创业型公司吧，公司的业务做出海项目</p>
+<p>进去先是填了个人信息表，做了一份笔试题，正反面，忘了是两道还是一道编程题，其他是一些Android基础知识，做完题后等了一会，进了一个办公室，两位面试官轮流问了一些问题，主要是一些Android基础知识，中规中矩，面完之后，HR让等待主管面，不巧的是主管在开会，等了半个小时没等到，因为还要赶下一场运满满面试，于是和HR说了下先出去下办事，真的是无奈之举，因为只请假一天，来南京一趟不容易</p>
+<p>下午五点多赶了回来，来了一位不知道职位的同事，聊了会说他说了不算，后面需要再来一趟老板面，最后隔了几天又来面了一次，面完回去等通知，第二天人事给了消息</p>
+<p>结果: 拿到offer，薪水不太满意，公积金是百分之六十缴纳，上班环境不错，不怎么加班，周末双休，提供三餐，没有补助貌似</p>
+<p><strong>2.运满满</strong></p>
+<p>从网眼那里直接骑车过去的，办公大楼不错，不过进办公区第一感觉很嘈杂，工位很紧凑，进去先是填了个人信息表，还让绑定了一个公众号，这里想吐槽下，运满满的个人信息表格内容超多，正反密密麻麻，简直是把老底调查了个遍，写的手都酸了</p>
+<p>面试在茶水间，人来人往，比较嘈杂，中午到了南京一直赶路没吃饭，脑袋有点晕乎乎，面试官问了一些Android基础知识，中规中矩吧，后面问了热修复，插件化，不太了解，因为做的手机开发，技术栈匹配度不是很高，后来又写了两道编程题，有一道写的算法题面试官说复杂度不够优化，问了是否可以再优化，看了下没看出来，而后面试官问了有啥兴趣爱好，哈哈哈哈，当时不知是太疲劳还是怎么了，脱口而出没啥爱好，面试官愣了下，那平时干嘛，答不干嘛，面试官说了句回去等消息，一面卒</p>
+<p>结果:一面卒，技术栈匹配度不高，暴露出技术广度不够</p>
+<p><strong>3.博泰</strong></p>
+<p>一家做车联网相关的，一面是电话面，问题较为简单，二面是去的他们上海总部，在美罗城那里，这里想吐槽下，到了那儿联系HR联系不上，坐着等了二十多分钟，HR才回复，然后进去填写个人信息表，上海的办公环境看上去一般般，比较旧，然后进会议室等面试官，得到回复面试官在面试其他人，让耐心等待，而后足足等了一个小时，期间几次想放弃回去了</p>
+<p>面试官先是一位女士后来又来了一位男士，问了些问题，技术问题不多，然后紧接着HR面，当时肚子饿的呱呱叫，已经六点多了，有些东西记不得了，只记得社保说是全额，后面HR让回去考虑下能否降低期望待遇，不了了之</p>
+<p>结果: 面试通过，无offer</p>
+<p><strong>4.苏宁易购</strong></p>
+<p>在徐庄苏宁总部地铁站，感觉苏宁真的好大啊，大楼很多，很气派，到了门卫领取了访客贴纸，约的十点面试，进去后，先是在满满一屋子人的屋里填写个人信息表，然后做了笔试题，两道简单的题，然后等面试官，前后等了近一个小时！</p>
+<p>一位貌似是行政人员说面试官有事，待会让别人过来面，又等了二十分钟，两位面试官来了，此时肚子饿的不行，头晕眼花，早上从上海赶火车过来饭都没吃</p>
+<p>因为之前电话面过一次大概十分钟，所以这次现场面应该是二面吧，两位面试官前后问了不到十五分钟结束，面试时间很短，然后让回去等消息，出来后已饿的不行，只想着赶紧吃饭</p>
+<p>结果: 收到offer，薪水达到预期，社保不是全额，百分之六十好像，有补助忘了多少一千左右</p>
+<p><strong>5.创维</strong></p>
+<p>在一个貌似叫云密谷的地方，里面很多办公大楼，看起来入住率不高，离地铁站有点远，办公区很安静。一开始就是HR面试，问了很多个人信息之类，然后是技术面，面试过程问答形式，前后一个小时左右吧，最后面试说去叫老总，后折回说不在，让回去等消息，</p>
+<p>过了几天HR通知要去现场boss面下，后来考虑了下，还是算了</p>
+<p>结果: 技术面试通过，无offer</p>
+<p><strong>6.一加手机</strong></p>
+<p>从创维出来后直接去了一加面试，路上经过便利店吃了点东西，一加在怡化中心，周边环境很棒，很多商场，办公大楼看起来高大上，因为之前电话面试两位面试官面了大概一个小时，所以这次算二面，进门后前台给我的手机摄像头位置都贴上了，出于产品隐私保护吧，这里需要说下，一加面试没有让写任何个人信息表，这点真的很棒，HR给端了水，然后两位面试官聊了聊项目，大概一个小时左右，整体体验感觉不错，第二天HR联系通过</p>
+<p>PS: 南京的一加团队组建不久，现在人还不多，七八十人</p>
+<p>结果: 面试通过，收到offer，社保是全额的百分之八比例，没有任何补助，双休，平时加班较多，听前同事在里说九点到九点半，面试体验很好，感觉比较有活力的公司</p>
+<p><strong>7.小米</strong></p>
+<p>小米的前两面都是电话面试，一面半小时左右，紧接着二面电话面，最后问了一个编程题，没答上，忘了是啥问题了</p>
+<p>过了一个礼拜，通知三面，当时已经体检了准备去一加了，三面在南京小米现场，离地铁站有点距离，步行至少十五分钟，办公大楼环境不错，三面主要聊项目之类，不到一小时结束，回去过了一个礼拜给回复，收到offer</p>
+<p>结果:面试通过，收到offer</p>
+<p><strong>8.趋势科技</strong></p>
+<p>南京为数不多的外企之一，听在里面的同学说不加班，弹性工作，氛围不错，大牛很多</p>
+<p>面试体验：</p>
+<p>先是在线做题，题目很多，最后有两道编程题，为此还给台式机特地买了摄像头，在线笔试要求必须有，猜测是防作弊之类的吧，难度较高，耗时一个半小时</p>
+<p>笔试后第二天HR反馈笔试通过，要求现场面，当时在上海，询问是否电话面，HR反馈可以视频面，视频面两位面试官，女士面试官提问较多，男士问的很少，总的来说提问的问题难度不高，主要还是围绕项目来。个人回答积极性不高，有些疲惫，有些问题只草草回答了三四句就收尾了，总的来讲基本都答出来了</p>
+<p>这里吐槽下，视频面只能看到自己，看不到面试官，一片漆黑，感觉有点怪怪的， 所以以后尽可能不要视频面试</p>
+<p>结果: 卒，过了一个礼拜多才收到面试未过的邮件</p>
+<p><strong>9.中兴</strong></p>
+<p>电话会议形式，面试官不止一人，声音不太听得清，常常要重复两三次，有出现不止一次对面同时有人讲话，完全听不清的情况，整个面试体验比较懵逼</p>
+<p>听清的问题难度中规中矩，前后不到五十分钟</p>
+<p>吸取教训，尽可能现场面，电话会议形式的尽量不要参加，凉凉概率较大</p>
+<p>结果:一面卒</p>
+<p>还有几个小公司就不一一说了，还有几家面试邀请放弃了没去参加，实在不想折腾了，包括后来接到的南京头条以及上海百度的面试邀请，这个时候已经从公司办理了离职，空档了一个礼拜，所以比较着急入职，有点小遗憾，总的来说最后结果还是很满意的</p>
+
       
     </div>
     
@@ -533,7 +522,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/" title="基于开源框架SlidingUpPanel二次开发">http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/</a>
+    <a href="http://lihaizhou.top/2019/06/16/南京面试记录/" title="南京面试记录">http://lihaizhou.top/2019/06/16/南京面试记录/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -555,8 +544,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/" rel="next" title="低内存引发的一点思考">
-                <i class="fa fa-chevron-left"></i> 低内存引发的一点思考
+              <a href="/2019/04/13/ANR的常见类型及解决思路/" rel="next" title="ANR的常见类型及解决思路">
+                <i class="fa fa-chevron-left"></i> ANR的常见类型及解决思路
               </a>
             
           </div>
@@ -564,10 +553,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/17/一个无法开机问题的分析流程/" rel="prev" title="一个无法开机问题的分析流程">
-                一个无法开机问题的分析流程 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

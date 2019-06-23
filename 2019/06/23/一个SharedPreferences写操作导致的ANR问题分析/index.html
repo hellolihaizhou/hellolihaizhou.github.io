@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="最近在看了项目上的代码后，发现随着项目功能的不断扩充，代码量已经比较庞大，很多业务代码看着一头雾水，可谓又臭又长，还有很多类似的代码多次重复出现，对静态static关键字的滥用，出了问题debug起来异常痛苦。这几天一直在思考，如果要优化代码的话，应该从哪些地方着手呢？如下是个人总结，比较简单基础，不涉及设计模式，后面会找时间写设计模式相关的内容 1.避免又臭又长的函数这点看项目中的代码时，经常能">
+<meta name="description" content="问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台 日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点 106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,">
 <meta property="og:type" content="article">
-<meta property="og:title" content="对优化代码的一点思考">
-<meta property="og:url" content="http://lihaizhou.top/2018/07/03/对优化代码的一点思考/index.html">
+<meta property="og:title" content="一个SharedPreferences写操作导致的ANR问题分析">
+<meta property="og:url" content="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="最近在看了项目上的代码后，发现随着项目功能的不断扩充，代码量已经比较庞大，很多业务代码看着一头雾水，可谓又臭又长，还有很多类似的代码多次重复出现，对静态static关键字的滥用，出了问题debug起来异常痛苦。这几天一直在思考，如果要优化代码的话，应该从哪些地方着手呢？如下是个人总结，比较简单基础，不涉及设计模式，后面会找时间写设计模式相关的内容 1.避免又臭又长的函数这点看项目中的代码时，经常能">
+<meta property="og:description" content="问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台 日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点 106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-13T08:44:53.023Z">
+<meta property="og:updated_time" content="2019-06-23T13:08:19.367Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="对优化代码的一点思考">
-<meta name="twitter:description" content="最近在看了项目上的代码后，发现随着项目功能的不断扩充，代码量已经比较庞大，很多业务代码看着一头雾水，可谓又臭又长，还有很多类似的代码多次重复出现，对静态static关键字的滥用，出了问题debug起来异常痛苦。这几天一直在思考，如果要优化代码的话，应该从哪些地方着手呢？如下是个人总结，比较简单基础，不涉及设计模式，后面会找时间写设计模式相关的内容 1.避免又臭又长的函数这点看项目中的代码时，经常能">
+<meta name="twitter:title" content="一个SharedPreferences写操作导致的ANR问题分析">
+<meta name="twitter:description" content="问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台 日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点 106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,">
 
 
 
@@ -128,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/07/03/对优化代码的一点思考/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/"/>
 
 
 
 
 
-  <title>对优化代码的一点思考 | Qiu&Lee&Dai</title>
+  <title>一个SharedPreferences写操作导致的ANR问题分析 | Qiu&Lee&Dai</title>
   
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/07/03/对优化代码的一点思考/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="追击的树袋熊">
@@ -334,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">对优化代码的一点思考</h1>
+          <h1 class="post-title" itemprop="name headline">一个SharedPreferences写操作导致的ANR问题分析</h1>
         
 
         <div class="post-meta">
@@ -346,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-03T23:50:55+08:00">
-                2018-07-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-23T20:11:32+08:00">
+                2019-06-23
               </time>
             
 
@@ -369,8 +369,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/性能/" itemprop="url" rel="index">
-                    <span itemprop="name">性能</span>
+                  <a href="/categories/ANR/" itemprop="url" rel="index">
+                    <span itemprop="name">ANR</span>
                   </a>
                 </span>
 
@@ -387,8 +387,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/07/03/对优化代码的一点思考/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/03/对优化代码的一点思考/" itemprop="commentCount"></span>
+                <a href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,559
+                  1,372
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  7
                 </span>
               
             </div>
@@ -447,18 +447,27 @@
       
 
       
-        <p>最近在看了项目上的代码后，发现随着项目功能的不断扩充，代码量已经比较庞大，很多业务代码看着一头雾水，可谓又臭又长，还有很多类似的代码多次重复出现，对静态static关键字的滥用，出了问题debug起来异常痛苦。这几天一直在思考，如果要优化代码的话，应该从哪些地方着手呢？<br>如下是个人总结，比较简单基础，不涉及设计模式，后面会找时间写设计模式相关的内容</p>
-<p><strong>1.避免又臭又长的函数</strong><br>这点看项目中的代码时，经常能看到一些动辄就是上百行的函数，一大堆业务逻辑代码封在一个函数，看的十分头疼，如果写这个函数的同事离职了，后续接手的同事的话，那么对接手的同事会是一件很痛苦的事，这种巨无霸函数阅读起来很困难，往往读着读着就迷失了，让人丧失往下看的兴趣。另外一点就是，这种很长的函数，往往可能会存在一些重复的代码，这些重复的代码剥离出来的话，可以供其他函数调用，这样也可以降低整个工程的代码量。<br>函数尽可能的简洁短小，一个函数只做与函数名相关的事，很长的函数需要考虑按照功能独立出来为一个个单独的函数，并为这些独立出来的函数取一个与功能符合的名字，这样代码的阅读性大大提高。这里需要把握好一个度，不是说函数越短越好，比如说只有一两句的代码也封装成一个函数，这就有点物极必反了。<br>另外，如果这个函数比较复杂，参数比较多，也可以考虑独立出来一个类，将参数作为类的属性</p>
-<p><strong>2.避免非常复杂的赋值表达式或if判断条件</strong><br>项目代码中经常会看到一些非常长的赋值表达式或者if判断中的判断条件，可能起初并不长，后面业务需要，增加一些限制判断条件，渐渐的就变成了一个非常长的表达式，有时候在界面中看不下还有鼠标往右拖动才能看到后面的，这样的代码看着十分蛋疼，容易迷失<br>这种很长的表达式就可以考虑分解出来，引入解释型变量，这样可阅读性大大增强。如果这个表达式其他地方也会用到，这个时候就可以考虑独立出来为一个函数，也方便复用。如果表达式中有不同功能的代码，可以按照功能分解出不止一个函数</p>
-<p><strong>3.避免对函数参数进行赋值</strong><br>项目代码中发现有些函数的传参进来后根据一些业务判断被直接赋了其他值，这个也是十分不建议的，这种做法改变了原始输入值，因为这个函数后面可能还会需要用到原始值，这里最好的做法是引入临时变量，将传参赋值给这个临时变量，这样就不会改变原始值</p>
-<p><strong>4.避免一个函数过多的参数</strong><br>项目代码中经常会出现一个函数有多达五六个参数，看起来比较头疼，比较舒服的函数是一两个参数，最舒服的情况是没有参数，这样的代码最易复用，看起来阅读性也比较强</p>
-<p><strong>5.避免一个类中出现和该类不相干的函数</strong><br>也就是尽可能遵循单一职责原则，与该类不相干的函数应考虑移走，放在更合适的地方<br>一个项目变得庞大的时候，很多时候需要增加接口，为了图省事直接就在需要修改的地方后面增加一个函数，久而久之，这个类中多出很多和该类不相干的函数，容易看的一头雾水</p>
-<p><strong>6.避免不同类中同样功能的函数</strong><br>不同类中出现同样功能的函数，这个是否观察不同类是不是同级别的，是否可以搞一个父类出来定义这些基础的行为，这样不同子类就不用再写多个重复功能的函数了，如果这些不同类看起来扯不上联系，可以将这些同样功能的函数剥离出来放到比如工具类中<br>宗旨只有一个: 尽可能重复性的写相同的代码</p>
-<p><strong>7.一堆组合起来关联性强的数据可以考虑做成实体类</strong><br>定义成实体类后，数据更好管理，代码结构更加清晰，也便于后面功能迭代，常用做法给这个实体类定义set, get方法</p>
-<p><strong>8.避免业务逻辑和UI界面类混合在一起</strong><br>这在项目代码中很常见，随便打开一个Activity类，其中都有大量的业务逻辑代码，随着项目功能的不断迭代，业务逻辑变得十分庞大，整个界面类显得十分臃肿，难以阅读，我们在工作过程中往往追求功能ok就好，没有考虑将代码按照功能职责分层剥离<br>这个时候就可以考虑引入MVP架构设计，这一点因叙述起来篇幅会比较大，后面会单独写一篇文章讨论</p>
-<p><strong>9.抽取子类共同行为放到父类中</strong><br>子类中有共同的行为的话，可以抽取出来放到父类中作为一个模板函数，可以精简不少代码量，这个模板函数意味着不会随着功能迭代或者子类增加而变动，对一些特殊的函数只有个别子类才会用到的就放在子类里</p>
-<hr>
-<font color="#000000" size="2" face="楷体">住所，汗衫</font>
+        <p><code>问题现象</code><br>手机连接WIFI后出现设置弹出无响应的弹框<br><code>问题概率</code><br>仅出现一次<br><code>问题平台</code><br>Andorid P  高通平台</p>
+<p><strong>日志分析</strong><br>拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">06</span><span class="number">-19</span> <span class="number">17</span>:<span class="number">53</span>:<span class="number">42.307</span>  <span class="number">1000</span>  <span class="number">1820</span>  <span class="number">1959</span> I am_anr  : [<span class="number">0</span>,<span class="number">3861</span>,com.android.settings,<span class="number">952745541</span>,Input dispatching timed out (com.android.settings/com.android.settings.MainSettings</span><br></pre></td></tr></table></figure>
+<p>解压后的bugreport中有一份ANR文件，查看其中的trace<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"main"</span> prio=<span class="number">5</span> tid=<span class="number">1</span> Blocked</span><br><span class="line">  | group=<span class="string">"main"</span> sCount=<span class="number">1</span> dsCount=<span class="number">0</span> flags=<span class="number">1</span> obj=<span class="number">0x7923e118</span> self=<span class="number">0x763be14c00</span></span><br><span class="line">  | sysTid=<span class="number">3861</span> nice=<span class="number">-10</span> cgrp=<span class="keyword">default</span> sched=<span class="number">0</span>/<span class="number">0</span> handle=<span class="number">0x76c1e12548</span></span><br><span class="line">  | state=S schedstat=( <span class="number">4685634510</span> <span class="number">1791639950</span> <span class="number">6133</span> ) utm=<span class="number">380</span> stm=<span class="number">88</span> core=<span class="number">3</span> HZ=<span class="number">100</span></span><br><span class="line">  | stack=<span class="number">0x7fe6270000</span><span class="number">-0x7fe6272000</span> stackSize=<span class="number">8</span>MB</span><br><span class="line">  | held mutexes=</span><br><span class="line">  at android.app.QueuedWork.processPendingWork(QueuedWork.java:<span class="number">273</span>)</span><br><span class="line">  - waiting to lock &lt;<span class="number">0x00210110</span>&gt; (a java.lang.Object) held by thread <span class="number">19</span></span><br><span class="line">  at android.app.QueuedWork.waitToFinish(QueuedWork.java:<span class="number">184</span>)</span><br><span class="line">  at android.app.ActivityThread.handleStopActivity(ActivityThread.java:<span class="number">4305</span>)</span><br></pre></td></tr></table></figure></p>
+<p>可以看出主线程在等锁0x00210110，该锁被thread 19持有，这里看堆栈可以看出卡在了waitToFinish上，界面回调了onStop的生命函数，<br>是不是可以理解为当时界面走了onStop准备退出，发现有任务没有完成，需要等待，猜测如此，继续看thread 19</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"queued-work-looper"</span> prio=<span class="number">5</span> tid=<span class="number">19</span> Native</span><br><span class="line">  | group=<span class="string">"main"</span> sCount=<span class="number">1</span> dsCount=<span class="number">0</span> flags=<span class="number">1</span> obj=<span class="number">0x130c0958</span> self=<span class="number">0x762df62800</span></span><br><span class="line">  | sysTid=<span class="number">3892</span> nice=<span class="number">-2</span> cgrp=<span class="keyword">default</span> sched=<span class="number">0</span>/<span class="number">0</span> handle=<span class="number">0x76223ff4f0</span></span><br><span class="line">  | state=D schedstat=( <span class="number">8250990</span> <span class="number">10651510</span> <span class="number">31</span> ) utm=<span class="number">0</span> stm=<span class="number">0</span> core=<span class="number">1</span> HZ=<span class="number">100</span></span><br><span class="line">  | stack=<span class="number">0x76222fc000</span><span class="number">-0x76222fe000</span> stackSize=<span class="number">1041</span>KB</span><br><span class="line">  | held mutexes=</span><br><span class="line">  kernel: (couldn<span class="string">'t read /proc/self/task/3892/stack)</span></span><br><span class="line"><span class="string">  native: #00 pc 000000000007b070  /system/lib64/libc.so (fsync+8)</span></span><br><span class="line"><span class="string">  native: #01 pc 0000000000003670  /system/lib64/libopenjdkjvm.so (JVM_Sync+20)</span></span><br><span class="line"><span class="string">  native: #02 pc 000000000001cd54  /system/lib64/libopenjdk.so (FileDescriptor_sync+40)</span></span><br><span class="line"><span class="string">  at java.io.FileDescriptor.sync(Native method)</span></span><br><span class="line"><span class="string">  at android.os.FileUtils.sync(FileUtils.java:197)</span></span><br><span class="line"><span class="string">  at android.app.SharedPreferencesImpl.writeToFile(SharedPreferencesImpl.java:777)</span></span><br><span class="line"><span class="string">  at android.app.SharedPreferencesImpl.access$900(SharedPreferencesImpl.java:54)</span></span><br><span class="line"><span class="string">  at android.app.SharedPreferencesImpl$2.run(SharedPreferencesImpl.java:642)</span></span><br><span class="line"><span class="string">  - locked &lt;0x08e457c5&gt; (a java.lang.Object)</span></span><br><span class="line"><span class="string">  at android.app.QueuedWork.processPendingWork(QueuedWork.java:286)</span></span><br><span class="line"><span class="string">  - locked &lt;0x00210110&gt; (a java.lang.Object)</span></span><br></pre></td></tr></table></figure>
+<p>这里的堆栈可以看出，当时在做SharedPreference的IO操作，锁的持有对象当时在做processPendingWork，可是为什么Activity的onStop要等SharedPreference写完呢？</p>
+<p>再来看下主线程中的堆栈</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">at android.app.QueuedWork.waitToFinish(QueuedWork.java:<span class="number">184</span>)</span><br><span class="line">at android.app.ActivityThread.handleStopActivity(ActivityThread.java:<span class="number">4305</span>)</span><br></pre></td></tr></table></figure>
+<p>看下ActivityThread.java中的handleStopActivity</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleStopActivity</span><span class="params">(IBinder token, <span class="keyword">boolean</span> show, <span class="keyword">int</span> configChanges,</span></span></span><br><span class="line"><span class="function"><span class="params">            PendingTransactionActions pendingActions, <span class="keyword">boolean</span> finalStateRequest, String reason)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ActivityClientRecord r = mActivities.get(token);</span><br><span class="line">        r.activity.mConfigChangeFlags |= configChanges;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> StopInfo stopInfo = <span class="keyword">new</span> StopInfo();</span><br><span class="line">        performStopActivityInner(r, stopInfo, show, <span class="keyword">true</span> <span class="comment">/* saveState */</span>, finalStateRequest,</span><br><span class="line">                reason);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (localLOGV) Slog.v(</span><br><span class="line">            TAG, <span class="string">"Finishing stop of "</span> + r + <span class="string">": show="</span> + show</span><br><span class="line">            + <span class="string">" win="</span> + r.window);</span><br><span class="line"></span><br><span class="line">        updateVisibility(r, show);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Make sure any pending writes are now committed.</span></span><br><span class="line">        <span class="keyword">if</span> (!r.isPreHoneycomb()) &#123;</span><br><span class="line">            QueuedWork.waitToFinish();</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p>重点关注其中的waitToFinish()函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Trigger queued work to be processed immediately. The queued work is processed on a separate</span></span><br><span class="line"><span class="comment">     * thread asynchronous. While doing that run and process all finishers on this thread. The</span></span><br><span class="line"><span class="comment">     * finishers can be implemented in a way to check weather the queued work is finished.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * Is called from the Activity base class's onPause(), after BroadcastReceiver's onReceive,</span></span><br><span class="line"><span class="comment">     * after Service command handling, etc. (so async work is never lost)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">waitToFinish</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// xxx ADD</span></span><br><span class="line">        <span class="keyword">boolean</span> interrupt = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">boolean</span> hadMessages = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        Handler handler = getHandler();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (sLock) &#123;</span><br><span class="line">            <span class="keyword">if</span> (handler.hasMessages(QueuedWorkHandler.MSG_RUN)) &#123;</span><br><span class="line">                <span class="comment">// Delayed work will be processed at processPendingWork() below</span></span><br><span class="line">                handler.removeMessages(QueuedWorkHandler.MSG_RUN);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (DEBUG) &#123;</span><br><span class="line">                    hadMessages = <span class="keyword">true</span>;</span><br><span class="line">                    Log.d(LOG_TAG, <span class="string">"waiting"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// We should not delay any work as this might delay the finishers</span></span><br><span class="line">            sCanDelay = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskWrites();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// xxx MOD</span></span><br><span class="line">            <span class="comment">// processPendingWork();</span></span><br><span class="line">            interrupt = processPendingWork(<span class="keyword">false</span>);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            StrictMode.setThreadPolicy(oldPolicy);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>依据trace，接着看processPendingWork</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">processPendingWork</span><span class="params">(<span class="keyword">boolean</span> fromMsg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> startTime = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> workNdx = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// if (DEBUG) &#123;</span></span><br><span class="line">        startTime = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// END</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (sProcessingWork) &#123; <span class="comment">//#273 主线程卡在这里等锁</span></span><br><span class="line">            LinkedList&lt;Runnable&gt; work;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">synchronized</span> (sLock) &#123;</span><br><span class="line">                work = (LinkedList&lt;Runnable&gt;) sWork.clone();</span><br><span class="line">                sWork.clear();     </span><br><span class="line">            <span class="comment">// Remove all msg-s as all work will be processed now</span></span><br><span class="line">           getHandler().removeMessages(QueuedWorkHandler.MSG_RUN);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (work.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">for</span> (Runnable w : work) &#123;</span><br><span class="line">                    w.run(); <span class="comment">//#286 tid19 一直在运行该处</span></span><br><span class="line">                    .....</span><br><span class="line">                    &#125;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>到这里基本明白了是怎么回事了，主线程在等的SharedPreference的写操作writeToFile完成，如果这个队列中的任务没有完成，SharedPreference就会一直持有这个锁，主线程拿不到这个锁，<br>一直等待，超过五秒后触发ANR，这点在日志中也得到了印证，ANR时间点前后有不少的SharedPreferencesImpl相关的日志输出，往上看大概能看出当时是在做同步数据之类</p>
+<p>其实SharedPreference时不论是apply还是commit都会有出现写入磁盘慢的情况发生，特别是数据量大，或者多线程同时访问同一份xml，又或者连续多次commit，都会有可能造成waitToFinish函数耗时变长。虽然apply是异步执行的，主线程依旧需要等它执行结束。这点其实不好规避，所以尽可能的少使用SharedPreference，特别是可能存在多线程操作同一份数据这种情况，毕竟有了加锁，会可能出现排队的情况。</p>
+<p><code>优化方式</code><br>尽可能传输的数据量轻量<br>尽可能减少commit次数<br>考虑新开线程，但是会有内存开销的存在，如果原本是apply，则在新开的线程改为commit</p>
+<p>其实看公司内部代码，发现公司的framework同事有修改waitToFinish函数中调用的processPendingWork函数内容，增加了记录时间，<br>超过10s直接return false，这是个不错的想法，但是10s对于广播中的情况或许可以cover，对应Activity中超时5秒就ANR的这种情况不能cover</p>
+<p>鉴于该问题只出现一次，不做修改</p>
+
       
     </div>
     
@@ -489,7 +498,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/07/03/对优化代码的一点思考/" title="对优化代码的一点思考">http://lihaizhou.top/2018/07/03/对优化代码的一点思考/</a>
+    <a href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/" title="一个SharedPreferences写操作导致的ANR问题分析">http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -511,8 +520,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/03/Android输入系统系列-4-分发输入消息/" rel="next" title="Android输入系统系列(4)----分发输入消息">
-                <i class="fa fa-chevron-left"></i> Android输入系统系列(4)----分发输入消息
+              <a href="/2019/06/16/南京面试记录/" rel="next" title="南京面试记录">
+                <i class="fa fa-chevron-left"></i> 南京面试记录
               </a>
             
           </div>
@@ -520,10 +529,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/" rel="prev" title="Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路">
-                Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

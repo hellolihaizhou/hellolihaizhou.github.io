@@ -88,22 +88,17 @@
 
 
 
-<meta name="description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
+<meta name="description" content="用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下： 1 内存不足2 app使用的绘制方式区别3 app使用的编译方式区别4 app自身问题 1234567C:\Users\MIλ adb shell cat /proc/meminfoMemTotal:        5871128 kBMemFree:         1215492 kBMemAvailable:    36312">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ANR的常见类型及解决思路">
-<meta property="og:url" content="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/index.html">
+<meta property="og:title" content="Android-丢帧分析临时草稿">
+<meta property="og:url" content="http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
+<meta property="og:description" content="用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下： 1 内存不足2 app使用的绘制方式区别3 app使用的编译方式区别4 app自身问题 1234567C:\Users\MIλ adb shell cat /proc/meminfoMemTotal:        5871128 kBMemFree:         1215492 kBMemAvailable:    36312">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/2_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/3_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/4_%E4%B8%BB%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E9%94%81.png">
-<meta property="og:updated_time" content="2019-04-13T08:45:30.096Z">
+<meta property="og:updated_time" content="2019-12-15T08:38:27.618Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ANR的常见类型及解决思路">
-<meta name="twitter:description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
+<meta name="twitter:title" content="Android-丢帧分析临时草稿">
+<meta name="twitter:description" content="用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下： 1 内存不足2 app使用的绘制方式区别3 app使用的编译方式区别4 app自身问题 1234567C:\Users\MIλ adb shell cat /proc/meminfoMemTotal:        5871128 kBMemFree:         1215492 kBMemAvailable:    36312">
 
 
 
@@ -133,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/"/>
 
 
 
 
 
-  <title>ANR的常见类型及解决思路 | Qiu&Lee&Dai</title>
+  <title>Android-丢帧分析临时草稿 | Qiu&Lee&Dai</title>
   
 
 
@@ -322,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="追击的树袋熊">
@@ -339,7 +334,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ANR的常见类型及解决思路</h1>
+          <h1 class="post-title" itemprop="name headline">Android-丢帧分析临时草稿</h1>
         
 
         <div class="post-meta">
@@ -351,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-13T14:46:41+08:00">
-                2019-04-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-15T15:39:19+08:00">
+                2019-12-15
               </time>
             
 
@@ -374,8 +369,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/移动开发/" itemprop="url" rel="index">
-                    <span itemprop="name">移动开发</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -392,8 +387,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/04/13/ANR的常见类型及解决思路/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/13/ANR的常见类型及解决思路/" itemprop="commentCount"></span>
+                <a href="/2019/12/15/Android-丢帧分析临时草稿/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/12/15/Android-丢帧分析临时草稿/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -415,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,335
+                  411
                 </span>
               
 
@@ -431,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  2
                 </span>
               
             </div>
@@ -452,32 +447,26 @@
       
 
       
-        <p>前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例<br>本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。</p>
-<p>先说下三种常见类型<br>1：<code>KeyDispatchTimeout</code>(谷歌default 5s，MTK平台上是8s) –主要类型<br>按键或触摸事件在特定时间内无响应<br>2：<code>BroadcastTimeout</code>(10s)<br>BroadcastReceiver在特定时间内无法处理完成<br>3：<code>ServiceTimeout</code>(20s) –小概率类型<br>Service在特定的时间内无法处理完成</p>
-<p><strong>一般解决步骤</strong></p>
-<p><label style="color:red"><strong>Step1:日志获取&amp;注意事项</strong></label><br>获取日志有一点需要注意，发生ANR后，不要选择结束进程，因为这样AMS会kill掉该进程，有些信息会打印不出来（比如MTK平台上会生成db.XX.ANR，写入到aee_exp文件夹下需要时间），最好是ANR发生后等两三分钟左右，再获取日志</p>
-<p>一般需要data/anr下生成的trace文件以及手机系统日志(一般只需要mobile文件夹)</p>
-<p>以MTK为例，需要如下日志信息：<br>1.aee_exp文件夹(MTK日志目录下，发生ANR会生成)<br>2.MTK目录下的mobilelog文件夹</p>
-<p>aee_exp文件夹一般都是需要的, 对DB进行dump解析，得到ANR发生时场景信息，比如主线程callstack，CPU，memory等，在分析问题根因时很关键</p>
-<p><label style="color:red"><strong>Step2:日志分析一般步骤</strong></label></p>
-<p><label style="color:red">Step2.1 确认时间点(非必需)</label><br>mobilelog文件夹下的events_log,搜索关键字”am_anr”,这一步用于确认ANR时间点，可以搜索到类似如下信息<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">04</span>-<span class="number">29</span> <span class="number">10</span>:<span class="number">00</span>:<span class="number">57.240</span> <span class="number">1267</span> <span class="number">1341</span> I am_anr : [<span class="number">0</span>,<span class="number">6073</span>,com.android.dialer,<span class="number">952745541</span>,Input dispatching timed out</span><br></pre></td></tr></table></figure></p>
-<p>比如上面这行表示ANR类型为<code>Input dispatching timed out</code>, 这种anr的原因的是在viewrootimpl分发事件时，并没有找到focuswindow导致的<br>这一步确认时间点在：10:00:57,进程号:6073</p>
-<p><label style="color:red">Step2.2: 查看ANR时的CPU以及IO率(可选)</label><br>这一步一般来说能基本定位是什么造成了ANR，是IO高还是CPU高，如两者都不是，需进入第三步trace日志分析环节<br>查看mobilelog文件夹下的main_log,搜索关键字<code>&quot;ANR in&quot;</code>,可以看到当时的CPU以及IO率，这一个环节一般来讲主要是看发生ANR时的CPU是否吃紧<br>还有需要注意<code>iowait</code>的占有率，如果占比比较高，则排查的方向要倾向与读取文件操作有关的信息，可以看trace日志中有没有一些读取文件或者操作SD卡的动作</p>
-<p><label style="color:red">Step2.3:分析ANR时的堆栈(必需，最重要的环节)</label><br>ANR发生会在data/anr下生成trace.txt，trace务必要与moile日志匹配，一般来讲直接先看tid=1的堆栈即对应主线程，因为ANR都是主线程执行超时导致</p>
-<p>关于trace日志的分析是ANR问题分析最重要的一个环节，下面将列出平时项目中遇到的ANR案例类型</p>
-<p><strong>ANR常见类型归纳</strong></p>
-<p><label style="color:red">1.主线程Binder调用等待超时</label><br>比如下面的这段<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br>很明显当时在做Binder通信，并没有waiting to lock等代表死锁的字样，那么说明这个案例即有可能是在等Binder对端响应，我们知道Binder通信对于发起方来说是阻塞等待响应，只有有了返回结果后才会继续执行下去<br>所以，如上这个案例中需要找到对端是哪个进程，这个进程当时在做什么，这时候就需要找到anr文件夹下另外一个文件binderinfo，这里需要找到与我们发起方进程1461通信的是哪个进程<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/2_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br>可以看到是1666号这个进程，再回到trace中看下，这个进程当时在做什么<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/3_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:150 px"><br><br><br><br><br><br><br><br><br><br><br><br>可以看到当时对端在做消息的读取，也就是说这里出了问题，很明显这里我们无法修改，我们这个问题在于主线程执行了Binder请求，对端迟迟未返回便很容易出现这个问题，当前做法异步中执行</p>
-<p><label style="color:red">案例二：主线程等待锁</label><br>比如下面这个主线程的CallStack例子，可以看到如下信息：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/4_%E4%B8%BB%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E9%94%81.png" align="left" style=" width:700px;height:700 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>这个案例中gallery的main thread在执行<code>UploaderChimeraService</code>的onDestroy方法时，需要lock 0x23f65d8b，但这个lock有被upload_periodic GCM Task 拿住，这个thread当前是在做连接网络的动作。从这段信息来看，很有可能与测试时手机连接的网络有关，当时连接的事google的网络，由于墙的原因，无法连接gms的相关server有关</p>
-<p>还有一种情况就是死锁，即形成了头尾相连，互相等待的情况，对于这种问题以及上面案例的解决，一般会尝试将锁改为超时锁，比如lock的trylock，超时会自动释放锁，从而避免一直持有锁的情况发生</p>
-<p><label style="color:red">案例三：卡在IO上</label><br>这种情况一般是和文件操作相关，判断是否是这种情况，可以看mainlog中搜索关键字”ANR in”,看这段信息的最下边，比如下面的信息<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ANRManager: <span class="number">100</span>% TOTAL: <span class="number">2</span>% user + <span class="number">2.1</span>% kernel + <span class="number">95</span>% iowait + <span class="number">0.1</span>% softirq</span><br></pre></td></tr></table></figure></p>
-<p>很明显，IO占比很高，这个时候就需要查看trace日志看当时的callstack，或者在这段ANR点往前看0~4s，看看当时做的什么文件操作，这种场景有遇到过，常见解决方法是对耗时文件操作采取异步操作</p>
-<p><label style="color:red">案例四：主线程有耗时的动作</label><br>这种情况是ANR类型问题里遇到最多的，比如网络访问，访问数据库之类的，都很容易造成主线程堵塞<br>这里以访问数据库来说，这类型引起的ANR，一般来讲看当时的CPU使用情况会发现user占比较高，看trace中主线程当时的信息会发现会有一些比如query像ContentProvider这种数据库的动作。这种情况下，还可以去看eventlog或者mainlog，在ANR发生前后打印出来的信息，比如访问数据库这种，在eventlog中搜索<code>&quot;am_anr&quot;</code>,然后看前后片段，会发现发生ANR的这个进程有很多数据库相关的信息，说明在发生ANR前后主线程一直在忙于访问数据库，这类型的问题常见于图库，联系人，彩短信应用。<br>所以这种问题的解决，一般考虑的是异步解决，异步解决并不是简单的new一个线程，要根据业务场景以及频率来决定，Android常见的异步AsyncTask, IntentService, 线程池(官方四种或自定义), new thread等，一般来说不建议直接new thread</p>
-<p><label style="color:red">案例五：binder线程池被占满</label><br>系统对每个process最多分配15个binder线程，这个是谷歌的设计（/frameworks/native/libs/binder/ProcessState.cpp)<br>如果另一个process发送太多重复binder请求，那么就会导致接收端binder线程被占满，从而处理不了其它的binder请求<br>这本身就是系统的一个限制，如果应用未按照系统的要求来实现对应逻辑，那么就会造成问题。<br>而系统端是不会（也不建议）通过修改系统行为来兼容应用逻辑，否则更容易造成其它根据系统需求正常编写的应用反而出现不可预料的问题。<br>判断Binder是否用完，可在trace中搜关键字”binder_f”，如搜索到表示已用完，然后就要找log其他地方看是谁一直在消耗binder或者是有死锁发生<br>之前有遇到过压力测试手电筒应用，出现BInder线程池被占满情况，解决的思路就是降低极短时间内大量Binder请求的发生，修复的手法是发送BInder请求的函数中做时间差过滤，限定在500ms内最多执行一次</p>
-<p><label style="color:red">案例六：JE或者NE导致ANR</label><br>这种场景有遇到过，ANR前出现频繁NE，NE所在的进程与ANR的进程有交互，在解决了NE后，ANR也不复存在，对于这类在ANR前有JE或者NE，一般思路是先解决JE或NE，再来看ANR是否还存在，如果还存在，那么就看trace 堆栈，如果不存在，则可以基本判定是JE或NE导致</p>
-<p><label style="color:red">案例七：只存在于Monkey测试下</label><br>有些问题是只有在Monkey环境下才能跑出来，平时的user版本用户使用是不会出现的，这种问题的话就没有改动的意义。<br>比如下面这个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActivityManager: Not finishing activity because controller resumed</span><br><span class="line"><span class="number">03</span>-<span class="number">18</span> <span class="number">07</span>:<span class="number">25</span>:<span class="number">50.901</span> <span class="number">810</span> <span class="number">870</span> I am_anr : [<span class="number">0</span>,<span class="number">25443</span>,android.process.media,<span class="number">1086897733</span>,<span class="function">Input dispatching timed <span class="title">out</span> <span class="params">(Waiting because no window has focus but there is a focused application that may eventually add a window when it finishes starting up.)</span>]</span></span><br></pre></td></tr></table></figure></p>
-<p>发生这个ANR的原因是Contoller将resume的操作给拦截了, 导致Focus不过去, 从而导致ANR，User版本不会有Contoller, 所以不会出现这个 ANR. 所以这个 ANR 可以忽略.</p>
-<hr>
-<font color="#000000" size="2" face="楷体">春和日丽的周末，午后</font>
+        <p>用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下：</p>
+<p>1 内存不足<br>2 app使用的绘制方式区别<br>3 app使用的编译方式区别<br>4 app自身问题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\MI</span><br><span class="line">λ adb shell cat /proc/meminfo</span><br><span class="line">MemTotal:        <span class="number">5871128</span> kB</span><br><span class="line">MemFree:         <span class="number">1215492</span> kB</span><br><span class="line">MemAvailable:    <span class="number">3631296</span> kB</span><br><span class="line">Buffers:           <span class="number">91956</span> kB</span><br><span class="line">Cached:          <span class="number">2432140</span> kB</span><br></pre></td></tr></table></figure>
+<p>比较多的Uninterruptible Sleep，block 在__lock_page_or_retry </p>
+<p>另外proc/meminfo中 可用内存非常少、且swap空间几乎耗尽 、lmk频繁打印等等都能从侧面反映内存偏低</p>
+<p>app使用的绘制方式区别<br>相同app的软件绘制与硬件绘制对比：</p>
+<p>软件绘制：</p>
+<p>硬件加速<br>Android3.0开始支持硬件加速，Android4.0 默认启用硬件加速。但是app还是能主动设置 hardwareAccelerated 来切换两种模式</p>
+<p>硬件绘制就是将CPU不擅长的图形计算转换成GPU专用指令，由GPU完成。</p>
+<p>优点：</p>
+<p>1）显著提升UI绘速度</p>
+<p>2） 更新UI只重绘脏区域，提升刷新速度</p>
+<p>缺点：</p>
+<p>内存和电量消耗会比软件绘制大</p>
+<p>3 app使用的编译方式区别<br>留意是否有编译方式的区别：</p>
+<p>解释模式编译.dex文件肯定比直接执行.oat文件要来的慢</p>
+<p>4 app自身问题<br>视图太复杂层级太深、主线程有耗时方法</p>
+<p>DrawFrame过程很长，且基本是出于running状态时，可能视图过于复杂</p>
+<p>主线程方法耗时的话，那需要通过加trace Label缩小范围，然后利用traceView对具体方法进行耗时分析</p>
+
       
     </div>
     
@@ -508,7 +497,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/" title="ANR的常见类型及解决思路">http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/</a>
+    <a href="http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/" title="Android-丢帧分析临时草稿">http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -530,8 +519,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/12/Launcher应用的重构之路/" rel="next" title="Launcher应用的重构之路">
-                <i class="fa fa-chevron-left"></i> Launcher应用的重构之路
+              <a href="/2019/12/15/Android-input系统临时草稿/" rel="next" title="Android-input系统(Q)临时草稿">
+                <i class="fa fa-chevron-left"></i> Android-input系统(Q)临时草稿
               </a>
             
           </div>
@@ -539,10 +528,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/" rel="prev" title="一个SharedPreferences写操作导致的ANR问题分析">
-                一个SharedPreferences写操作导致的ANR问题分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

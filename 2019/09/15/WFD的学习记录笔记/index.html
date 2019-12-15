@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="红红火火">
+<meta name="description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WFD的学习记录笔记">
 <meta property="og:url" content="http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="红红火火">
+<meta property="og:description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-15T09:30:32.555Z">
+<meta property="og:updated_time" content="2019-10-15T13:04:39.923Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WFD的学习记录笔记">
-<meta name="twitter:description" content="红红火火">
+<meta name="twitter:description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
 
 
 
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  2,284
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  10
                 </span>
               
             </div>
@@ -447,7 +447,73 @@
       
 
       
-        
+        <p>本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内</p>
+<h1 id="WFD扫盲"><a href="#WFD扫盲" class="headerlink" title="WFD扫盲"></a>WFD扫盲</h1><h2 id="miracast简介"><a href="#miracast简介" class="headerlink" title="miracast简介"></a>miracast简介</h2><h2 id="应用层如何操作WFD？"><a href="#应用层如何操作WFD？" class="headerlink" title="应用层如何操作WFD？"></a>应用层如何操作WFD？</h2><p>连接Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.connectWifiDisplay(String deviceMacAddress);</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用。<br>权限<br>android.permission.CONFIGURE_WIFI_DISPLAY</p>
+<p>断开Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.disconnectWifiDisplay();</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用<br>扫描Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.startWifiDisplayScan();</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用。<br>权限<br>android.permission.CONFIGURE_WIFI_DISPLAY<br>举个milink中的使用例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * scan wifi display while we can connect</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startWifiDisplayScan</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> == mDisplayManager) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ReflectUtil.callObjectMethod(mDisplayManager, <span class="string">"startWifiDisplayScan"</span>) == <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里用的是反射调用</p>
+<h2 id="芯片商在谷歌基础上的定制化"><a href="#芯片商在谷歌基础上的定制化" class="headerlink" title="芯片商在谷歌基础上的定制化"></a>芯片商在谷歌基础上的定制化</h2><h2 id="高通WFD"><a href="#高通WFD" class="headerlink" title="高通WFD"></a>高通WFD</h2><p>With Android JB MR1, Google released a WFD solution called Remote Display.<br> Google WFD supports AVC, LPCM, and AAC codecs along with HDCP encryption, but lacks support for content protection. </p>
+<p> It is available to applications as an external WFD using Presentation, MediaRouter, and DisplayManager APIs. </p>
+<p> When compared to the QTI-based Miracast solution, it lacks content protection support and has low performance and higher power consumption numbers. </p>
+<p> QTI created a wrapper to launch the QTI-based Miracast solution using Android APIs; this provides an enhanced Miracast solution to third-party vendors and OEMs who would like to use the Presentation API for Miracast</p>
+<h2 id="WFD的应用场景"><a href="#WFD的应用场景" class="headerlink" title="WFD的应用场景"></a>WFD的应用场景</h2><h1 id="高通WFD代码结构"><a href="#高通WFD代码结构" class="headerlink" title="高通WFD代码结构"></a>高通WFD代码结构</h1><p>SessionManagerService<br>vendor/qcom/proprietary/commonsys/wfd/wdsm/service/src/com/qualcomm/wfd/service/<br>提供了很多的接口，诸如：</p>
+<h1 id="RTSP协议"><a href="#RTSP协议" class="headerlink" title="RTSP协议"></a>RTSP协议</h1><h1 id="WFD代码连接流程"><a href="#WFD代码连接流程" class="headerlink" title="WFD代码连接流程"></a>WFD代码连接流程</h1><h1 id="M-Message消息"><a href="#M-Message消息" class="headerlink" title="M-Message消息"></a>M-Message消息</h1><h1 id="P2P以及RTSP的的建立"><a href="#P2P以及RTSP的的建立" class="headerlink" title="P2P以及RTSP的的建立"></a>P2P以及RTSP的的建立</h1><h2 id="p2p的建立"><a href="#p2p的建立" class="headerlink" title="p2p的建立"></a>p2p的建立</h2><h2 id="RTSP的建立"><a href="#RTSP的建立" class="headerlink" title="RTSP的建立"></a>RTSP的建立</h2><h1 id="WFD整体架构-source"><a href="#WFD整体架构-source" class="headerlink" title="WFD整体架构(source)"></a>WFD整体架构(source)</h1><h1 id="WFD常见问题的debug策略"><a href="#WFD常见问题的debug策略" class="headerlink" title="WFD常见问题的debug策略"></a>WFD常见问题的debug策略</h1><h2 id="Wifi-Display-Miracast分析一般需要的日志"><a href="#Wifi-Display-Miracast分析一般需要的日志" class="headerlink" title="Wifi-Display/Miracast分析一般需要的日志"></a>Wifi-Display/Miracast分析一般需要的日志</h2><p>前提条件：root版本，因为有些命令如关selinux这些命令需要root权限</p>
+<h3 id="高通平台"><a href="#高通平台" class="headerlink" title="高通平台"></a>高通平台</h3><p>使能所有WFD日志的开关</p>
+<ol>
+<li>Android N 以及更早的版本<br>创建一个文件名为mmosal_logmask.cfg，内容如下<br><start><br>LOGMASK = 6013:63<br>LOGMASK = 6015:63<end>
+
+</end></start></li>
+</ol>
+<p>这个文件建议保存在本地，后续方便提供给测试或者自己调试</p>
+<p> push mmosal_logmask.cfg这个文件到 /data/ folder 或者 /data/misc/media/ 目录下, 执行如下命令<br> adb root<br> adb remount<br> adb push mmosal_logmask.cfg /data/<br> adb push mmosal_logmask.cfg /data/misc/media/<br> adb shell setenforce 0</p>
+<ol start="2">
+<li><p>Android O 版本<br>adb shell setprop mmosal.debug.config 6015:63:6013:63</p>
+</li>
+<li><p>Android P 版本<br>adb shell setprop vendor.debug.mmosal.config 6015:63:6013:63</p>
+</li>
+<li><p>Android Q 版本<br>push  mmosal_logmask.cfg这个文件到 /data/ 目录 或者 /data/misc/media/ folder 或者 /data/vendor/，索性都push了<br>adb root<br>adb remount<br>adb push mmosal_logmask.cfg /data/<br>adb push mmosal_logmask.cfg data/misc/media/<br>adb push mmosal_logmask.cfg  /data/vendor/<br>adb shell setenforce 0</p>
+</li>
+</ol>
+<p>打开延迟分析属性来判断延迟值<br>对于 WFD performance 问题, 需要打开延迟分析属性来判断延迟值<br>Android O<br>adb shell setprop persist.debug.wfd.profile 1</p>
+<p>Android P/Q<br>adb shell setprop persist.vendor.debug.wfd.profile 1</p>
+<p>获取 TCP dump，这一步主要用来分析丢包率以及建立RTSP过程中的问题<br>1.adb shell</p>
+<ol start="2">
+<li>tcpdump -i wlan0 -s 0 -w /data/tcpdump.pcap</li>
+</ol>
+<h3 id="联发科平台"><a href="#联发科平台" class="headerlink" title="联发科平台"></a>联发科平台</h3><p>WFD卡顿延迟问题<br> 1.当发现有延迟或者卡顿，可以看是否有如下LOG：<br>212887 07-05 11:13:53.018936 582 24850 I MtkNetworkSession: [WFD_P][video][dummy=0]ts=7663475,in 7663545,out 7664846,LatencyF 91,send 1300,LatencyT 1392<br>212888 07-05 11:13:53.019069 582 24850 I MtkNetworkSession: [WFD_P][audo][dummy=0]ts=7663476,in 7663546,out 7664846,LatencyF 7,send 1300,LatencyT 1307</p>
+<p>//如下的时间单位都是毫秒<br>LatencyF 91 //编码打包的延迟时间<br>send 1300 //发送的延迟时间<br>LatencyT 1392 //总的延迟</p>
+<p>2.假如send 时间比较长（一般需要平均1000/25FPS = 40毫秒以内才能保证不会卡顿）那么卡顿是正常现象，一般没办法提升，比如网络原因，如下LOG（ link_score小于70），说明是网络信号不好卡顿延迟：<br>39313 07-05 11:13:50.521 <6>[ 7662.347991] (1)[1261:tx_thread][wlan]nicCmdEventQueryStaStatistics:(P2P INFO) link_score=11, rssi=78, rate=81, threshold_cnt=2780,。</6></p>
+<p>3.假如是LatencyF 太长，请帮忙设置如下property并抓LOG复现（需要提供mtklog和netlog）。<br>  adb root<br>  adb shell setenforce 0<br>  //Android O版本以及之前的版本<br>  adb shell setprop mtk.omx.enable.venc.log 1<br>  //Android P版本<br>  adb shell setprop vendor.mtk.omx.enable.venc.log 2</p>
+<h2 id="如何分析丢包率"><a href="#如何分析丢包率" class="headerlink" title="如何分析丢包率"></a>如何分析丢包率</h2><h2 id="miracast连接超时问题分析"><a href="#miracast连接超时问题分析" class="headerlink" title="miracast连接超时问题分析"></a>miracast连接超时问题分析</h2><h2 id="sink端显示问题一般处理策略"><a href="#sink端显示问题一般处理策略" class="headerlink" title="sink端显示问题一般处理策略"></a>sink端显示问题一般处理策略</h2><h3 id="播放卡顿的厘清方向-source"><a href="#播放卡顿的厘清方向-source" class="headerlink" title="播放卡顿的厘清方向(source)"></a>播放卡顿的厘清方向(source)</h3><h3 id="播放卡顿的厘清方向-sink"><a href="#播放卡顿的厘清方向-sink" class="headerlink" title="播放卡顿的厘清方向(sink)"></a>播放卡顿的厘清方向(sink)</h3><p>1 在测试之前，需要先在屏蔽室中测试手机的吞吐量，看看是否正常。</p>
+<p>2  在测试之前也要先确保硬件没有问题，比如接收灵敏度，EVM，天线效能等硬件因素要是ok的。</p>
+<p>3  测试时首先选择一个比较干净的环境进行测试。</p>
+<p>4  使用sniffer 设备在全信道上扫描，看看周围AP在各信道上的分布</p>
+<p>5  在测试时，最好是选择比较空闲的信道进行测试，可以这样设置：先设置AP的信道为空闲信道，然后手机连接AP，手机再连接dongle，断开AP，此时WFD的连接就处于空闲信道了。</p>
+<p>6  如果一定要在比较繁忙的信道上测试，首先要在这个信道上使用iperf打吞吐量，如果数据可以稳定在15Mbps以上，就可以进行测试。</p>
+<p>7  测试时，请同时拿对比机进行测试，如果遇到卡顿现象，请换一只手机进行测试，也可以再测试一次此时的吞吐量，看看是否有变。</p>
+<p>8  测试时，可以在空闲的时段进行测试，比如下班后，或者周末的时间等</p>
+<p>若只是SINK端卡顿，通常的原因有：<br>1.mdp做resize和rotate慢<br>2.encoder做视频编码慢<br>3.ANetworksession调用socket接口将已打好包的rtp a\v data发送有延迟<br>4.network wifi环境问题<br>5.SINK端本身拆包解码慢</p>
+<p>逆向分析比较容易快速厘清问题，贵司可以先通过mainlog和netlog快速厘清是否是网络或者SINK端本身问题。<br>首先请通过mtklogger apk，勾选moblie log和net log，然后开始复现问题，抓取分析资料.<br>再通过netlog导出SOURCE发送给SINK端的rtp数据，并通过wireshark将rtp包生成ts文件,直接在PC上查看播放视频（可以用vlc视频播放器直接打开），查看视频播放是否有卡顿现象。<br>若视频本身在PC上播放卡顿，请提交eservice，并附带mtklog（mobile log&amp; net log）等文件；<br>若视频本身在PC上播放不卡顿，则surface-&gt;mdp-&gt;encoder-&gt;ANetworksession\socket这一路正常，推荐贵司做下面测试：<br>1）用对比机测试看是否也有同样问题；<br>2）可以把附件视频ts文件直接通过usb的方式，在TV上播放，若播放卡顿，则是5.SINK端本身拆包解码慢；<br>3）测试当前wifi网络环境，在纯净wifi网络环境下再进行测试。<br>若还没有找到原因，请提交eservice，说明贵司分析现状以及测试实验结果，并附带mtklog（mobile log&amp; net log）等文件。</p>
+<p>通常网络不稳定导致的sink端卡顿会有下面log<br>1)link_score不稳定等于100<br>05-31 14:01:09.326144 1238 2086 D WifiP2pService: link_score=10<br>05-31 14:01:11.329835 1238 2086 D WifiP2pService: link_score=8<br>05-31 14:01:13.331112 1238 2086 D WifiP2pService: link_score=10<br>05-31 14:01:15.332513 1238 2086 D WifiP2pService: link_score=10<br>~<br>05-31 14:02:31.387187 1238 2086 D WifiP2pService: link_score=71<br>05-31 14:02:33.391052 1238 2086 D WifiP2pService: link_score=58<br>05-31 14:02:35.390564 1238 2086 D WifiP2pService: link_score=73<br>05-31 14:02:37.393885 1238 2086 D WifiP2pService: link_score=54</p>
+<p>2)Netowrksession打印出来send cost时间较长<br>05-31 14:01:35.820162 413 10936 I NetworkSession: [WFD_P][audo][dummy=0]ts=13041028 ms,in 13041053 ms,out 13044779 ms, mLatencyF 24 ms,send cost 3725 ms,LatencyT 3750 ms<br>05-31 14:01:35.820302 413 10936 I NetworkSession: [WFD_P][audo][dummy=0]ts=13041049 ms,in 13041054 ms,out 13044779 ms, mLatencyF 4 ms,send cost 3725 ms,LatencyT 3729 ms</p>
+<h3 id="高通平台的花屏问题一般分析方向"><a href="#高通平台的花屏问题一般分析方向" class="headerlink" title="高通平台的花屏问题一般分析方向"></a>高通平台的花屏问题一般分析方向</h3><h3 id="MTK平台的花屏问题一般分析方向"><a href="#MTK平台的花屏问题一般分析方向" class="headerlink" title="MTK平台的花屏问题一般分析方向"></a>MTK平台的花屏问题一般分析方向</h3><p>参见：[FAQ21608] WFD图像花屏问题</p>
+<p>step1: 用wireshark打开netlog，并过滤出RTP包，分析丢包率</p>
+<p>step2: 发现了丢包，那么说明花屏是正常的，假如仍然要分析问题，可以去搜索kernel_log里面的link_score关键字。如果出现如下LOG（ link_score小于70），说明是网络信号不好导致丢帧：<br>39313 07-05 11:13:50.521 <6>[ 7662.347991] (1)[1261:tx_thread][wlan]nicCmdEventQueryStaStatistics:(P2P INFO) link_score=11, rssi=78, rate=81, threshold_cnt=2780,</6></p>
+<p>step3:如果发现没有丢包，但是出现了花屏。可以在如下界面把ts数据dump出来，然后拿PC端的播放器播放</p>
+<p>step4:如果发现播放器播放是OK的，那么说明是TV或者其他显示设备的问题，跟平台无关，亲自行去找TV厂商沟通</p>
+<p>step5:如果发现播放有问题，请帮忙提供mtklog，且需要打开netlog</p>
+<h1 id="WFD几个典型案例"><a href="#WFD几个典型案例" class="headerlink" title="WFD几个典型案例"></a>WFD几个典型案例</h1><p>参考了：</p>
+<p><a href="https://online.mediatek.com/FAQ#/SW/FAQ21609" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21609</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ21608" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21608</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ08527" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ08527</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ21602" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21602</a></p>
+
       
     </div>
     
@@ -510,6 +576,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/10/02/RTSP协议概述以及应用/" rel="prev" title="RTSP&RTP协议概述以及应用">
+                RTSP&RTP协议概述以及应用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -563,8 +633,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -583,7 +662,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -594,7 +673,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -626,6 +705,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#WFD扫盲"><span class="nav-number">1.</span> <span class="nav-text">WFD扫盲</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#miracast简介"><span class="nav-number">1.1.</span> <span class="nav-text">miracast简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用层如何操作WFD？"><span class="nav-number">1.2.</span> <span class="nav-text">应用层如何操作WFD？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#芯片商在谷歌基础上的定制化"><span class="nav-number">1.3.</span> <span class="nav-text">芯片商在谷歌基础上的定制化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高通WFD"><span class="nav-number">1.4.</span> <span class="nav-text">高通WFD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WFD的应用场景"><span class="nav-number">1.5.</span> <span class="nav-text">WFD的应用场景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高通WFD代码结构"><span class="nav-number">2.</span> <span class="nav-text">高通WFD代码结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RTSP协议"><span class="nav-number">3.</span> <span class="nav-text">RTSP协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WFD代码连接流程"><span class="nav-number">4.</span> <span class="nav-text">WFD代码连接流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#M-Message消息"><span class="nav-number">5.</span> <span class="nav-text">M-Message消息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#P2P以及RTSP的的建立"><span class="nav-number">6.</span> <span class="nav-text">P2P以及RTSP的的建立</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#p2p的建立"><span class="nav-number">6.1.</span> <span class="nav-text">p2p的建立</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RTSP的建立"><span class="nav-number">6.2.</span> <span class="nav-text">RTSP的建立</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WFD整体架构-source"><span class="nav-number">7.</span> <span class="nav-text">WFD整体架构(source)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WFD常见问题的debug策略"><span class="nav-number">8.</span> <span class="nav-text">WFD常见问题的debug策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Wifi-Display-Miracast分析一般需要的日志"><span class="nav-number">8.1.</span> <span class="nav-text">Wifi-Display/Miracast分析一般需要的日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高通平台"><span class="nav-number">8.1.1.</span> <span class="nav-text">高通平台</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联发科平台"><span class="nav-number">8.1.2.</span> <span class="nav-text">联发科平台</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何分析丢包率"><span class="nav-number">8.2.</span> <span class="nav-text">如何分析丢包率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#miracast连接超时问题分析"><span class="nav-number">8.3.</span> <span class="nav-text">miracast连接超时问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sink端显示问题一般处理策略"><span class="nav-number">8.4.</span> <span class="nav-text">sink端显示问题一般处理策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#播放卡顿的厘清方向-source"><span class="nav-number">8.4.1.</span> <span class="nav-text">播放卡顿的厘清方向(source)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#播放卡顿的厘清方向-sink"><span class="nav-number">8.4.2.</span> <span class="nav-text">播放卡顿的厘清方向(sink)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高通平台的花屏问题一般分析方向"><span class="nav-number">8.4.3.</span> <span class="nav-text">高通平台的花屏问题一般分析方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MTK平台的花屏问题一般分析方向"><span class="nav-number">8.4.4.</span> <span class="nav-text">MTK平台的花屏问题一般分析方向</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WFD几个典型案例"><span class="nav-number">9.</span> <span class="nav-text">WFD几个典型案例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -667,7 +762,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共30.1k字</span>
+  <span class="post-count">Steven的博客共33.3k字</span>
 </div>
         
 

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2019-12-15T08:38:27.618Z</updated>
+  <updated>2019-12-15T08:58:46.697Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://lihaizhou.top/2019/12/15/Android-%E4%B8%A2%E5%B8%A7%E5%88%86%E6%9E%90%E4%B8%B4%E6%97%B6%E8%8D%89%E7%A8%BF/"/>
     <id>http://lihaizhou.top/2019/12/15/Android-丢帧分析临时草稿/</id>
     <published>2019-12-15T07:39:19.000Z</published>
-    <updated>2019-12-15T08:38:27.618Z</updated>
+    <updated>2019-12-15T08:58:46.697Z</updated>
     
     <content type="html"><![CDATA[<p>用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下：</p><p>1 内存不足<br>2 app使用的绘制方式区别<br>3 app使用的编译方式区别<br>4 app自身问题</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\MI</span><br><span class="line">λ adb shell cat /proc/meminfo</span><br><span class="line">MemTotal:        <span class="number">5871128</span> kB</span><br><span class="line">MemFree:         <span class="number">1215492</span> kB</span><br><span class="line">MemAvailable:    <span class="number">3631296</span> kB</span><br><span class="line">Buffers:           <span class="number">91956</span> kB</span><br><span class="line">Cached:          <span class="number">2432140</span> kB</span><br></pre></td></tr></table></figure><p>比较多的Uninterruptible Sleep，block 在__lock_page_or_retry </p><p>另外proc/meminfo中 可用内存非常少、且swap空间几乎耗尽 、lmk频繁打印等等都能从侧面反映内存偏低</p><p>app使用的绘制方式区别<br>相同app的软件绘制与硬件绘制对比：</p><p>软件绘制：</p><p>硬件加速<br>Android3.0开始支持硬件加速，Android4.0 默认启用硬件加速。但是app还是能主动设置 hardwareAccelerated 来切换两种模式</p><p>硬件绘制就是将CPU不擅长的图形计算转换成GPU专用指令，由GPU完成。</p><p>优点：</p><p>1）显著提升UI绘速度</p><p>2） 更新UI只重绘脏区域，提升刷新速度</p><p>缺点：</p><p>内存和电量消耗会比软件绘制大</p><p>3 app使用的编译方式区别<br>留意是否有编译方式的区别：</p><p>解释模式编译.dex文件肯定比直接执行.oat文件要来的慢</p><p>4 app自身问题<br>视图太复杂层级太深、主线程有耗时方法</p><p>DrawFrame过程很长，且基本是出于running状态时，可能视图过于复杂</p><p>主线程方法耗时的话，那需要通过加trace Label缩小范围，然后利用traceView对具体方法进行耗时分析</p>]]></content>
     

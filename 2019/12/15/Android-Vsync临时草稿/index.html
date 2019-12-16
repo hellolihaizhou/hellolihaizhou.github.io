@@ -88,16 +88,26 @@
 
 
 
-<meta name="description" content="红红火火">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:url" content="http://lihaizhou.top/page/3/index.html">
+<meta name="description" content="Vsync作用-Drawing without Sync Step1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个VSync快来前才开始处理Step">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-Vsync临时草稿">
+<meta property="og:url" content="http://lihaizhou.top/2019/12/15/Android-Vsync临时草稿/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="红红火火">
+<meta property="og:description" content="Vsync作用-Drawing without Sync Step1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个VSync快来前才开始处理Step">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-1.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-4.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-2-dispsync.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-3.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-5.jpg?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync_6_disp_sync_arch.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-7.jpg?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-8.jpg?raw=true">
+<meta property="og:updated_time" content="2019-12-16T13:46:21.003Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Qiu&amp;Lee&amp;Dai">
-<meta name="twitter:description" content="红红火火">
+<meta name="twitter:title" content="Android-Vsync临时草稿">
+<meta name="twitter:description" content="Vsync作用-Drawing without Sync Step1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个VSync快来前才开始处理Step">
+<meta name="twitter:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-1.png?raw=true">
 
 
 
@@ -127,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/page/3/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2019/12/15/Android-Vsync临时草稿/"/>
 
 
 
 
 
-  <title>Qiu&Lee&Dai</title>
+  <title>Android-Vsync临时草稿 | Qiu&Lee&Dai</title>
   
 
 
@@ -152,8 +162,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
@@ -302,9 +311,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -317,7 +326,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/12/15/Android-Vsync临时草稿/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="追击的树袋熊">
@@ -334,9 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="url">低内存引发的一点思考</a></h1>
+          <h1 class="post-title" itemprop="name headline">Android-Vsync临时草稿</h1>
         
 
         <div class="post-meta">
@@ -348,8 +355,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T20:37:55+08:00">
-                2018-05-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-15T20:42:18+08:00">
+                2019-12-15
               </time>
             
 
@@ -371,8 +378,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/性能/" itemprop="url" rel="index">
-                    <span itemprop="name">性能</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -389,8 +396,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="commentCount"></span>
+                <a href="/2019/12/15/Android-Vsync临时草稿/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/12/15/Android-Vsync临时草稿/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -412,7 +419,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,255
+                  2,137
                 </span>
               
 
@@ -428,7 +435,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  8
                 </span>
               
             </div>
@@ -449,20 +456,47 @@
       
 
       
-        
-          
-          问题平台Android 7.1.1  MT6739
-问题现象需要常驻的进程经常被kill，界面操作不流畅
-日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看ker
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/13/低内存引发的LowMemoryKiller思考/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+        <p>Vsync作用-Drawing without Sync</p>
+<p>Step1. Display显示第0帧数据，此时CPU和GPU<br>渲染第1帧画面，而且赶在Display显示下一帧<br>前完成<br>Step2. 因为渲染及时，Display在第0帧显示完<br>成后，也就是第1个VSync后，正常显示第1帧<br>Step3. 由于某些原因，比如CPU资源被占用，<br>系统没有及时地开始处理第2帧，直到第2个<br>VSync快来前才开始处理<br>Step4. 第2个VSync来时，由于第2帧数据还没<br>有准备就绪，显示的还是第1帧。这种情况被<br>Android开发组命名为“Jank”。<br>Step5. 当第2帧数据准备完成后，它并不会马<br>上被显示，而是要等待下一个VSync。</p>
+<p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-1.png?raw=true" alt=""></p>
+<p>这个图中还有个值得注意的地方就是FramebufferSurface,这个代表最终合成的数据<br>可以看到sf合成后这个数值变为了1，display显示后这个数值又变为了0</p>
+<p>让CPU GPU渲染工作都在一个Vsync周期工作，保<br>证绘制的步调和屏幕刷新的步调一致，为此<br>Android引入另外两个软件VSync信号，VSYNC-sf<br>和VSYNC-app，<br>VSYNC-sf用于触发SurfaceFlinger合成<br>VSYNC-app用于触发app 绘制<br>这几个信号可通过systrace观察到<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-4.png?raw=true" alt=""></p>
+<p>有个问题，因为 VSYNC 是由硬件产生的，一旦产生了你就必须开始干活，不灵活。假设有这么一种需求，我希望在 VSYNC 偏移一段时间以后再干活，那么这个是硬件 VSYNC 提供不了，所以这个时候就必须引入软件模型。而 DispSync 就是为了解决这个需求引入的软件模型。DispSync 类似于一个 PLL（phase lock loop，锁相回路），它通过接收硬件 VSYNC，然后给其他关心硬件 VSYNC 的组件（SurfaceFlinger 和需要渲染的 app）在指定的偏移以后发送软件 VSYNC，并且当误差在可接受的范围内，将会关闭硬件 VSYNC</p>
+<p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-2-dispsync.png?raw=true" alt="dispsync"></p>
+<p>Vsync虚拟化（Vsync App + Vsync SurfaceFlinger）：</p>
+<p>　　虽然vsync使得CPU/GPU/Display同步了，但App UI和SurfaceFlinger的工作显然是一个流水线的模型。即对于一帧内容，先等App UI画完了，SurfaceFlinger再出场对其进行合并渲染后放入framebuffer，最后整到屏幕上。而现有的VSync模型是让大家一起开始干活，这样对于同一帧内容，第一个VSync信号时App UI的数据开始准备，第二个VSync信号时SurfaceFlinger工作，第三个VSync信号时用户看到Display内容，这样就两个VSync period(每个16ms)过去了，影响用户体验。<br>　　解决思路：SurfaceFlinger在App UI准备好数据后及时开工做合成。</p>
+<p>　　Android 4.4(KitKat)引入了VSync的虚拟化，即把硬件的VSync信号先同步到一个本地VSync模型中，再从中一分为二，引出两条VSync时间与之有固定偏移的线程。示意图如下：</p>
+<p>  <img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-3.png?raw=true" alt=""></p>
+<p>第一阶段：App 在收到 Vsync-App 的时候，在主线程进行 measure、layout、draw(构建 DisplayList , 里面包含 OpenGL 渲染需要的命令及数据) 。这里对应的 Systrace 中的主线程 doFrame 操作<br>第二阶段：CPU 将数据上传（共享或者拷贝）给 GPU,　这里 ARM 设备 内存一般是 GPU 和 CPU 共享内存。这里对应的 Systrace 中的渲染线程的 flush drawing commands 操作<br>第三阶段：通知 GPU 渲染，真机一般不会阻塞等待 GPU 渲染结束，CPU 通知结束后就返回继续执行其他任务，使用 Fence 机制辅助 GPU CPU 进行同步操作<br>第四 阶段：swapBuffers，并通知 SurfaceFlinger 图层合成。这里对应的 Systrace 中的渲染线程的 eglSwapBuffersWithDamageKHR 操作<br>第五阶段：SurfaceFlinger 开始合成图层，如果之前提交的 GPU 渲染任务没结束，则等待 GPU 渲染完成，再合成（Fence 机制），合成依然是依赖 GPU，不过这就是下一个任务了.这里对应的 Systrace 中的 SurfaceFlinger 主线程的 onMessageReceived 操作（包括 handleTransaction、handleMessageInvalidate、handleMessageRefresh）SurfaceFlinger 在合成的时候，会将一些合成工作委托给 Hardware Composer,从而降低来自 OpenGL 和 GPU 的负载，只有 Hardware Composer 无法处理的图层，或者指定用 OpenGL 处理的图层，其他的 图层偶会使用 Hardware Composer 进行合成<br>第六阶段 ：最终合成好的数据放到屏幕对应的 Frame Buffer 中，固定刷新的时候就可以看到了</p>
+<p>通过systrace看数据流向<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-5.jpg?raw=true" alt=""></p>
+<p>上图中主要包含 SurfaceFlinger、App 和 hwc 三个进程，下面就来结合图中的标号，来进一步说明数据的流向</p>
+<ul>
+<li>第一个 Vsync 信号到来, SurfaceFlinger 和 App 同时收到 Vsync 信号</li>
+<li>SurfaceFlinger 收到 Vsync-sf 信号，开始进行 App 上一帧的 Buffer 的合成</li>
+<li>App 收到 Vsyc-app 信号，开始进行这一帧的 Buffer 的渲染(对应上面的第一、二、三、四阶段)</li>
+<li>第二个 Vsync 信号到来 ，SurfaceFlinger 和 App 同时收到 Vsync 信号，SurfaceFlinger 获取 App 在第二步里面渲染的 Buffer，开始合成（对应上面的第五阶段），App 收到 Vsycn-app 信号，开始新一帧的 Buffer 的渲染(对应上面的第一、二、三、四阶段)</li>
+</ul>
+<h3 id="Vsync-offset"><a href="#Vsync-offset" class="headerlink" title="Vsync offset"></a>Vsync offset</h3><p>文章最开始有提到，Vsync 信号可以由硬件产生，也可以用软件模拟，不过现在基本上都是硬件产生，负责产生硬件 Vsync 的是 HWC,HWC 可生成 VSYNC 事件并通过回调将事件发送到 SurfaceFlinge , DispSync 将 Vsync 生成由 Choreographer 和 SurfaceFlinger 使用的 VSYNC_APP 和 VSYNC_SF 信号.</p>
+<p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync_6_disp_sync_arch.png?raw=true" alt=""></p>
+<p>其中 app 和 sf 相对 hw_vsync_0 都有一个偏移,即 phase-app 和 phase-sf，如下图<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-7.jpg?raw=true" alt=""></p>
+<p>Vsync Offset 我们指的是 VSYNC_APP 和 VSYNC_SF 之间有一个 Offset，即上图中 phase-sf - phase-app 的值，这个 Offset 是厂商可以配置的。如果 Offset 不为 0，那么意味着 App 和 SurfaceFlinger 主进程不是同时收到 Vsync 信号，而是间隔 Offset (通常在 0 - 16.6ms 之间)</p>
+<p>目前大部分厂商都没有配置这个 Offset，所以 App 和 SurfaceFlinger 是同时收到 Vsync 信号的.</p>
+<p>可以通过 Dumpsys SurfaceFlinger 来查看对应的值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\MI</span><br><span class="line">λ adb shell dumpsys SurfaceFlinger|grep <span class="string">"app phase"</span></span><br><span class="line">   app phase:   <span class="number">8300000</span> ns      SF phase:   <span class="number">8300000</span> ns</span><br></pre></td></tr></table></figure>
+<p>Offset 为 0<br>首先说 Offset 为 0 的情况， 此时 App 和 SurfaceFlinger 是同时收到 Vsync 信号 ， 其对应的 Systrace 图如下</p>
+<p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-8.jpg?raw=true" alt=""><br>这个图上面也有讲解，这里就不再详细说明，大家只需要看到，App 渲染好的 Buffer，要等到下一个 Vsync-SF 来的时候才会被 SurfaceFlinger 拿去做合成，这个时间大概在 16.6 ms。这时候大家可能会想，如果 App 的 Buffer 渲染结束，Swap 到 BufferQueue 中 ，就触发 SurfaceFlinger 去做合成，那岂不是省了一些时间(0-16.6ms )?</p>
+<p>答案是可行的，这也就引入了 Offset 机制，在这种情况下，App 先收到 Vsync 信号，进行一帧的渲染工作，然后过了 Offset 时间后，SurfaceFlinger 才收到 Vsync 信号开始合成，这时候如果 App 的 Buffer 已经 Ready 了，那么 SurfaceFlinger 这一次合成就可以包含 App 这一帧，用户也会早一点看到。</p>
+<p>Offset 的优缺点</p>
+<ul>
+<li><p>Offset 的一个比较难以确定的点就在与 Offset 的时间该如何设置，这也是众多厂商默认都不进行配置 Offset 的一个原因，其优缺点是动态的，与机型的性能和使用场景有很大的关系</p>
+</li>
+<li><p>如果 Offset 配置过短，那么可能 App 收到 Vsync-App 后还没有渲染完成，SurfaceFlinger 就收到 Vsync-SF 开始合成，那么此时如果 App 的 BufferQueue 中没有之前累积的 Buffer，那么 SurfaceFlinger 这次合成就不会有 App 的东西在里面，需要等到下一个 Vsync-SF 才能合成这次 App 的内容，时间相当于变成了 Vsync 周期+Offset，而不是我们期待的 Offset<br>如果 Offset 配置过长，就起不到作用了</p>
+</li>
+</ul>
+<h3 id="HW-Vsync"><a href="#HW-Vsync" class="headerlink" title="HW_Vsync"></a>HW_Vsync</h3><p>这里需要说明的是，不是每次申请 Vsync 都会由硬件产生 Vsync，只有此次请求 vsync 的时间距离上次合成时间大于 500ms，才会通知 hwc，请求 HW_VSYNC</p>
+<p>以桌面滑动为例，看 SurfaceFlinger 的进程 Trace 可以看到 HW_VSYNC 的状态</p>
+<p>HW_VSYNC 主要是利用最近的硬件 VSYNC 来做预测,最少要 3 个,最多是 32 个,实际上要用几个则不一定, DispSync 拿到 6 个 VSYNC 后就会计算出 SW_VSYNC,只要收到的 Present Fence 没有超过误差,硬件 VSYNC 就会关掉,不然会继续接收硬件 VSYNC 计算 SW_VSYNC 的值,直到误差小于 threshold.</p>
+
       
     </div>
     
@@ -471,6 +505,13 @@
 	
 	<div>
 	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
     </div>
 	
     
@@ -478,212 +519,51 @@
     
 
     
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    追击的树袋熊
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2019/12/15/Android-Vsync临时草稿/" title="Android-Vsync临时草稿">http://lihaizhou.top/2019/12/15/Android-Vsync临时草稿/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
 
     <footer class="post-footer">
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="追击的树袋熊">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Qiu&Lee&Dai">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/11/一个定屏重启的问题分析/" itemprop="url">一个定屏重启的问题分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T17:26:17+08:00">
-                2018-05-11
-              </time>
+              <a href="/2019/12/15/Android-丢帧分析临时草稿/" rel="next" title="Android-丢帧分析临时草稿">
+                <i class="fa fa-chevron-left"></i> Android-丢帧分析临时草稿
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/移动开发/" itemprop="url" rel="index">
-                    <span itemprop="name">移动开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/11/一个定屏重启的问题分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/11/一个定屏重启的问题分析/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,256
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  6
-                </span>
-              
-            </div>
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-          问题平台Android 7.1.1    MT6739
-问题现象界面定屏并重启
-初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/11/一个定屏重启的问题分析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-    </div>
-	
-    
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -693,14 +573,11 @@
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -708,6 +585,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -728,8 +612,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -791,6 +684,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsync-offset"><span class="nav-number">1.</span> <span class="nav-text">Vsync offset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HW-Vsync"><span class="nav-number">2.</span> <span class="nav-text">HW_Vsync</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -944,6 +853,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

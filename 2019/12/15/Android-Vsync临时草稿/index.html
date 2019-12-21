@@ -106,7 +106,7 @@
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync_6_disp_sync_arch.png?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-7.jpg?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-8.jpg?raw=true">
-<meta property="og:updated_time" content="2019-12-21T09:02:04.611Z">
+<meta property="og:updated_time" content="2019-12-21T10:02:06.261Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android-Vsync临时草稿">
 <meta name="twitter:description" content="本文目的在于通过了解Vsync工作原理加深对systrace的理解 在 Systrace 中我们可以看到，Android 系统在 Vsync 信号的指引下，有条不紊地进行者每一帧的渲染、合成操作，使我们可以享受稳定帧率的画面。 Vsync作用-Drawing without SyncStep1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成">
@@ -422,7 +422,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,262
+                  3,244
                 </span>
               
 
@@ -438,7 +438,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  14
+                  13
                 </span>
               
             </div>
@@ -468,27 +468,28 @@
 <p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-10.png?raw=true" alt=""></p>
 <p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-11.png?raw=true" alt=""></p>
 <p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-12.png?raw=true" alt=""></p>
-<p>因为 VSYNC 是由硬件产生的，一旦产生了就必须开始干活，不灵活。假设有这么一种需求，我希望在 VSYNC 偏移一段时间以后再干活，那么这个是硬件 VSYNC 提供不了，所以这个时候就必须引入软件模型。而 DispSync 就是为了解决这个需求引入的软件模型。<br>DispSync 类似于一个 PLL（phase lock loop，锁相回路），它通过接收硬件 VSYNC，然后给其他关心硬件 VSYNC 的组件（SurfaceFlinger 和需要渲染的 app）在指定的偏移以后发送软件 VSYNC，并且当误差在可接受的范围内，将会关闭硬件 VSYNC<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-2-dispsync.png?raw=true" alt="dispsync"><br>SurfaceFlinger将HWComposer收到新的Vsync timestamp交给DispSync::addResyncSample决定是否需要继续输入HW_VSYNC_0<br>同时，DispSync根据HWComposer传过来的retire fence timestamps来检查SW_VSYNC</p>
+<p>因为 VSYNC 是由硬件产生的，一旦产生了就必须开始干活，不灵活。假设有这么一种需求，我希望在 VSYNC 偏移一段时间以后再干活，那么这个是硬件 VSYNC 提供不了，所以这个时候就必须引入软件模型。而 DispSync 就是为了解决这个需求引入的软件模型。<br>DispSync 类似于一个 PLL（phase lock loop，锁相回路），它通过接收硬件 VSYNC，然后给其他关心硬件 VSYNC 的组件（SurfaceFlinger 和需要渲染的 app）在指定的偏移以后发送软件 VSYNC，并且当误差在可接受的范围内，将会关闭硬件 VSYNC<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-2-dispsync.png?raw=true" alt="dispsync"><br>SurfaceFlinger将HWComposer收到新的Vsync-timestamp交给DispSync::addResyncSample来决定是否还需要继续输入HW_VSYNC_0</p>
+<p>与此同时,DispSync会根据HWComposer传过来的retire-fence-timestamps来检查SW_VSYNC</p>
 <p>Vsync虚拟化（Vsync App + Vsync SurfaceFlinger）：<br>虽然vsync使得CPU/GPU/Display同步了，但App UI和SurfaceFlinger的工作显然是一个流水线的模型。即对于一帧内容，先等App UI画完了，SurfaceFlinger再出场对其进行合并渲染后放入framebuffer，最后整到屏幕上。<br>而现有的VSync模型是让大家一起开始干活，这样对于同一帧内容，第一个VSync信号时App UI的数据开始准备，第二个VSync信号SurfaceFlinger工作，第三个VSync信号时用户看到Display内容，这样就两个VSync period(每个16ms)过去了，影响用户体验。<br>解决思路：SurfaceFlinger在App UI准备好数据后及时开工做合成。</p>
 <p>Android 4.4(KitKat)引入了VSync的虚拟化，即把硬件的VSync信号先同步到一个本地VSync模型中，再从中一分为二，引出两条VSync时间与之有固定偏移的线程。示意图如下：<br>  <img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-3.png?raw=true" alt=""></p>
-<p>第一阶段：<br>App 在收到 Vsync-App 的时候，在主线程进行 measure、layout、draw(构建 DisplayList , 里面包含 OpenGL 渲染需要的命令及数据) 。这里对应的 Systrace 中的主线程 doFrame 操作<br>第二阶段：<br>CPU 将数据上传（共享或者拷贝）给 GPU,　这里 ARM 设备 内存一般是 GPU 和 CPU 共享内存。这里对应的 Systrace 中的渲染线程的 flush drawing commands 操作<br>第三阶段：<br>通知 GPU 渲染，真机一般不会阻塞等待 GPU 渲染结束，CPU 通知结束后就返回继续执行其他任务，使用 Fence 机制辅助 GPU CPU 进行同步操作<br>第四 阶段：<br>swapBuffers，并通知 SurfaceFlinger 图层合成。这里对应的 Systrace 中的渲染线程的 eglSwapBuffersWithDamageKHR 操作<br>第五阶段：<br>SurfaceFlinger 开始合成图层，如果之前提交的 GPU 渲染任务没结束，则等待 GPU 渲染完成，再合成（Fence 机制），合成依然是依赖 GPU，不过这就是下一个任务了.这里对应的 Systrace 中的 SurfaceFlinger 主线程的 onMessageReceived 操作（包括 handleTransaction、handleMessageInvalidate、handleMessageRefresh）SurfaceFlinger 在合成的时候，会将一些合成工作委托给 Hardware Composer,从而降低来自 OpenGL 和 GPU 的负载，只有 Hardware Composer 无法处理的图层，或者指定用 OpenGL 处理的图层，其他的 图层偶会使用 Hardware Composer 进行合成<br>第六阶段 ：最终合成好的数据放到屏幕对应的 Frame Buffer 中，固定刷新的时候就可以看到了</p>
+<p>第一阶段：<br>App 在收到 Vsync-App 的时候，在主线程进行 measure、layout、draw(构建 DisplayList , 里面包含 OpenGL 渲染需要的命令及数据) 。这里对应的 Systrace 中的主线程 doFrame 操作<br>第二阶段：<br>CPU 将数据上传（共享或者拷贝）给 GPU,　这里 ARM 设备 内存一般是 GPU 和 CPU 共享内存。这里对应的 Systrace 中的渲染线程的 flush drawing commands 操作<br>第三阶段：<br>通知 GPU 渲染，真机一般不会阻塞等待 GPU 渲染结束，CPU 通知结束后就返回继续执行其他任务，使用 Fence 机制辅助 GPU CPU 进行同步操作<br>第四 阶段：<br>swapBuffers，并通知 SurfaceFlinger 图层合成。这里对应的 Systrace 中的渲染线程的 eglSwapBuffersWithDamageKHR 操作<br>第五阶段：<br>SurfaceFlinger开始合成图层，如果之前提交的GPU渲染任务没结束，则等待GPU渲染完成，再合成（Fence机制），合成依然是依赖GPU，不过这就是下一个任务了.这里对应的Systrace中的SurfaceFlinger主线程的 onMessageReceived操作（包括 handleTransaction、handleMessageInvalidate、handleMessageRefresh）SurfaceFlinger 在合成的时候，会将一些合成工作委托给Hardware Composer,从而降低来自 OpenGL和GPU的负载，只有Hardware Composer 无法处理的图层，或者指定用OpenGL处理的图层，其他的 图层偶会使用Hardware Composer进行合成<br>第六阶段 ：最终合成好的数据放到屏幕对应的Frame Buffer中，固定刷新的时候就可以看到了</p>
 <p>通过systrace看数据流向<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-5.jpg?raw=true" alt=""></p>
 <p>上图中主要包含 SurfaceFlinger、App 和 hwc 三个进程，下面就来结合图中的标号，来进一步说明数据的流向</p>
 <ul>
-<li>第一个 Vsync 信号到来, SurfaceFlinger 和 App 同时收到 Vsync 信号</li>
-<li>SurfaceFlinger 收到 Vsync-sf 信号，开始进行 App 上一帧的 Buffer 的合成</li>
-<li>App 收到 Vsyc-app 信号，开始进行这一帧的 Buffer 的渲染(对应上面的第一、二、三、四阶段)</li>
-<li>第二个 Vsync 信号到来 ，SurfaceFlinger 和 App 同时收到 Vsync 信号，SurfaceFlinger 获取 App 在第二步里面渲染的 Buffer，开始合成（对应上面的第五阶段），App 收到 Vsycn-app 信号，开始新一帧的 Buffer 的渲染(对应上面的第一、二、三、四阶段)</li>
+<li>第一个Vsync信号到来, SurfaceFlinger和App同时收到Vsync信号</li>
+<li>SurfaceFlinger收到Vsync-sf信号，开始进行App上一帧的Buffer的合成</li>
+<li>App收到Vsyc-app信号，开始进行这一帧的Buffer的渲染(对应上面的第一、二、三、四阶段)</li>
+<li>第二个Vsync信号到来 ,SurfaceFlinger和App同时收到Vsync信号，SurfaceFlinger获取App在第二步里面渲染的Buffer,开始合成(对应上面的第五阶段),App收到Vsycn-app 信号，开始新一帧的Buffer的渲染(对应上面的第一、二、三、四阶段)</li>
 </ul>
-<h3 id="Vsync-offset"><a href="#Vsync-offset" class="headerlink" title="Vsync offset"></a>Vsync offset</h3><p>文章最开始有提到，Vsync 信号可以由硬件产生，也可以用软件模拟，不过现在基本上都是硬件产生，负责产生硬件 Vsync 的是 HWC,HWC 可生成 VSYNC 事件并通过回调将事件发送到 SurfaceFlinge , DispSync 将 Vsync 生成由 Choreographer 和 SurfaceFlinger 使用的 VSYNC_APP 和 VSYNC_SF 信号.</p>
+<h3 id="Vsync-offset"><a href="#Vsync-offset" class="headerlink" title="Vsync offset"></a>Vsync offset</h3><p>文章最开始有提到，Vsync信号可以由硬件产生，也可以用软件模拟，不过现在基本上都是硬件产生，负责产生硬件Vsync的是HWC,HWC 可生成 VSYNC事件并通过回调将事件发送到 SurfaceFlinge , DispSync将Vsync 生成由Choreographer和SurfaceFlinger使用的VSYNC_APP 和 VSYNC_SF 信号.</p>
 <p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync_6_disp_sync_arch.png?raw=true" alt=""></p>
-<p>有一个疑问<br>因此可以看出 SW vsync/App vsync 并不是直接由HW vsync产生的，而是由SW vsync产生的，HW vsync作为SW vsync的参考，动态的更新SW vsync里的模型参数，这样让SW vsync能与HW vsync更加的精确吧。</p>
+<p>有一个疑问<br>因此可以看出SW vsync/App vsync 并不是直接由HW vsync产生的，而是由SW vsync产生的，HW vsync作为SW vsync的参考，动态的更新SW vsync里的模型参数，这样让SW vsync能与HW vsync更加的精确吧。</p>
 <p>那么为什么SurfaceFlinger要用SW vsync而不是直接用HW vsync呢？<br>猜想可能是因为HW vsync每隔固定时间由显示屏产生中断，然后传给driver, driver再回调给SurfaceFlinger, 这样经过层层回调，会对performance有影响吧。而SW vsync直接由SurfaceFlinger产生，省略了很多步骤</p>
 <p>这个文章 <a href="https://www.jianshu.com/p/d3e4b1805c92" target="_blank" rel="noopener">https://www.jianshu.com/p/d3e4b1805c92</a> 很棒</p>
 <p>其中 app 和 sf 相对 hw_vsync_0 都有一个偏移,即 phase-app 和 phase-sf，如下图<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-7.jpg?raw=true" alt=""></p>
-<p>Vsync Offset 我们指的是 VSYNC_APP 和 VSYNC_SF 之间有一个 Offset，即上图中 phase-sf - phase-app 的值，这个 Offset 是厂商可以配置的。如果 Offset 不为 0，那么意味着 App 和 SurfaceFlinger 主进程不是同时收到 Vsync 信号，而是间隔 Offset (通常在 0 - 16.6ms 之间)</p>
-<p>目前大部分厂商都没有配置这个 Offset，所以 App 和 SurfaceFlinger 是同时收到 Vsync 信号的.</p>
-<p>可以通过 Dumpsys SurfaceFlinger 来查看对应的值</p>
+<p>Vsync Offset我们指的是VSYNC_APP和VSYNC_SF之间有一个Offset，即上图中phase-sf - phase-app的值，这个Offset是厂商可以配置的。如果 Offset 不为 0，那么意味着App和SurfaceFlinger主进程不是同时收到Vsync信号，而是间隔Offset(通常在0 - 16.6ms之间)</p>
+<p>目前大部分厂商都没有配置这个Offset，所以App和SurfaceFlinger是同时收到Vsync信号的.</p>
+<p>可以通过Dumpsys SurfaceFlinger来查看对应的值</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\MI</span><br><span class="line">λ adb shell dumpsys SurfaceFlinger|grep <span class="string">"app phase"</span></span><br><span class="line">   app phase:   <span class="number">8300000</span> ns      SF phase:   <span class="number">8300000</span> ns</span><br></pre></td></tr></table></figure>
 <p>Offset 为 0<br>首先说 Offset 为 0 的情况， 此时 App 和 SurfaceFlinger 是同时收到 Vsync 信号 ， 其对应的 Systrace 图如下</p>
 <p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/vsync-8.jpg?raw=true" alt=""><br>这个图上面也有讲解，这里就不再详细说明，大家只需要看到，App 渲染好的 Buffer，要等到下一个 Vsync-SF 来的时候才会被 SurfaceFlinger 拿去做合成，这个时间大概在 16.6 ms。这时候大家可能会想，如果 App 的 Buffer 渲染结束，Swap 到 BufferQueue 中 ，就触发 SurfaceFlinger 去做合成，那岂不是省了一些时间(0-16.6ms )?</p>
@@ -573,6 +574,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/12/21/一个返回卡顿2s问题的分析解决之路/" rel="prev" title="一个返回卡顿2s问题的分析解决之路">
+                一个返回卡顿2s问题的分析解决之路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -655,7 +660,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -755,7 +760,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共37.6k字</span>
+  <span class="post-count">Steven的博客共37.5k字</span>
 </div>
         
 

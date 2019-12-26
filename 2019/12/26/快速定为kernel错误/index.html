@@ -98,7 +98,7 @@
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.png?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/7d36fef5-b40b-439b-bd69-fd65e393e8be.png?raw=true">
 <meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true">
-<meta property="og:updated_time" content="2019-12-26T12:09:36.223Z">
+<meta property="og:updated_time" content="2019-12-26T12:13:09.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="快速定为kernel错误">
 <meta name="twitter:description" content="比如在定位systrace卡顿问题时，最后跟到kernel中 可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”} 123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$">
@@ -469,7 +469,7 @@
 <li>ndk-stack：用来把log信息全部翻译成更加详细的带源码行数信息的log，相当于是在整个crash堆栈信息都执行addr2line命令。</li>
 </ul>
 <p>linux自带addr2line命令。使用Windows的，在sdk中安装了NDK之后，在ndk中就带有这些工具。<br>比如addr2line工具在：sdk\ndk-bundle\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin下面，同时这个bin下面包含很多其他工具，比如objdump，readelf等；<br>ndk-stack工具则在sdk\ndk-bundle下面；</p>
-<h3 id="使用addr2line查找代码位置"><a href="#使用addr2line查找代码位置" class="headerlink" title="使用addr2line查找代码位置"></a>使用addr2line查找代码位置</h3><p>执行如下的命令，多个指针地址可以在<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true" alt="addr2line"></p>
+<h3 id="使用addr2line查找代码位置"><a href="#使用addr2line查找代码位置" class="headerlink" title="使用addr2line查找代码位置"></a>使用addr2line查找代码位置</h3><p>执行如下的命令，多个指针地址可以在<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true" alt=""></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-addr2line –e obj/local/armeabi/libhello-jni.so <span class="number">00004</span>de8 <span class="number">000056</span>c8 <span class="number">00004</span>fb4 <span class="number">00004</span>f58</span><br></pre></td></tr></table></figure>
 <p>PS：</p>
 <ul>

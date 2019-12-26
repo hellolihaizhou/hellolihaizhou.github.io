@@ -88,22 +88,21 @@
 
 
 
-<meta name="description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
+<meta name="description" content="比如在定位systrace卡顿问题时，最后跟到kernel中 可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”} 123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个定屏重启的问题分析">
-<meta property="og:url" content="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/index.html">
+<meta property="og:title" content="快速定位kernel报错位置">
+<meta property="og:url" content="http://lihaizhou.top/2019/12/26/快速定位kernel报错位置/index.html">
 <meta property="og:site_name" content="Qiu&amp;Lee&amp;Dai">
-<meta property="og:description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
+<meta property="og:description" content="比如在定位systrace卡顿问题时，最后跟到kernel中 可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”} 123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E7%9B%AE%E5%BD%95.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E5%85%B7%E4%BD%93%E5%A0%86%E6%A0%88.png">
-<meta property="og:updated_time" content="2019-04-13T08:44:21.419Z">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/7d36fef5-b40b-439b-bd69-fd65e393e8be.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true">
+<meta property="og:updated_time" content="2019-12-26T12:00:17.156Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个定屏重启的问题分析">
-<meta name="twitter:description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png">
+<meta name="twitter:title" content="快速定位kernel报错位置">
+<meta name="twitter:description" content="比如在定位systrace卡顿问题时，最后跟到kernel中 可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”} 123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$">
+<meta name="twitter:image" content="https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.png?raw=true">
 
 
 
@@ -133,13 +132,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2019/12/26/快速定位kernel报错位置/"/>
 
 
 
 
 
-  <title>一个定屏重启的问题分析 | Qiu&Lee&Dai</title>
+  <title>快速定位kernel报错位置 | Qiu&Lee&Dai</title>
   
 
 
@@ -322,7 +321,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/12/26/快速定位kernel报错位置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="追击的树袋熊">
@@ -339,7 +338,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一个定屏重启的问题分析</h1>
+          <h1 class="post-title" itemprop="name headline">快速定位kernel报错位置</h1>
         
 
         <div class="post-meta">
@@ -351,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T17:26:17+08:00">
-                2018-05-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-26T19:25:34+08:00">
+                2019-12-26
               </time>
             
 
@@ -374,8 +373,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/移动开发/" itemprop="url" rel="index">
-                    <span itemprop="name">移动开发</span>
+                  <a href="/categories/工具/" itemprop="url" rel="index">
+                    <span itemprop="name">工具</span>
                   </a>
                 </span>
 
@@ -392,8 +391,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/11/一个定屏重启的问题分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/11/一个定屏重启的问题分析/" itemprop="commentCount"></span>
+                <a href="/2019/12/26/快速定位kernel报错位置/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/12/26/快速定位kernel报错位置/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -415,7 +414,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,256
+                  1,053
                 </span>
               
 
@@ -431,7 +430,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  5
                 </span>
               
             </div>
@@ -452,34 +451,35 @@
       
 
       
-        <p><strong>问题平台</strong><br><code>Android 7.1.1</code>    <code>MT6739</code></p>
-<p><strong>问题现象</strong><br><code>界面定屏并重启</code></p>
-<p><strong>初步分析</strong><br>拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧<br>日志目录如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png" align="left" style=" width:300px;height:50 px"><br><br><br><br>看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6.png" align="left" style=" width:300px;height:23 px"><br><br></p>
-<p align="left">是一个JE的问题导致的重启，猜测是systemServer挂了</p>  
-
-<p><strong>Step1：分析日志</strong><br>拿出看家小工具GAT，对于db文件的分析离不开GAT，用GAT解析下来究竟发生了what让我们的小机器重启了呢，解析后文件目录如下</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E7%9B%AE%E5%BD%95.png" align="left" style=" width:900px;height:500 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>(这里将产品名称马赛克一下，我也不知道为什么这么做，反正就是这么做了，哈哈哈（￣︶￣）↗)</p>
-<p>这里可以看到果然是systemServer进程重启了，发生问题点在systemServer进程中，接着看原因，是个数组越界异常，下标为1，数组长度为2(见上图红色框)，唉？没越界啊，为什么会报越界呢？</p>
-<p>分析具体的堆栈代码之前，先看下日志判断下死机发生时用户当时具体做了些啥  </p>
-<p>首先看下main日志，找到IndexOutOfBoundsException发生时间点<code>09:43:33.818111</code><br>测试人员使用的是user版本，user版本的kernel日志不会打出每行时间戳，userdebug以及eng版本的kernel日志会有具体的时间戳，所以分析user版本的kernel日志会稍稍麻烦一点，通过搜索关键字”UTC”来查看时间戳，这份日志中UTC时间戳每隔二十秒打印<br>异常发生时间点09:43:33.818111，所以是在如下两行之间<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Line <span class="number">176236</span>: &lt;7&gt;[ 1762.546722]  (0)[249:wdtk-0][thread:249][RT:1762546695292] 2018-04-26 01:43:27.105173 UTC;android time 2018-04-26 09:43:27.105173</span><br><span class="line">Line 179752: &lt;7&gt;[ 1782.556698]  (0)[249:wdtk-0][thread:249][RT:1782556690801] 2018-04-26 01:43:47.115173 UTC;android time 2018-04-26 09:43:47.115173</span><br></pre></td></tr></table></figure></p>
-<p><code>9.43.27</code>这行往下数6s左右，大概在<code>178800</code>行附近，ok，去这个行数附近看看<br>在<code>178891</code>行看到了如下信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">7</span>&gt;[ <span class="number">1777.097776</span>] -(<span class="number">0</span>)[<span class="number">1085</span>:android.ui][signal][<span class="number">1085</span>:android.ui]send death sig <span class="number">9</span> to[<span class="number">1068</span>:system_server:R]</span><br></pre></td></tr></table></figure></p>
-<p>sig 9代表SIGNAL_KILL，这里杀掉了system_server进程，在此上面有大量连续的手指触摸日志信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923619</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">302</span>, y = <span class="number">148</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923695</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8490</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923712</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.925815</span>]  (<span class="number">1</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.933972</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934001</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934944</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x904</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935112</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">303</span>, y = <span class="number">143</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935157</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935169</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.938970</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock+++blocking=<span class="number">0</span> ,dst_mode=<span class="number">0</span>,dispmode = <span class="number">0</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939000</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;state = <span class="number">240</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939014</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;session_mode = <span class="number">1</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.942542</span>]  (<span class="number">0</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.946983</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947013</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8494</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947971</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x9</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.948138</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger [<span class="number">00</span>] up <span class="number">11111</span></span><br></pre></td></tr></table></figure></p>
-<p>可见当时测试人员与屏幕一直在互动，符合测试人员所说的当时在滑动屏幕</p>
-<p><strong>Step2：跟踪源码流程</strong><br>看具体的堆栈信息</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E5%85%B7%E4%BD%93%E5%A0%86%E6%A0%88.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br></p>
-<p>emmm…没有看到具体的应用堆栈信息，都是framework里的堆栈，其实看到这里心里大概有数了，应该不是应用的问题，而是系统层面的问题</p>
-<p>好的，撸起袖子打开源码，开始看具体的代码</p>
-<font color="#000000" size="2" face="楷体">libcore/ojluni/src/main/java/java/util/ArrayList.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= size)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBoundsMsg(index));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (E) elementData[index];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里抛出了越界异常，接着往下看</p>
-<font color="#000000" size="2" face="楷体">/frameworks/base/services/core/java/com/android/server/wm/DisplayContent.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Find the task whose outside touch area (for resizing) (x, y) falls within.</span></span><br><span class="line"><span class="comment"> * Returns null if the touch doesn't fall into a resizing area.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Task <span class="title">findTaskForControlPoint</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> delta = mService.dipToPixel(RESIZE_HANDLE_WIDTH_IN_DP, mDisplayMetrics);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> stackNdx = mStacks.size() - <span class="number">1</span>; stackNdx &gt;= <span class="number">0</span>; --stackNdx) &#123;</span><br><span class="line">        TaskStack stack = mStacks.get(stackNdx);</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里出现了异常，理论上不会出现越界的问题，不过如果是多线程访问的情况，鉴于这里并没有同步机制，<br>mStacks又是公用的，很多地方会对其增删修改，这样的话就难以保证不会出现异常了</p>
-<p><strong>问题小结：</strong><br>这个问题看起来是谷歌的bug，避免这种情况可以选择加同步机制。同步机制难免会牺牲性能，不过也增强了代码的稳定性<br>考虑到这个问题至今只是出现了一次，后续没有再出现过，选择忽略不做修改</p>
-<hr>
-<font color="#000000" size="2" face="楷体">本文写于公司，电脑前，慵懒的午后</font>
+        <p>比如在定位systrace卡顿问题时，最后跟到kernel中<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.png?raw=true" alt="systrace卡顿"></p>
+<p>可以看到阻塞在<br>{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”}</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mi@mi-OptiPlex<span class="number">-7060</span>:~<span class="regexp">/Code_mi/</span>F7_code/prebuilts/gdb/linux-x86/bin$ ./gdb</span><br><span class="line">GNU gdb (GDB) <span class="number">7.11</span></span><br><span class="line">Copyright (C) <span class="number">2016</span> Free Software Foundation, Inc.</span><br><span class="line">License GPLv3+: GNU GPL version <span class="number">3</span> or later &lt;http:<span class="comment">//gnu.org/licenses/gpl.html&gt;</span></span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.  Type <span class="string">"show copying"</span></span><br><span class="line">and <span class="string">"show warranty"</span> <span class="keyword">for</span> details.</span><br><span class="line">This GDB was configured <span class="keyword">as</span> <span class="string">"x86_64-linux-gnu"</span>.</span><br><span class="line">Type <span class="string">"show configuration"</span> <span class="keyword">for</span> configuration details.</span><br><span class="line">For bug reporting instructions, please see:</span><br><span class="line">&lt;http:<span class="comment">//www.gnu.org/software/gdb/bugs/&gt;.</span></span><br><span class="line">Find the GDB manual and other documentation resources online at:</span><br><span class="line">&lt;http:<span class="comment">//www.gnu.org/software/gdb/documentation/&gt;.</span></span><br><span class="line">For help, type <span class="string">"help"</span>.</span><br><span class="line">Type <span class="string">"apropos word"</span> to search <span class="keyword">for</span> commands related to <span class="string">"word"</span>.</span><br><span class="line">(gdb) file <span class="string">'/home/mi/日志/vmliux/out/target/product/merlin/obj/KERNEL_OBJ/vmlinux'</span> </span><br><span class="line"><span class="comment">//此时输入file后面跟vmlinux文件，vmlinux在symbols中，具体路径在out/target/product/libra/obj/KERNEL_OBJ/下</span></span><br><span class="line">Reading symbols <span class="keyword">from</span> /home/mi/日志/vmliux/out/target/product/merlin/obj/KERNEL_OBJ/vmlinux...done.</span><br><span class="line"></span><br><span class="line">(gdb) list*teei_forward_call+<span class="number">0xac</span>  <span class="comment">//list*后面跟上偏移位</span></span><br><span class="line"><span class="number">0xffffff80087fe9d8</span> is <span class="keyword">in</span> teei_forward_call (<span class="regexp">/home/</span>work/merlin-q-dev-build/kernel<span class="number">-4.14</span>/drivers/misc/mediatek/teei/<span class="number">300</span>/tz_driver/teei_smc_call.c:<span class="number">128</span>).</span><br></pre></td></tr></table></figure>
+<p>这种情况适用于像NE问题或者一些watchdog问题等</p>
+<p>还有一种情况是像如下图中</p>
+<p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/7d36fef5-b40b-439b-bd69-fd65e393e8be.png?raw=true" alt="systrace卡顿2"></p>
+<p>这种情况稍微有点麻烦<br>知道地址该如何反向定位函数名和偏移呢, 这个时候就需要用到objdump，-d后面跟的是vmlinux的地址，最后会将汇编语言导入到vmlinux.txt中，此时搜索后五位即 fb684</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aarch64-linux-android-objdump -d vmlinux &gt; vmlinux.txt</span><br></pre></td></tr></table></figure>
+<p>搜索到如下结果</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffffff80087fb674:    <span class="number">14000004</span>     b    ffffff80087fb684 &lt;teei_forward_call+<span class="number">0xac</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>这个时候在用gdb配合vmlinux定位teei_forward_call+0xac就可以了</p>
+<p>汇总下<br>分析工具</p>
+<ul>
+<li>addr2line：用来分析单个pc地址对应的源码行数，比如示例log中的第13行中的#00 pc 0004097c，0004097c就是crash时pc调用的堆栈地址，用这个地址就可以分析出对应在源码中的行数；</li>
+<li>objdump：用来把相应的so变成汇编语言的asm文件，然后根据地址信息（比如0004097c）就可以找到更加详细的相关函数信息；</li>
+<li>ndk-stack：用来把log信息全部翻译成更加详细的带源码行数信息的log，相当于是在整个crash堆栈信息都执行addr2line命令。</li>
+</ul>
+<p>linux自带addr2line命令。使用Windows的，在sdk中安装了NDK之后，在ndk中就带有这些工具。<br>比如addr2line工具在：sdk\ndk-bundle\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin下面，同时这个bin下面包含很多其他工具，比如objdump，readelf等；<br>ndk-stack工具则在sdk\ndk-bundle下面；</p>
+<h3 id="使用addr2line查找代码位置"><a href="#使用addr2line查找代码位置" class="headerlink" title="使用addr2line查找代码位置"></a>使用addr2line查找代码位置</h3><p>执行如下的命令，多个指针地址可以在<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true" alt="addr2line"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-addr2line –e obj/local/armeabi/libhello-jni.so <span class="number">00004</span>de8 <span class="number">000056</span>c8 <span class="number">00004</span>fb4 <span class="number">00004</span>f58</span><br></pre></td></tr></table></figure>
+<p>PS：</p>
+<ul>
+<li>crash log与对应的so一定要对应起来。即错误的情况是：你拿了一份旧的log，然后你修改了so相关的源码，然后编译出来了新的so，你拿着这个新的so以及旧log中的地址去让addr2line等分析，那肯定是得不到正确的结果的</li>
+<li>带symbols的so文件<br>对于比如手机公司的开发人员来说，一般来说出问题的so对应的带symbols的so都在out/target/product/&lt;model_name&gt;/symbols/system/lib/下面，而对于常见的使用AndroidStudio开发的单个应用来说，其对应的带symbols的在&lt;PROJECT_ROOT&gt;\app\src\main\obj\local\<abi>\下面的so，而不能是\app\src\main\libs\<abi>的，这里面的是不包含symbols信息的，拿这个去分析，输出的结果就是“??:?”。其实这两个so的体积对比也是很明显的的，在我的应用中，前一个带symbols的so的体积为7M多，而后一个只有2M</abi></abi></li>
+</ul>
+<h3 id="使用objdump获取函数信息"><a href="#使用objdump获取函数信息" class="headerlink" title="使用objdump获取函数信息"></a>使用objdump获取函数信息</h3><p>使用如下命令导出函数表</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-objdump –S obj/local/armeabi/libhello-jni.so &gt; hello.asm</span><br></pre></td></tr></table></figure>
+<p>在生成的asm文件中查找刚刚我们定位的两个关键指针00004fb4和00004f58，搜索后四位<br>可以显示对应的函数名，这样再配合addressline的结果堪称完美，可以得到对应文件的某一行并且知道对应的函数名(其实addr2line就够了)</p>
+<p>参考文章:<br><a href="https://www.oschina.net/question/2241352_213433" target="_blank" rel="noopener">如何定位Android NDK开发中遇到的错误</a></p>
 
       
     </div>
@@ -511,7 +511,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/" title="一个定屏重启的问题分析">http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/</a>
+    <a href="http://lihaizhou.top/2019/12/26/快速定位kernel报错位置/" title="快速定位kernel报错位置">http://lihaizhou.top/2019/12/26/快速定位kernel报错位置/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -533,15 +533,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/12/15/Android-Vsync临时草稿/" rel="next" title="Android-Vsync临时草稿">
+                <i class="fa fa-chevron-left"></i> Android-Vsync临时草稿
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/" rel="prev" title="低内存引发的一点思考">
-                低内存引发的一点思考 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -596,8 +596,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -659,6 +668,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用addr2line查找代码位置"><span class="nav-number">1.</span> <span class="nav-text">使用addr2line查找代码位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用objdump获取函数信息"><span class="nav-number">2.</span> <span class="nav-text">使用objdump获取函数信息</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

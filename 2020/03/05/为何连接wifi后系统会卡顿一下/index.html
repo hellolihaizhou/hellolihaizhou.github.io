@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李海洲的沉淀之路" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为何连接wifi后系统会卡顿一下?">
+<meta property="og:url" content="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/index.html">
+<meta property="og:site_name" content="李海洲的沉淀之路">
+<meta property="og:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png">
+<meta property="og:updated_time" content="2020-03-05T03:19:17.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为何连接wifi后系统会卡顿一下?">
+<meta name="twitter:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/"/>
+
+
+
+
+
+  <title>为何连接wifi后系统会卡顿一下? | 李海洲的沉淀之路</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李海洲的沉淀之路</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的沉淀之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">为何连接wifi后系统会卡顿一下?</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-05T11:00:05+08:00">
+                2020-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/【Android-性能】/" itemprop="url" rel="index">
+                    <span itemprop="name">【Android,性能】</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/03/05/为何连接wifi后系统会卡顿一下/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/05/为何连接wifi后系统会卡顿一下/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,110
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>问题描述<br>数据流量使用过程中切换到wifi连接，系统全局会卡一下</p>
+<p>初步分析<br>抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动<br>我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。<br>自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面</p>
+<p><a href="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-1.png" target="_blank" rel="noopener">https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-1.png</a></p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png" alt="切换到wifi后卡顿-1.png"></p>
+<p>其实这个时间段可以发现deliverInputEvent也没有，其实这一点也可以从Launcher的PendingInputEventQueue区域看出来<br>PS: PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这个阶段对应的是用户进程中了<br>开始卡顿后即红圈后面便没有波峰出现, 说明压根没有input送到应用进程</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png" alt="切换到wifi后卡顿-2.png"></p>
+<p>这个时候，自然而然就有一个疑问:<br>既然应用进程没有收到input事件，那么会不会是input上报的过程中哪个环节出了问题呢？</p>
+<p>再科普下input事件上报的大概流程</p>
+<pre><code>InputReader 读取 Input 事件
+InputReader 将读取的 Input 事件放到 InboundQueue 中
+InputDispatcher 从 InboundQueue 中取出 Input 事件派发到各个 App(连接) 的 OutBoundQueue
+同时将事件记录到各个 App(连接) 的 WaitQueue
+App 接收到 Input 事件，同时记录到 PaddingQueue ，然后对事件进行分发处理
+App 处理完成后，回调 InputManagerService 将负责监听的 WaitQueue 中对应的 Input 移除
+</code></pre><p>InputReader和InputDispatcher是跑在SystemServer里面的两个Native线程，负责读取和分发Input 事件</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png" alt="切换到wifi后卡顿-3.png"></p>
+<p>到这里可以明显看出，卡顿时间段内InputReader在不断的读取事件，说明driver没问题，注意这个时候InputDispatcher 没有收到任何input事件并且处于S状态<br>其实InputDispatcher 没有获取到事件的话，不用说oq区域和wq区域肯定也是没有事件的</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png" alt="切换到wifi后卡顿-4.png"></p>
+<p>意料之中，空空如也，难怪应用进程苦苦等不来事件<br>这里再简要科普下这几个概念<br>说明</p>
+<pre><code>InputReader 负责从 EventHub 里面把 Input 事件读取出来，然后交给 InputDispatcher 进行事件分发
+InputDispatcher 在拿到 InputReader 获取的事件之后，对事件进行包装和分发 (也就是发给对应的)
+OutboundQueue 里面放的是即将要被派发给对应 AppConnection 的事件
+WaitQueue 里面记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件
+PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这里可以看到已经到了应用进程
+deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒
+InputResponse 标识 Input 事件区域
+App 响应 Input 事件 ： 这里是滑动然后松手，也就是我们熟悉的桌面滑动的操作，桌面随着手指的滑动更新画面，松手后触发 Fling 继续滑动，从 Systrace 就可以看到整个事件的流程
+</code></pre><p>这个时候，事件上报大致问题区域知道了，再回到InputDispatcher ，看下最后是被1726唤醒的</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png" alt="切换到wifi后卡顿-5.png"></p>
+<p>跟到tid 1726区域，居然定位到了systemserver区域，InputDispatcher正常来讲都是由InputReader 唤醒的，这里不免有些困惑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/native/services/inputflinger/dispatcher/InputDispatcher.cpp;l=2719?q=InputDispatcher.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InputDispatcher::notifyMotion(<span class="keyword">const</span> NotifyMotionArgs* args) &#123;</span><br><span class="line"><span class="comment">//....</span></span><br><span class="line">    bool needWake;</span><br><span class="line">    &#123; <span class="comment">// acquire lock</span></span><br><span class="line">        mLock.lock();</span><br><span class="line">        <span class="keyword">if</span> (shouldSendMotionToInputFilterLocked(args)) &#123;</span><br><span class="line">            mLock.unlock();</span><br><span class="line">            MotionEvent event;</span><br><span class="line">            event.initialize(args-&gt;deviceId, args-&gt;source, args-&gt;displayId, args-&gt;action,</span><br><span class="line">                             args-&gt;actionButton, args-&gt;flags, args-&gt;edgeFlags, args-&gt;metaState,</span><br><span class="line">                             args-&gt;buttonState, args-&gt;classification, <span class="number">0</span>, <span class="number">0</span>, args-&gt;xPrecision,</span><br><span class="line">                             args-&gt;yPrecision, args-&gt;downTime, args-&gt;eventTime, args-&gt;pointerCount,</span><br><span class="line">                             args-&gt;pointerProperties, args-&gt;pointerCoords);</span><br><span class="line">            policyFlags |= POLICY_FLAG_FILTERED;</span><br><span class="line">            <span class="keyword">if</span> (!mPolicy-&gt;filterInputEvent(&amp;event, policyFlags)) &#123;</span><br><span class="line">                <span class="keyword">return</span>; <span class="comment">// event was consumed by the filter</span></span><br><span class="line">            &#125;</span><br><span class="line">            mLock.lock();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Just enqueue a new motion event.</span></span><br><span class="line">        MotionEntry* newEntry =</span><br><span class="line">                <span class="keyword">new</span> MotionEntry(args-&gt;sequenceNum, args-&gt;eventTime, args-&gt;deviceId, args-&gt;source,</span><br><span class="line">                                args-&gt;displayId, policyFlags, args-&gt;action, args-&gt;actionButton,</span><br><span class="line">                                args-&gt;flags, args-&gt;metaState, args-&gt;buttonState,</span><br><span class="line">                                args-&gt;classification, args-&gt;edgeFlags, args-&gt;xPrecision,</span><br><span class="line">                                args-&gt;yPrecision, args-&gt;downTime, args-&gt;pointerCount,</span><br><span class="line">                                args-&gt;pointerProperties, args-&gt;pointerCoords, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        needWake = enqueueInboundEventLocked(newEntry);</span><br><span class="line">        mLock.unlock();</span><br><span class="line">    &#125; <span class="comment">// release lock</span></span><br><span class="line">    <span class="keyword">if</span> (needWake) &#123;</span><br><span class="line">        mLooper-&gt;wake();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数里主要做的事是读取线程InputReaderThread在处理事务并将读取的事件放到队列中<br>可以看到最后mLooper-&gt;wake();这里的looper对应的是InputDispatcher的looper，也就是最后会唤醒InputDispatcher线程<br>而我们这笔问题中InputDispatcher在卡顿期间处于S状态，往上看哪里return了导致没有执行，其实在mPolicy-&gt;filterInputEvent处返回了false并且return了，这里的代码层层追踪会跟到InputManagerService的filterInputEvent()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/input/InputManagerService.java;l=1828?q=InputManagerService</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Native callback.</span></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">filterInputEvent</span><span class="params">(InputEvent event, <span class="keyword">int</span> policyFlags)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mInputFilterLock) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mInputFilter != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    mInputFilter.filterInputEvent(event, policyFlags);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                    <span class="comment">/* ignore */</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        event.recycle();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里主要是判断InputFilter是否为空，如果不为空，则会走到mInputFilter.filterInputEvent，可以注意下，这里已经位于IMS也就是systemserver进程<br>我们这个问题始终不为空，原因在于开启了手势识别会设置一个InputFilter导致这里不为空，以便做进一步的事件加工处理，InputManagerService的filterInputEvent()最后调用到injectInputEvent()将这个事件送入mInBoundQueue，并唤醒InputDispatcher，不是本文重点所以代码就不展开叙述<br>至此明白了为何InputReader的唤醒源会跑到systemserver(UI线程)中</p>
+<p>继续看systemserver(UI线程)这段区域，在执行一个广播的onReceive中等锁导致的sleep</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png" alt="切换到wifi后卡顿-6.png"></p>
+<p>这里顺便对Contended on monitor with owner NetworkPolicy进行解读:<br>Monitor指的是当前锁对象的池，在Java中，每个对象都有两个池，锁(monitor)池和等待池：</p>
+<p>锁池（同步队列 SynchronizedQueue ）：假设线程 A 已经拥有了某个对象(注意:不是类 )的锁，而其它的线程想要调用这个对象的某个 synchronized 方法(或者 synchronized 块)，由于这些线程在进入对象的 synchronized 方法之前必须先获得该对象的锁的拥有权，但是该对象的锁目前正被线程 A 拥有，所以这些线程就进入了该对象的锁池中。</p>
+<p>这里用了争夺(contention)这个词，意思是这里由于在和目前对象的锁正被其他对象（Owner）所持有，所以没法得到该对象的锁的拥有权，所以进入该对象的锁池</p>
+<p>Owner : 指的是当前拥有这个对象的锁的对象，这里是NetworkPolicy</p>
+<p>讲的通俗一点<br>systemserver(UI线程)在执行一个广播的onReceive中等一个锁，这个锁此时被NetworkPolicy持有</p>
+<p>自然而然继续看NetworkPolicy区域</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png" alt="切换到wifi后卡顿-7.png"></p>
+<p>可以看到这段时间NetworkPolicy基本处于S状态，此时netd得到调度运行，这点在cpu区域也可以得到证实</p>
+<p>再看下netd区域，卡顿开始的时候也正是netd得到调度的时候，是被2835这个进程唤醒，2835正是NetworkPolicy</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png" alt="切换到wifi后卡顿-8.png"></p>
+<p>到这里可以大致梳理一下卡顿时间内做的事:<br>1.SystemServer中的UI线程在等一个锁，这个锁被NetworkPolicy持有，所以没有发送input事件给InputDispatcher<br>2.NetworkPolicy为何一直不释放呢，是因为其调用了netd，netd执行的时间较长耗时了1s左右，等netd执行结束后NetworkPolicy得到调度继续执行并释放锁<br>3.SystemServer中的UI线程获取到锁，继续发送input事件到mInBoundQueue并唤醒InputDispatcher</p>
+<p>现在的疑问就是NetworkPolicy和SystemServer(UI线程)监听了一样的广播，这个广播的服务端应该是加锁了导致了所有注册的客户端顺序执行<br>其实想想也能猜到应该是wifi状态变化或者网络变化的广播，跟到NetworkManagerService中看下很容易发现NetworkManagerService监听了一个网络变化广播CONNECTIVITY_ACTION<br>但是SystemServer(UI线程)中注册并回调执行的代码位置需要借助traceview进一步定位，这里比较简单不展开讨论</p>
+<p>解决思路看看SystemServer(UI线程)中具体代码处是否能够去掉锁或后台执行，只要不堵在UI线程就行</p>
+<p>这个问题只有开启手势识别或有设置了InputFilter的情况才会出现，最新谷歌代码上发现代码变化没有注册监听，故该问题在新版本上不会存在</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/" title="为何连接wifi后系统会卡顿一下?">http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/04/谁拖慢了列表的滑动速度/" rel="next" title="谁拖慢了列表的滑动速度">
+                <i class="fa fa-chevron-left"></i> 谁拖慢了列表的滑动速度
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/background.jpg"
+                alt="Steven Lee" />
+            
+              <p class="site-author-name" itemprop="name">Steven Lee</p>
+              <p class="site-description motion-element" itemprop="description">永远保持好奇心</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Lee</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">Steven的博客共40.4k字</span>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'Hsz9zOlrvMN9ry0R9Jfi5ykJ-gzGzoHsz',
+        appKey: 'MAHOS3RIF7wDFRbEeC7kf3Vr',
+        placeholder: '此处输入评论内容',
+        avatar:'wavatar',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

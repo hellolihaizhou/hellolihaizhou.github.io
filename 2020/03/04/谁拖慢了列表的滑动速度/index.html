@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李海洲的沉淀之路" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现 抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧  挑其中一处红色帧放大看下 耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="谁拖慢了列表的滑动速度">
+<meta property="og:url" content="http://lihaizhou.top/2020/03/04/谁拖慢了列表的滑动速度/index.html">
+<meta property="og:site_name" content="李海洲的沉淀之路">
+<meta property="og:description" content="问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现 抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧  挑其中一处红色帧放大看下 耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
+<meta property="og:updated_time" content="2020-03-05T02:52:41.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="谁拖慢了列表的滑动速度">
+<meta name="twitter:description" content="问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现 抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧  挑其中一处红色帧放大看下 耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lihaizhou.top/2020/03/04/谁拖慢了列表的滑动速度/"/>
+
+
+
+
+
+  <title>谁拖慢了列表的滑动速度 | 李海洲的沉淀之路</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李海洲的沉淀之路</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/03/04/谁拖慢了列表的滑动速度/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的沉淀之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">谁拖慢了列表的滑动速度</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-04T21:59:04+08:00">
+                2020-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-性能/" itemprop="url" rel="index">
+                    <span itemprop="name">Android  性能</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/03/04/谁拖慢了列表的滑动速度/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/04/谁拖慢了列表的滑动速度/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,173
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>问题描述</strong><br>在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现</p>
+<p>抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF1.jpg" alt="wifi列表卡顿1.jpg"></p>
+<p>挑其中一处红色帧放大看下<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF2.png" alt="wifi列表卡顿2.jpg"></p>
+<p>耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程<br>放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF3.png" alt="wifi列表卡顿3.png"></p>
+<p>我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上</p>
+<pre><code>performMeasure: 从根节点向下遍历View树，完成所有ViewGroup和View的测量工作，计算出所有ViewGroup和View显示出来需要的高度和宽度
+performLayout()：从根节点向下遍历View树，完成所有ViewGroup和View的布局计算工作，根据测量出来的宽高及自身属性，计算出所有ViewGroup和View显示在屏幕上的区域；
+performDraw()：从根节点向下遍历View树，完成所有ViewGroup和View的绘制工作，根据布局过程计算出的显示区域，将所有View的当前需显示的内容画到屏幕上
+</code></pre><p>对应到我们这个问题，此时大概心里有数了，一帧的耗时并不是计算显示在哪个区域以及本身的内容绘制耗时，而是计算需要显示的高度或宽度耗时，注意这里是计算这个列表的高度或宽度耗时了，因为每次measure都对应了数十次的加载item的过程，很显然需要依据item的高度或宽度来最终确定列表的高度或宽度</p>
+<p>故真相只有一个，就是列表很可能使用了自适应的高度或宽度</p>
+<p>看下代码<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;LinearLayout</span><br><span class="line">     android:id=<span class="string">"@+id/provision_lyt_content"</span></span><br><span class="line">     android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">     android:layout_height=<span class="string">"0dip"</span></span><br><span class="line">     android:layout_weight=<span class="string">"1"</span></span><br><span class="line">     android:layout_marginTop=<span class="string">"@dimen/provision_content_top_padding"</span></span><br><span class="line">     android:paddingStart=<span class="string">"@dimen/provision_list_left_padding"</span></span><br><span class="line">     android:paddingEnd=<span class="string">"@dimen/provision_list_right_padding"</span></span><br><span class="line">     android:orientation=<span class="string">"vertical"</span>&gt;</span><br><span class="line">     &lt;ListView</span><br><span class="line">         android:id=<span class="string">"@android:id/list"</span></span><br><span class="line">         android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">         android:layout_height=<span class="string">"wrap_content"</span> /&gt;</span><br><span class="line"> &lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure></p>
+<p> 果不其然，这里设置了自适应的高度，修改为match_parent后再次测试发现卡顿消失<br>抓取改后的systrace</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png" alt="wifi列表卡顿4.png"></p>
+<p>基本上没有了红色帧，每一帧的绘制不再有measure的过程<br>其实这个问题不抓systrace，看traceview同样能够定位，只是没有systrace直观</p>
+<p>到这里，还有一个疑问，当view设置了自适应高度后，它的高度由其子view的高度决定，故需要计算它的所有子view高度后才能确定自身的显示高度<br>这一点容易理解，但是具体到onMeasure的代码里是如何实现的呢？<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">frameworks/base/core/java/android/view/ViewRootImpl.java</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">performMeasure</span><span class="params">(<span class="keyword">int</span> childWidthMeasureSpec, <span class="keyword">int</span> childHeightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mView == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="comment">//这里对应了systrace中measure tag</span></span><br><span class="line">        Trace.traceBegin(Trace.TRACE_TAG_VIEW, <span class="string">"measure"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            Trace.traceEnd(Trace.TRACE_TAG_VIEW);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中的mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);通过参数可以看到，view的显示宽高用到了其子view的宽高作为约束条件<br>listview必定会重写onMeasure，直接跟到其源码中<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">frameworks/base/core/java/android/widget/ListView.java</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Sets up mListPadding</span></span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> heightMode = MeasureSpec.getMode(heightMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> heightSize = MeasureSpec.getSize(heightMeasureSpec);</span><br><span class="line">          <span class="comment">//....</span></span><br><span class="line">          </span><br><span class="line">          <span class="keyword">if</span> (heightMode == MeasureSpec.AT_MOST) &#123;</span><br><span class="line">              <span class="comment">// <span class="doctag">TODO:</span> after first layout we should maybe start at the first visible position, not 0</span></span><br><span class="line">              heightSize = measureHeightOfChildren(widthMeasureSpec, <span class="number">0</span>, NO_POSITION, heightSize, -<span class="number">1</span>);</span><br><span class="line">          &#125;</span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line">         &#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们都知道wrap_content对应的mode为MeasureSpec.AT_MOST,这时候调用到measureHeightOfChildren开始计算其子view的宽高</p>
+<p>这里看注释描述，如果指定了高度，则measure会停止<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Measures the height of the given range of children (inclusive) and</span></span><br><span class="line"><span class="comment">     * returns the height with this ListView's padding and divider heights</span></span><br><span class="line"><span class="comment">     * included. If maxHeight is provided, the measuring will stop when the</span></span><br><span class="line"><span class="comment">     * current height reaches maxHeight.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> widthMeasureSpec The width measure spec to be given to a child's</span></span><br><span class="line"><span class="comment">     *            &#123;<span class="doctag">@link</span> View#measure(int, int)&#125;.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> startPosition The position of the first child to be shown.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> endPosition The (inclusive) position of the last child to be</span></span><br><span class="line"><span class="comment">     *            shown. Specify &#123;<span class="doctag">@link</span> #NO_POSITION&#125; if the last child should be</span></span><br><span class="line"><span class="comment">     *            the last available child from the adapter.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> maxHeight The maximum height that will be returned (if all the</span></span><br><span class="line"><span class="comment">     *            children don't fit in this value, this value will be</span></span><br><span class="line"><span class="comment">     *            returned).</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> disallowPartialChildPosition In general, whether the returned</span></span><br><span class="line"><span class="comment">     *            height should only contain entire children. This is more</span></span><br><span class="line"><span class="comment">     *            powerful--it is the first inclusive position at which partial</span></span><br><span class="line"><span class="comment">     *            children will not be allowed. Example: it looks nice to have</span></span><br><span class="line"><span class="comment">     *            at least 3 completely visible children, and in portrait this</span></span><br><span class="line"><span class="comment">     *            will most likely fit; but in landscape there could be times</span></span><br><span class="line"><span class="comment">     *            when even 2 children can not be completely shown, so a value</span></span><br><span class="line"><span class="comment">     *            of 2 (remember, inclusive) would be good (assuming</span></span><br><span class="line"><span class="comment">     *            startPosition is 0).</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> The height of this ListView with the given children.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@UnsupportedAppUsage</span>(maxTargetSdk = Build.VERSION_CODES.P, trackingBug = <span class="number">115609023</span>)</span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">int</span> <span class="title">measureHeightOfChildren</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> startPosition, <span class="keyword">int</span> endPosition,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> maxHeight, <span class="keyword">int</span> disallowPartialChildPosition)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> ListAdapter adapter = mAdapter;</span><br><span class="line">        <span class="keyword">if</span> (adapter == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> mListPadding.top + mListPadding.bottom;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Include the padding of the list</span></span><br><span class="line">        <span class="keyword">int</span> returnedHeight = mListPadding.top + mListPadding.bottom;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> dividerHeight = mDividerHeight;</span><br><span class="line">        <span class="comment">// The previous height value that was less than maxHeight and contained</span></span><br><span class="line">        <span class="comment">// no partial children</span></span><br><span class="line">        <span class="keyword">int</span> prevHeightWithoutPartialChild = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> i;</span><br><span class="line">        View child;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// mItemCount - 1 since endPosition parameter is inclusive</span></span><br><span class="line">        endPosition = (endPosition == NO_POSITION) ? adapter.getCount() - <span class="number">1</span> : endPosition;</span><br><span class="line">        <span class="keyword">final</span> AbsListView.RecycleBin recycleBin = mRecycler;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> recyle = recycleOnMeasure();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span>[] isScrap = mIsScrap;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = startPosition; i &lt;= endPosition; ++i) &#123;</span><br><span class="line">            child = obtainView(i, isScrap);</span><br><span class="line"></span><br><span class="line">            measureScrapChild(child, i, widthMeasureSpec, maxHeight);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// Count the divider for all but one child</span></span><br><span class="line">                returnedHeight += dividerHeight;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Recycle the view before we possibly return from the method</span></span><br><span class="line">            <span class="keyword">if</span> (recyle &amp;&amp; recycleBin.shouldRecycleViewType(</span><br><span class="line">                    ((LayoutParams) child.getLayoutParams()).viewType)) &#123;</span><br><span class="line">                recycleBin.addScrapView(child, -<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            returnedHeight += child.getMeasuredHeight();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (returnedHeight &gt;= maxHeight) &#123;</span><br><span class="line">                <span class="comment">// We went over, figure out which height to return.  If returnedHeight &gt; maxHeight,</span></span><br><span class="line">                <span class="comment">// then the i'th position did not fit completely.</span></span><br><span class="line">                <span class="keyword">return</span> (disallowPartialChildPosition &gt;= <span class="number">0</span>) <span class="comment">// Disallowing is enabled (&gt; -1)</span></span><br><span class="line">                            &amp;&amp; (i &gt; disallowPartialChildPosition) <span class="comment">// We've past the min pos</span></span><br><span class="line">                            &amp;&amp; (prevHeightWithoutPartialChild &gt; <span class="number">0</span>) <span class="comment">// We have a prev height</span></span><br><span class="line">                            &amp;&amp; (returnedHeight != maxHeight) <span class="comment">// i'th child did not fit completely</span></span><br><span class="line">                        ? prevHeightWithoutPartialChild</span><br><span class="line">                        : maxHeight;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((disallowPartialChildPosition &gt;= <span class="number">0</span>) &amp;&amp; (i &gt;= disallowPartialChildPosition)) &#123;</span><br><span class="line">                prevHeightWithoutPartialChild = returnedHeight;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// At this point, we went through the range of children, and they each</span></span><br><span class="line">        <span class="comment">// completely fit, so return the returnedHeight</span></span><br><span class="line">        <span class="keyword">return</span> returnedHeight;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里最关键的代码: child = obtainView(i, isScrap);</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Gets a view and have it show the data associated with the specified</span></span><br><span class="line"><span class="comment">    * position. This is called when we have already discovered that the view</span></span><br><span class="line"><span class="comment">    * is not available for reuse in the recycle bin. The only choices left are</span></span><br><span class="line"><span class="comment">    * converting an old view or making a new one.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> position the position to display</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> outMetadata an array of at least 1 boolean where the first entry</span></span><br><span class="line"><span class="comment">    *                    will be set &#123;<span class="doctag">@code</span> true&#125; if the view is currently</span></span><br><span class="line"><span class="comment">    *                    attached to the window, &#123;<span class="doctag">@code</span> false&#125; otherwise (e.g.</span></span><br><span class="line"><span class="comment">    *                    newly-inflated or remained scrap for multiple layout</span></span><br><span class="line"><span class="comment">    *                    passes)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> A view displaying the data associated with the specified position</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function">View <span class="title">obtainView</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">boolean</span>[] outMetadata)</span> </span>&#123;</span><br><span class="line">       Trace.traceBegin(Trace.TRACE_TAG_VIEW, <span class="string">"obtainView"</span>);</span><br><span class="line">       <span class="comment">//...</span></span><br><span class="line">       <span class="comment">//obtainView方法里面核心的代码其实就两行，首先从复用缓存中取出一个可以复用的View，然后作为参传入getView中，</span></span><br><span class="line">	<span class="comment">//也就是convertView。这里会走到obtainview，子View实例都是由obtainView方法返回的，然后再调用具体measureScrapChild</span></span><br><span class="line">	<span class="comment">//来具体测量子View的高度.</span></span><br><span class="line">        <span class="comment">//正常情况下这里for循环的次数就等于所有子项的个数，不过特殊的是已测量的子View高度之和大于maxHeight</span></span><br><span class="line">	 <span class="comment">//就直接return出循环了。这种做法其实很好理解，ListView能显示的最大高度就是屏幕的高度，如果有1000个子项</span></span><br><span class="line">	 <span class="comment">//前面10项已经占满了一屏幕了，那后面的990项就没必要继续测量高度了，这样可以大大提高性能</span></span><br><span class="line">      <span class="keyword">final</span> View scrapView = mRecycler.getScrapView(position);</span><br><span class="line">       <span class="keyword">final</span> View child = mAdapter.getView(position, scrapView, <span class="keyword">this</span>);</span><br><span class="line">       <span class="keyword">if</span> (scrapView != <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">if</span> (child != scrapView) &#123;</span><br><span class="line">               <span class="comment">// Failed to re-bind the data, return scrap to the heap.</span></span><br><span class="line">               mRecycler.addScrapView(scrapView, position);</span><br><span class="line">           &#125; <span class="keyword">else</span> <span class="keyword">if</span> (child.isTemporarilyDetached()) &#123;</span><br><span class="line">               outMetadata[<span class="number">0</span>] = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">               <span class="comment">// Finish the temporary detach started in addScrapView().</span></span><br><span class="line">               child.dispatchFinishTemporaryDetach();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//....</span></span><br><span class="line">       setItemViewLayoutParams(child, position);</span><br><span class="line">       Trace.traceEnd(Trace.TRACE_TAG_VIEW);</span><br><span class="line">       <span class="keyword">return</span> child;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>出现问题时正是触发了onMeasure，导致遍历可见范围内的数十个wifi item并计算他们的高度</p>
+<p><strong>一点小结</strong><br>一个View最终显示到屏幕上一共分为三个阶段：Measure、Layout、Draw，而使用不当会造成其重复调用，尤其是Measure过程最为敏感。<br>因为当根布局做measure的时候，需要逐级measure子View和子布局，当所有子View或子布局measure完成的时候才能最终确定根部局的大小，<br>所以子布局的measure调用时机是由父布局来决定的。而像ListView这种在其onMeasure中直接调用getView的情况，<br>如果onMeasure被调用次数过多，将严重影响性能。</p>
+<p>这里的listview还好外边没有裹着RelativeLayout，不然会导致子View的onMeasure重复调用，卡顿也会更加明显，假设RelativeLayout嵌套层数为n，子View的onMeasure次数为2^（n+1）</p>
+<p>使用ListView的时候注意尽量使用layout_height=”match_parent”，如果无法避免，外边也不能裹着RelativeLayout</p>
+<p>总而言之: 写代码三思而后行，谨慎再谨慎</p>
+
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2020/03/04/谁拖慢了列表的滑动速度/" title="谁拖慢了列表的滑动速度">http://lihaizhou.top/2020/03/04/谁拖慢了列表的滑动速度/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/26/如何快速定位kernel错误/" rel="next" title="如何快速定位kernel错误">
+                <i class="fa fa-chevron-left"></i> 如何快速定位kernel错误
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/05/为何连接wifi后系统会卡顿一下/" rel="prev" title="为何连接wifi后系统会卡顿一下?">
+                为何连接wifi后系统会卡顿一下? <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/background.jpg"
+                alt="Steven Lee" />
+            
+              <p class="site-author-name" itemprop="name">Steven Lee</p>
+              <p class="site-description motion-element" itemprop="description">永远保持好奇心</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Lee</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">Steven的博客共40.4k字</span>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'Hsz9zOlrvMN9ry0R9Jfi5ykJ-gzGzoHsz',
+        appKey: 'MAHOS3RIF7wDFRbEeC7kf3Vr',
+        placeholder: '此处输入评论内容',
+        avatar:'wavatar',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

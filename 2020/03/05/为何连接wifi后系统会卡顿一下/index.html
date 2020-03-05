@@ -88,12 +88,12 @@
 
 
 
-<meta name="description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta name="description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 其实">
 <meta property="og:type" content="article">
 <meta property="og:title" content="为何连接wifi后系统会卡顿一下?">
 <meta property="og:url" content="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/index.html">
 <meta property="og:site_name" content="李海洲的沉淀之路">
-<meta property="og:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta property="og:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 其实">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png">
@@ -103,10 +103,10 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png">
-<meta property="og:updated_time" content="2020-03-05T03:19:17.093Z">
+<meta property="og:updated_time" content="2020-03-05T04:55:25.716Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为何连接wifi后系统会卡顿一下?">
-<meta name="twitter:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 ht">
+<meta name="twitter:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面 其实">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
 
 
@@ -348,8 +348,19 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/【Android-性能】/" itemprop="url" rel="index">
-                    <span itemprop="name">【Android,性能】</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/性能/" itemprop="url" rel="index">
+                    <span itemprop="name">性能</span>
                   </a>
                 </span>
 
@@ -389,7 +400,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,110
+                  2,087
                 </span>
               
 
@@ -426,52 +437,47 @@
       
 
       
-        <p>问题描述<br>数据流量使用过程中切换到wifi连接，系统全局会卡一下</p>
-<p>初步分析<br>抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动<br>我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。<br>自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面</p>
-<p><a href="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-1.png" target="_blank" rel="noopener">https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-1.png</a></p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png" alt="切换到wifi后卡顿-1.png"></p>
+        <p><strong>问题描述</strong><br>数据流量使用过程中切换到wifi连接，系统全局会卡一下</p>
+<p><strong>初步分析</strong><br>抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动<br>我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。<br>自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png" align="left"></p>
 <p>其实这个时间段可以发现deliverInputEvent也没有，其实这一点也可以从Launcher的PendingInputEventQueue区域看出来<br>PS: PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这个阶段对应的是用户进程中了<br>开始卡顿后即红圈后面便没有波峰出现, 说明压根没有input送到应用进程</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png" alt="切换到wifi后卡顿-2.png"></p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png" align="left"></p>
 <p>这个时候，自然而然就有一个疑问:<br>既然应用进程没有收到input事件，那么会不会是input上报的过程中哪个环节出了问题呢？</p>
 <p>再科普下input事件上报的大概流程</p>
-<pre><code>InputReader 读取 Input 事件
-InputReader 将读取的 Input 事件放到 InboundQueue 中
-InputDispatcher 从 InboundQueue 中取出 Input 事件派发到各个 App(连接) 的 OutBoundQueue
-同时将事件记录到各个 App(连接) 的 WaitQueue
-App 接收到 Input 事件，同时记录到 PaddingQueue ，然后对事件进行分发处理
-App 处理完成后，回调 InputManagerService 将负责监听的 WaitQueue 中对应的 Input 移除
-</code></pre><p>InputReader和InputDispatcher是跑在SystemServer里面的两个Native线程，负责读取和分发Input 事件</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png" alt="切换到wifi后卡顿-3.png"></p>
-<p>到这里可以明显看出，卡顿时间段内InputReader在不断的读取事件，说明driver没问题，注意这个时候InputDispatcher 没有收到任何input事件并且处于S状态<br>其实InputDispatcher 没有获取到事件的话，不用说oq区域和wq区域肯定也是没有事件的</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png" alt="切换到wifi后卡顿-4.png"></p>
+<ol>
+<li>InputReader 读取 Input 事件</li>
+<li>InputReader 将读取的 Input 事件放到 InboundQueue 中</li>
+<li>InputDispatcher 从 InboundQueue 中取出 Input 事件派发到各个 App(连接) 的 OutBoundQueue<br> 同时将事件记录到各个 App(连接) 的 WaitQueue</li>
+<li>App 接收到 Input 事件，同时记录到 PaddingQueue ，然后对事件进行分发处理<br> App 处理完成后，回调 InputManagerService 将负责监听的 WaitQueue 中对应的 Input 移除</li>
+</ol>
+<p>InputReader和InputDispatcher是跑在SystemServer里面的两个Native线程，负责读取和分发Input 事件<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png" align="left"><br>到这里可以明显看出，卡顿时间段内InputReader在不断的读取事件，说明driver没问题，注意这个时候InputDispatcher 没有收到任何input事件并且处于S状态<br>其实InputDispatcher 没有获取到事件的话，不用说oq区域和wq区域肯定也是没有事件的<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png" align="left"></p>
 <p>意料之中，空空如也，难怪应用进程苦苦等不来事件<br>这里再简要科普下这几个概念<br>说明</p>
-<pre><code>InputReader 负责从 EventHub 里面把 Input 事件读取出来，然后交给 InputDispatcher 进行事件分发
-InputDispatcher 在拿到 InputReader 获取的事件之后，对事件进行包装和分发 (也就是发给对应的)
-OutboundQueue 里面放的是即将要被派发给对应 AppConnection 的事件
-WaitQueue 里面记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件
-PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这里可以看到已经到了应用进程
-deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒
-InputResponse 标识 Input 事件区域
-App 响应 Input 事件 ： 这里是滑动然后松手，也就是我们熟悉的桌面滑动的操作，桌面随着手指的滑动更新画面，松手后触发 Fling 继续滑动，从 Systrace 就可以看到整个事件的流程
-</code></pre><p>这个时候，事件上报大致问题区域知道了，再回到InputDispatcher ，看下最后是被1726唤醒的</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png" alt="切换到wifi后卡顿-5.png"></p>
+<ul>
+<li>InputReader 负责从 EventHub 里面把 Input 事件读取出来，然后交给 InputDispatcher 进行事件分发</li>
+<li>InputDispatcher 在拿到 InputReader 获取的事件之后，对事件进行包装和分发 (也就是发给对应的)<ul>
+<li>OutboundQueue 里面放的是即将要被派发给对应 AppConnection 的事件</li>
+</ul>
+</li>
+<li>WaitQueue 里面记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件</li>
+<li>PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这里可以看到已经到了应用进程</li>
+<li>deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒</li>
+<li>InputResponse 标识 Input 事件区域</li>
+<li>App 响应 Input 事件 ： 这里是滑动然后松手，也就是我们熟悉的桌面滑动的操作，桌面随着手指的滑动更新画面，松手后触发 Fling 继续滑动，从 Systrace 就可以看到整个事件的流程</li>
+</ul>
+<p>这个时候，事件上报大致问题区域知道了，再回到InputDispatcher ，看下最后是被1726唤醒的<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png" align="left"></p>
 <p>跟到tid 1726区域，居然定位到了systemserver区域，InputDispatcher正常来讲都是由InputReader 唤醒的，这里不免有些困惑</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/native/services/inputflinger/dispatcher/InputDispatcher.cpp;l=2719?q=InputDispatcher.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InputDispatcher::notifyMotion(<span class="keyword">const</span> NotifyMotionArgs* args) &#123;</span><br><span class="line"><span class="comment">//....</span></span><br><span class="line">    bool needWake;</span><br><span class="line">    &#123; <span class="comment">// acquire lock</span></span><br><span class="line">        mLock.lock();</span><br><span class="line">        <span class="keyword">if</span> (shouldSendMotionToInputFilterLocked(args)) &#123;</span><br><span class="line">            mLock.unlock();</span><br><span class="line">            MotionEvent event;</span><br><span class="line">            event.initialize(args-&gt;deviceId, args-&gt;source, args-&gt;displayId, args-&gt;action,</span><br><span class="line">                             args-&gt;actionButton, args-&gt;flags, args-&gt;edgeFlags, args-&gt;metaState,</span><br><span class="line">                             args-&gt;buttonState, args-&gt;classification, <span class="number">0</span>, <span class="number">0</span>, args-&gt;xPrecision,</span><br><span class="line">                             args-&gt;yPrecision, args-&gt;downTime, args-&gt;eventTime, args-&gt;pointerCount,</span><br><span class="line">                             args-&gt;pointerProperties, args-&gt;pointerCoords);</span><br><span class="line">            policyFlags |= POLICY_FLAG_FILTERED;</span><br><span class="line">            <span class="keyword">if</span> (!mPolicy-&gt;filterInputEvent(&amp;event, policyFlags)) &#123;</span><br><span class="line">                <span class="keyword">return</span>; <span class="comment">// event was consumed by the filter</span></span><br><span class="line">            &#125;</span><br><span class="line">            mLock.lock();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Just enqueue a new motion event.</span></span><br><span class="line">        MotionEntry* newEntry =</span><br><span class="line">                <span class="keyword">new</span> MotionEntry(args-&gt;sequenceNum, args-&gt;eventTime, args-&gt;deviceId, args-&gt;source,</span><br><span class="line">                                args-&gt;displayId, policyFlags, args-&gt;action, args-&gt;actionButton,</span><br><span class="line">                                args-&gt;flags, args-&gt;metaState, args-&gt;buttonState,</span><br><span class="line">                                args-&gt;classification, args-&gt;edgeFlags, args-&gt;xPrecision,</span><br><span class="line">                                args-&gt;yPrecision, args-&gt;downTime, args-&gt;pointerCount,</span><br><span class="line">                                args-&gt;pointerProperties, args-&gt;pointerCoords, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        needWake = enqueueInboundEventLocked(newEntry);</span><br><span class="line">        mLock.unlock();</span><br><span class="line">    &#125; <span class="comment">// release lock</span></span><br><span class="line">    <span class="keyword">if</span> (needWake) &#123;</span><br><span class="line">        mLooper-&gt;wake();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个函数里主要做的事是读取线程InputReaderThread在处理事务并将读取的事件放到队列中<br>可以看到最后mLooper-&gt;wake();这里的looper对应的是InputDispatcher的looper，也就是最后会唤醒InputDispatcher线程<br>而我们这笔问题中InputDispatcher在卡顿期间处于S状态，往上看哪里return了导致没有执行，其实在mPolicy-&gt;filterInputEvent处返回了false并且return了，这里的代码层层追踪会跟到InputManagerService的filterInputEvent()</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/input/InputManagerService.java;l=1828?q=InputManagerService</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Native callback.</span></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">filterInputEvent</span><span class="params">(InputEvent event, <span class="keyword">int</span> policyFlags)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mInputFilterLock) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mInputFilter != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    mInputFilter.filterInputEvent(event, policyFlags);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                    <span class="comment">/* ignore */</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        event.recycle();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>这里主要是判断InputFilter是否为空，如果不为空，则会走到mInputFilter.filterInputEvent，可以注意下，这里已经位于IMS也就是systemserver进程<br>我们这个问题始终不为空，原因在于开启了手势识别会设置一个InputFilter导致这里不为空，以便做进一步的事件加工处理，InputManagerService的filterInputEvent()最后调用到injectInputEvent()将这个事件送入mInBoundQueue，并唤醒InputDispatcher，不是本文重点所以代码就不展开叙述<br>至此明白了为何InputReader的唤醒源会跑到systemserver(UI线程)中</p>
-<p>继续看systemserver(UI线程)这段区域，在执行一个广播的onReceive中等锁导致的sleep</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png" alt="切换到wifi后卡顿-6.png"></p>
+<p>继续看systemserver(UI线程)这段区域，在执行一个广播的onReceive中等锁导致的sleep<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png" align="left"></p>
 <p>这里顺便对Contended on monitor with owner NetworkPolicy进行解读:<br>Monitor指的是当前锁对象的池，在Java中，每个对象都有两个池，锁(monitor)池和等待池：</p>
 <p>锁池（同步队列 SynchronizedQueue ）：假设线程 A 已经拥有了某个对象(注意:不是类 )的锁，而其它的线程想要调用这个对象的某个 synchronized 方法(或者 synchronized 块)，由于这些线程在进入对象的 synchronized 方法之前必须先获得该对象的锁的拥有权，但是该对象的锁目前正被线程 A 拥有，所以这些线程就进入了该对象的锁池中。</p>
 <p>这里用了争夺(contention)这个词，意思是这里由于在和目前对象的锁正被其他对象（Owner）所持有，所以没法得到该对象的锁的拥有权，所以进入该对象的锁池</p>
 <p>Owner : 指的是当前拥有这个对象的锁的对象，这里是NetworkPolicy</p>
 <p>讲的通俗一点<br>systemserver(UI线程)在执行一个广播的onReceive中等一个锁，这个锁此时被NetworkPolicy持有</p>
-<p>自然而然继续看NetworkPolicy区域</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png" alt="切换到wifi后卡顿-7.png"></p>
-<p>可以看到这段时间NetworkPolicy基本处于S状态，此时netd得到调度运行，这点在cpu区域也可以得到证实</p>
+<p>自然而然继续看NetworkPolicy区域<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png" align="left"><br>可以看到这段时间NetworkPolicy基本处于S状态，此时netd得到调度运行，这点在cpu区域也可以得到证实</p>
 <p>再看下netd区域，卡顿开始的时候也正是netd得到调度的时候，是被2835这个进程唤醒，2835正是NetworkPolicy</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png" alt="切换到wifi后卡顿-8.png"></p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png" align="left"></p>
 <p>到这里可以大致梳理一下卡顿时间内做的事:<br>1.SystemServer中的UI线程在等一个锁，这个锁被NetworkPolicy持有，所以没有发送input事件给InputDispatcher<br>2.NetworkPolicy为何一直不释放呢，是因为其调用了netd，netd执行的时间较长耗时了1s左右，等netd执行结束后NetworkPolicy得到调度继续执行并释放锁<br>3.SystemServer中的UI线程获取到锁，继续发送input事件到mInBoundQueue并唤醒InputDispatcher</p>
 <p>现在的疑问就是NetworkPolicy和SystemServer(UI线程)监听了一样的广播，这个广播的服务端应该是加锁了导致了所有注册的客户端顺序执行<br>其实想想也能猜到应该是wifi状态变化或者网络变化的广播，跟到NetworkManagerService中看下很容易发现NetworkManagerService监听了一个网络变化广播CONNECTIVITY_ACTION<br>但是SystemServer(UI线程)中注册并回调执行的代码位置需要借助traceview进一步定位，这里比较简单不展开讨论</p>
 <p>解决思路看看SystemServer(UI线程)中具体代码处是否能够去掉锁或后台执行，只要不堵在UI线程就行</p>
@@ -623,7 +629,7 @@ App 响应 Input 事件 ： 这里是滑动然后松手，也就是我们熟悉�
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>

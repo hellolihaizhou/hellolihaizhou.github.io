@@ -95,18 +95,19 @@
 <meta property="og:site_name" content="李海洲的沉淀之路">
 <meta property="og:description" content="在Unix/Linux系统下读写文件，一般有两种方式 第一种方式：传统的read/write方式 常规文件系统操作的调用过程：  进程发起读文件请求  内核通过查找进程文件符表，定位到内核已打开文件集上的文件信息，从而找到此文件的inode  inode在address_space上查找要请求的文件页是否已经缓存在页缓存中。如果存在，则直接返回这片文件页的内容。  如果不存在，则通过inode定位">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1-1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1-2.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-3.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-4.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-5.jpeg">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-6.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-7.jpeg">
-<meta property="og:updated_time" content="2020-06-01T01:41:06.053Z">
+<meta property="og:updated_time" content="2020-06-02T03:37:05.927Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mmap机制初探">
 <meta name="twitter:description" content="在Unix/Linux系统下读写文件，一般有两种方式 第一种方式：传统的read/write方式 常规文件系统操作的调用过程：  进程发起读文件请求  内核通过查找进程文件符表，定位到内核已打开文件集上的文件信息，从而找到此文件的inode  inode在address_space上查找要请求的文件页是否已经缓存在页缓存中。如果存在，则直接返回这片文件页的内容。  如果不存在，则通过inode定位">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1-1.jpg">
 
 
 
@@ -388,7 +389,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,023
+                  6,026
                 </span>
               
 
@@ -444,7 +445,8 @@
 <p>具体操作方式是：<br>open一个文件，然后调用mmap系统调用，将文件的内容的全部或一部分直接映射到进程的地址空间，映射完成后，进程可以像访问普通内存一样做其他的操作，比如memcpy等等。</p>
 <p>mmap并不分配物理地址空间，它只是占有进程的虚拟地址空间。这跟第一种方式不一样的，第一种方式需要预先分配好物理内存，内核才能将页高速缓冲中的文件数据拷贝到用户进程指定的内存空间中。</p>
 <p>而第二种方式，当多个进程需要同时访问同一个文件时，每个进程都将文件所存储的内核高速缓冲映射到自己的进程地址空间。当第一个进程访问内核中的缓冲区时候，前面讲过并没有实际拷贝数据，这时MMU在地址映射表中是无法找到与地址空间相对应的物理地址的，也就是MMU失败，就会触发缺页中断。内核将文件的这一页数据读入到内核高速缓冲区中，并更新进程的页表，使页表指向内核缓冲中的这一页。之后有其他的进程再次访问这一页的时候，该页已经在内存中了，内核只需要将进程的页表登记并且指向内核的页高速缓冲区即可</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1-1.jpg" alt=""></p>
+<p>异步IO<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/mmap-1-2.jpg" alt=""></p>
 <p>mmap内存映射具体流程如下：</p>
 <p>1、用户进程调用内存映射函数库mmap，当前进程在虚拟地址空间中，寻找一段空闲的满足要求的虚拟地址。</p>
 <p>2、此时内核收到相关请求后会调用内核的mmap函数，注意，不同于用户空间库函数。内核mmap函数通过虚拟文件系统定位到文件磁盘物理地址，既实现了文件地址和虚拟地址区域的映射关系。 此时，这片虚拟地址并没有任何数据关联到主存中。</p>

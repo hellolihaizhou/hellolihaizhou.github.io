@@ -88,12 +88,12 @@
 
 
 
-<meta name="description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们应该知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等）。我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register）。">
+<meta name="description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register），如">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Memory Barrier读书笔记">
+<meta property="og:title" content="内存屏障">
 <meta property="og:url" content="http://lihaizhou.top/2020/06/20/Memory-Barrier读书笔记/index.html">
 <meta property="og:site_name" content="李海洲的沉淀之路">
-<meta property="og:description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们应该知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等）。我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register）。">
+<meta property="og:description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register），如">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier01.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier02.gif">
@@ -102,10 +102,10 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier05.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier06.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier07.png">
-<meta property="og:updated_time" content="2020-06-20T10:03:20.111Z">
+<meta property="og:updated_time" content="2020-06-21T04:45:08.787Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Memory Barrier读书笔记">
-<meta name="twitter:description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们应该知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等）。我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register）。">
+<meta name="twitter:title" content="内存屏障">
+<meta name="twitter:description" content="本篇文章开始之前需要了解一些背景知识 Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。 在CPU内部存在一堆的通用寄存器（register），如">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier01.png">
 
 
@@ -142,7 +142,7 @@
 
 
 
-  <title>Memory Barrier读书笔记 | 李海洲的沉淀之路</title>
+  <title>内存屏障 | 李海洲的沉淀之路</title>
   
 
 
@@ -312,7 +312,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Memory Barrier读书笔记</h1>
+          <h1 class="post-title" itemprop="name headline">内存屏障</h1>
         
 
         <div class="post-meta">
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  9,139
+                  9,149
                 </span>
               
 
@@ -426,8 +426,8 @@
 
       
         <p>本篇文章开始之前需要了解一些背景知识</p>
-<h1 id="Cache-Memory"><a href="#Cache-Memory" class="headerlink" title="Cache Memory"></a>Cache Memory</h1><p>我们应该知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等）。我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。</p>
-<p>在CPU内部存在一堆的通用寄存器（register）。如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤</p>
+<h1 id="Cache-Memory"><a href="#Cache-Memory" class="headerlink" title="Cache Memory"></a>Cache Memory</h1><p>我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。</p>
+<p>在CPU内部存在一堆的通用寄存器（register），如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤</p>
 <ol>
 <li>CPU 从主存中读取地址A的数据到内部通用寄存器 x0（ARM64架构的通用寄存器之一）</li>
 <li>通用寄存器 x0 加1</li>
@@ -443,21 +443,14 @@
 <p>例如，cache line大小是8字节。CPU即使读取一个byte，在cache缺失后，cache会从主存中load 8字节填充整个cache line，至于原因可以参见这篇文章:<br><a href="http://www.wowotech.net/memory_management/458.html" target="_blank" rel="noopener">浅谈Cache Memory</a></p>
 <p>有了前面的基础知识的认知，不难理解下面这个极简的抽象CPU架构图<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier02.gif" alt=""></p>
 <h1 id="缓存一致性"><a href="#缓存一致性" class="headerlink" title="缓存一致性"></a>缓存一致性</h1><p>考虑到多线程读写环境中，不免会有个疑问，如果一个数据是多个cpu都共享，其中一个修改了是不是要想办法使得其他cpu也能更新<br>一个cpu去读取一个数值时，怎么确定是最新的呢？说到底就是要保证在使用cache后如何确保各 CPU 看到的数据是一致的<br>这个就引出另外一个名词“cache-coherence protocol”即缓存一致性协议<br>其中，MESI protocol 是一个基本版，从 MESI protocol 可以了解 CPU 之间如何维持看到一致的资料，可以参见MESI的维基定义:   <a href="https://zh.wikipedia.org/wiki/MESI%E5%8D%8F%E8%AE%AE" target="_blank" rel="noopener">MESI协议</a></p>
-<p>这里摘取英文文档中的对于MESI拆解开来的四种状态的解释</p>
-<p><code>A line in the “modified” state has been subject to a recent memory store from the corresponding CPU, and the corresponding memory is guaranteed not to appear in any other CPU’s cache. Cache lines in the “modified”state can thus be said to be “owned” by the CPU. Because this cache holds the only up-to-date copy of the data, this
+<p>这里摘取英文文档中的对于MESI拆解开来的四种状态的解释<br><code>A line in the “modified” state has been subject to a recent memory store from the corresponding CPU, and the corresponding memory is guaranteed not to appear in any other CPU’s cache. Cache lines in the “modified”state can thus be said to be “owned” by the CPU. Because this cache holds the only up-to-date copy of the data, this
 cache is ultimately responsible for either writing it back to memory or handing it off to some other cache, and must do so before reusing this line to hold other data.</code><br>处于modified状态的cacheline说明近期有过来自对应cpu的写操作，同时也说明该该数据不会存在其他cpu对应的cache中。因此，处于modified状态的cacheline也可以说是被该CPU独占。而又因为只有该CPU的cache保存了最新的数据（最终的memory中都没有更新），所以，该cache需要对该数据负责到底。例如根据请求，该cache将数据及其控制权传递到其他cache中，或者cache需要负责将数据写回到memory中，而这些操作都需要在reuse该cache line之前完成。<br><code>The “exclusive” state is very similar to the “modified”state, the single exception being that the cache line has not yet been modified by the corresponding CPU, which in turn means that the copy of the cache line’s data that resides in memory is up-to-date. However, since the CPU can store to this line at any time, without consulting other CPUs, a line in the “exclusive” state can still be said to be owned by the corresponding CPU. That said, because the corresponding value in memory is up to date, this cache can discard this data without writing it back to memory or handing it off to some other CPU.</code><br>exclusive状态和modified状态非常类似，唯一的区别是对应CPU还没有修改cacheline中的数据，也正因为还没有修改数据，因此memory中对应的data也是最新的。在exclusive状态下，cpu也可以不通知其他CPU cache而直接对cacheline进行操作，因此，exclusive状态也可以被认为是被该CPU独占。由于memory中的数据和cacheline中的数据都是最新的，因此，cpu不需对exclusive状态的cacheline执行写回的操作或者将数据以及归属权转交其他cpu cache，而直接reuse该cacheline（将cacheine中的数据丢弃，用作他用）<br><code>A line in the “shared” state might be replicated in at least one other CPU’s cache, so that this CPU is not permitted to store to the line without first consulting with other CPUs. As with the “exclusive” state, because the
-corresponding value in memory is up to date, this cache can discard this data without writing it back to memory or handing it off to some other CPU.</code><br>处于share状态的cacheline，其数据可能在一个或者多个CPU cache中，因此，处于这种状态的cache line，CPU不能直接修改cacheline的数据，而是需要首先和其他CPU cache进行沟通。和exclusive状态类似，处于share状态的cacheline对应的memory中的数据也是最新的，因此，cpu也可以直接丢弃cacheline中的数据而不必将其转交给其他CPU cache或者写回到memory中。</p>
-<p><code>A line in the “invalid” state is empty, in other words, it holds no data. When new data enters the cache, it is placed into a cache line that was in the “invalid” state if possible. This approach is preferred because replacing a line in any other state could result in an expensive cache miss should the replaced line be referenced in the future.</code><br>处于invalid状态的cacheline是空的，没有数据。当新的数据要进入cache的时候，优选状态是invalid的cacheline，之所以如此是因为如果选中其他状态的cacheline，则说明需要替换cacheline数据，而未来如果再次访问这个被替换掉的cacheline数据的时候将遇到开销非常大的cache miss  </p>
+corresponding value in memory is up to date, this cache can discard this data without writing it back to memory or handing it off to some other CPU.</code><br>处于share状态的cacheline，其数据可能在一个或者多个CPU cache中，因此，处于这种状态的cache line，CPU不能直接修改cacheline的数据，而是需要首先和其他CPU cache进行沟通。和exclusive状态类似，处于share状态的cacheline对应的memory中的数据也是最新的，因此，cpu也可以直接丢弃cacheline中的数据而不必将其转交给其他CPU cache或者写回到memory中。<br><code>A line in the “invalid” state is empty, in other words, it holds no data. When new data enters the cache, it is placed into a cache line that was in the “invalid” state if possible. This approach is preferred because replacing a line in any other state could result in an expensive cache miss should the replaced line be referenced in the future.</code><br>处于invalid状态的cacheline是空的，没有数据。当新的数据要进入cache的时候，优选状态是invalid的cacheline，之所以如此是因为如果选中其他状态的cacheline，则说明需要替换cacheline数据，而未来如果再次访问这个被替换掉的cacheline数据的时候将遇到开销非常大的cache miss  </p>
 <font color="red"> 个人理解:<br>1. 对于modified状态的cacheline，别的cpu如果需要其中的数据，必须要写回到memory或者转移<br>2. exclusive可以理解为是modified的轻量版，exclusive状态的cacheline数据此时还没有被cpu修改，也就是说它的数据和memory中是一致的，当别的cpu需要状态是exclusive的cacheline数据时，可以直接提供数据不需要写回到memory<br>3. share状态的cacheline不能直接被修改，如果一个cpu需要对这个cacheline进行修改了，需要先通知其他cpu让他们将各自对应的cacheline置为invalid，然后再切换cacheline的状态到exclusive，再然后就是M状态<br>4. invalid状态的cacheline之前可能是有数据的，比如之前是shared状态，后来其他cpu要修改这个cacheline了，就发通知过来了要求置为invalid的，不然读取出来的就是错误的<br><br> </font>
 
 <p>有一个MESI动画的网址，可以模拟各个cacheline的状态切换，比起文字描述来讲更好理解，可以不断的模拟测试，对理解MESI很有帮助<br><a href="https://www.scss.tcd.ie/Jeremy.Jones/VivioJS/caches/MESIHelp.htm" target="_blank" rel="noopener">VivioJS - Interactive Reversible E-Learning Animations for the WWW</a></p>
 <p>比如当前状态<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier03.png" alt=""></p>
-<p>此时CPU0上a1数据对应的cacheline此时的状态是M状态，可以看到此时的数值是11，比memory要新，其他两个cpu1，cpu2上的a1对应的cacheline是invalid状态</p>
-<p>如果此时cpu2上对a1进行写值加1，会是什么样子的呢？根据上面的理论知识，此时应该会通过总线通知到cpu0让其写入到memory中，然后cpu2才能读取到最新的值此时再进行修改此时数值应该是12并将状态置为E并且写回memory</p>
-<p>此时CPU0上的a1对应cacheline状态理论上应该是invalid</p>
-<p>实际的cpu2对a1加1后效果图如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier04.png" alt=""></p>
-<p>此时如果对cpu2的cacheline进行写加1，cacheline状态会切换到M状态，如果一直写，数值一直增加一直是M状态，其他cpu无变化。因为此时M是最新的，只有其他cpu比如此时cpu1需要读取a1的值，这个时候cpu2会将这个值写回到memory并且此时cpu1和cpu2上a1对应的cacheline状态都是S<br>如果这个时候，对cpu2的a1进行写操作呢？其状态会切换到E，其他cpu对应的a1-cacheline都切到invalid<br>介绍完MESI后，我们知道有了MESI protocol，任何一个CPU 要写入资料前，都要先确保其它CPU 已invalid 同一位置的cache 后(希望写入的CPU 广播invalidate，其它CPU 回invalidate ack)， 才能写资料到自己的cache，并在稍后补写回memory。<br>这个设计确保资料的一致性，不用担心同一时间同一个位置的资料会有不同的值，但是代价是写入 cache 的速度会有点慢，让 CPU 闲置，下图中的stall就是cpu等待的时长<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier05.png" alt=""></p>
-<font color="red">  个人理解添加<br>想象一下这个场景：<br><em> CPU 0 打算写入值到位置 X，CPU 1 的 cache 有 X 的值。因为缓存一致性的缘故，这个时候CPU0给CPU1发送一个invalid的广播告知其需要将其对应数值置于无效
+<font color="red"><br>个人理解添加<br>此时CPU0上a1数据对应的cacheline此时的状态是M状态，可以看到此时的数值是11，比memory要新，其他两个cpu1，cpu2上的a1对应的cacheline是invalid状态。如果此时cpu2上对a1进行写值加1，会是什么样子的呢？<br>根据上面的理论知识，此时应该会通过总线通知cpu0让其写入到memory中，然后cpu2才能读取到最新的值此时再进行修改此时数值应该是12并将状态置为E并且写回memory，此时CPU0上的a1对应cacheline状态理论上应该是invalid。<br></font><br>实际的cpu2对a1加1后效果图如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier04.png" alt=""><br><font color="red"> 个人理解添加<br>此时如果对cpu2的cacheline进行写加1，cacheline状态会切换到M状态，如果一直写，数值一直增加一直是M状态，其他cpu无变化。因为此时M是最新的，只有其他cpu比如此时cpu1需要读取a1的值，这个时候cpu2会将这个值写回到memory并且此时cpu1和cpu2上a1对应的cacheline状态都是S。<br>如果这个时候，对cpu2的a1进行写操作呢？其状态会切换到E，其他cpu对应的a1-cacheline都切到invalid<br>介绍完MESI后，我们知道有了MESI protocol，任何一个CPU 要写入资料前，都要先确保其它CPU 已invalid 同一位置的cache 后(希望写入的CPU 广播invalidate，其它CPU 回invalidate ack)， 才能写资料到自己的cache，并在稍后补写回memory。<br></font><br>这个设计确保资料的一致性，不用担心同一时间同一个位置的资料会有不同的值，但是代价是写入 cache 的速度会有点慢，让 CPU 闲置，下图中的stall就是cpu等待的时长<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/memory-barrier05.png" alt=""><br><br><font color="red">  个人理解添加<br>想象一下这个场景：<br><em> CPU 0 打算写入值到位置 X，CPU 1 的 cache 有 X 的值。因为缓存一致性的缘故，这个时候CPU0给CPU1发送一个invalid的广播告知其需要将其对应数值置于无效
 </em> 这个时候呢cpu0就开始傻乎乎的等 CPU 1 回 invalidate ack，但是此时CPU 1 的 cache 可能太忙而拖慢了回覆时间 (比方同时从 cache 大量的读写资料，或是短时间收到大量 invalidate ack)。<br>这样就导致了CPU0白白耗费时间在等待上，这对于宝贵的cpu资源是一种很大的浪费，其实没必要等待这么长的时间，毕竟物理CPU 1中的cacheline保存有什么样子的数据，其实都没有意义，这个值都会被CPU 0新写入的值覆盖的，所以能不能不等呢？这也就引出了另外一个名词StoreBuffer，还有另外一个名词对应刷新的Invalidate Queue<br></font> 
 
 <h2 id="Store-Buffer-amp-Invalidate-Queue"><a href="#Store-Buffer-amp-Invalidate-Queue" class="headerlink" title="Store Buffer &amp; Invalidate Queue"></a>Store Buffer &amp; Invalidate Queue</h2><p>在CPU和cache之间增加store buffer这个HW block</p>
@@ -538,9 +531,7 @@ However, if you need to implement the synchronization primitives themselves, or 
 <font color="red"><br>个人理解添加<br>以StoreLoad为例，这个是上面四个中最重的，最耗性能的，storeload其实能涵盖上面三个，因为它既保证了写也保证了读，它和loadstore的侧重点不一样，loadstore对于后面的那个写什么时候能写进去不是非常要求，更侧重的是前面的写。前一个是写后一个是读，后一个读取不能重排到这个写操作之前，也就是load时要看到前面写的值，这也就要保证前一个写的内容如果在storebuffer中就一定要写到cache中.<br>然后load的时候不能直接去读cache的值，要将invalidqueue中的值处理掉，该标记无效的都要进行标记，确保读取出来的是最新的。<br></font>   
 
 <p>对于java中的volatile防止重排网上博客一大堆，有些文章从汇编角度来分析加了volatile前后的对比，本地测试过hsdis可以用来将java转换为对应的汇编，这里就不展开了     </p>
-<font color="red"><br>个人理解:<br>volatile最重要的使命是为了可见性，为了达到可见性这个目的不得不设计出防止指令重排，因为如果不限制重排，就达不到可见性这个目的<br>所以可以理解防止重排只是达到可见性的一个不得已手段<br></font>      
-
-
+<p><font color="red"> 个人理解<br>volatile最重要的使命是为了可见性，为了达到可见性这个目的不得不设计出防止指令重排，因为如果不限制重排，就达不到可见性这个目的<br>所以可以理解防止重排只是达到可见性的一个不得已手段<br></font><br><br>   </p>
 <p><strong>参考文章</strong><br><a href="https://www.infoq.com/articles/memory_barriers_jvm_concurrency/" target="_blank" rel="noopener">Memory Barriers and JVM Concurrency</a><br><a href="http://www.wowotech.net/kernel_synchronization/memory-barrier.html" target="_blank" rel="noopener">Linux内核同步机制之（三）：memory barrier</a><br><a href="https://medium.com/fcamels-notes/%E5%BE%9E%E7%A1%AC%E9%AB%94%E8%A7%80%E9%BB%9E%E4%BA%86%E8%A7%A3-memry-barrier-%E7%9A%84%E5%AF%A6%E4%BD%9C%E5%92%8C%E6%95%88%E6%9E%9C-416ff0a64fc1" target="_blank" rel="noopener">從硬體觀點了解 memory barrier 的實作和效果</a><br><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0098r0.pdf" target="_blank" rel="noopener">P0098R0: Towards Implementation and Use ofmemoryorderconsume</a><br><a href="https://createpoint.qti.qualcomm.com/search/contentdocument/stream/35553?refererRoute=search%2FsearchArgs%2Fq%7C%7CMemory%20Barriers%7C%7Crows%7C%7C10%7C%7CsortField%7C%7Cscore%7C%7CsortOrder%7C%7Cdesc&amp;dcn=80-N5603-1&amp;currentPage=1&amp;itemTotalIndex=1" target="_blank" rel="noopener">LINUX MEMORY ORDERING ON SCORPION-MP AND KRAIT APPLICATION PROCESSORS</a><br><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a><br><a href="https://mp.weixin.qq.com/s?__biz=MzUzMDk3NjM3Mg==&amp;mid=2247483755&amp;idx=1&amp;sn=50f80e73f46fab04d8a799e8731432c6&amp;chksm=fa48da70cd3f5366d9658277cccd9e36fca540276f580822d41aef7d8af4dda480fc85e3bde4&amp;token=630636109&amp;lang=zh_CN#rd" target="_blank" rel="noopener">从 Java 内存模型看内部细节</a><br><a href="http://www.4e00.com/blog/java/2018/10/21/inside-java-memory-model.html" target="_blank" rel="noopener">深入理解 java 内存模型</a><br><a href="http://www.wowotech.net/memory_management/458.html" target="_blank" rel="noopener">浅谈Cache Memory</a><br><a href="http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html" target="_blank" rel="noopener">Why Memory Barriers</a></p>
 
       
@@ -573,7 +564,7 @@ However, if you need to implement the synchronization primitives themselves, or 
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2020/06/20/Memory-Barrier读书笔记/" title="Memory Barrier读书笔记">http://lihaizhou.top/2020/06/20/Memory-Barrier读书笔记/</a>
+    <a href="http://lihaizhou.top/2020/06/20/Memory-Barrier读书笔记/" title="内存屏障">http://lihaizhou.top/2020/06/20/Memory-Barrier读书笔记/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>

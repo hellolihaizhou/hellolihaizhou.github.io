@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李海洲的沉淀之路" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content=";;;ace.define(&quot;ace/keyboard/vim&quot;,[&quot;require&quot;,&quot;exports&quot;,&quot;module&quot;,&quot;ace/keyboard/vim/commands&quot;,&quot;ace/keyboard/vim/maps/util&quot;,&quot;ace/lib/useragent&quot;],function(a,b,c){var d=a(&quot;./vim/commands&quot;),e=d.coreCommands,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="李海洲的沉淀之路">
+<meta property="og:url" content="http://lihaizhou.top/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/index.html">
+<meta property="og:site_name" content="李海洲的沉淀之路">
+<meta property="og:description" content=";;;ace.define(&quot;ace/keyboard/vim&quot;,[&quot;require&quot;,&quot;exports&quot;,&quot;module&quot;,&quot;ace/keyboard/vim/commands&quot;,&quot;ace/keyboard/vim/maps/util&quot;,&quot;ace/lib/useragent&quot;],function(a,b,c){var d=a(&quot;./vim/commands&quot;),e=d.coreCommands,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-08-09T12:12:47.801Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="李海洲的沉淀之路">
+<meta name="twitter:description" content=";;;ace.define(&quot;ace/keyboard/vim&quot;,[&quot;require&quot;,&quot;exports&quot;,&quot;module&quot;,&quot;ace/keyboard/vim/commands&quot;,&quot;ace/keyboard/vim/maps/util&quot;,&quot;ace/lib/useragent&quot;],function(a,b,c){var d=a(&quot;./vim/commands&quot;),e=d.coreCommands,">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lihaizhou.top/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/"/>
+
+
+
+
+
+  <title> | 李海洲的沉淀之路</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+	
+	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
+	
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李海洲的沉淀之路</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的沉淀之路">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-09T20:12:47+08:00">
+                2020-08-09
+              </time>
+            
+
+            
+
+            
+  	    
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,871
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        ;;;ace.define("ace/keyboard/vim",["require","exports","module","ace/keyboard/vim/commands","ace/keyboard/vim/maps/util","ace/lib/useragent"],function(a,b,c){var d=a("./vim/commands"),e=d.coreCommands,f=a("./vim/maps/util"),g=a("../lib/useragent"),h={i:{command:e.start},I:{command:e.startBeginning},a:{command:e.append},A:{command:e.appendEnd},"ctrl-f":{command:"gotopagedown"},"ctrl-b":{command:"gotopageup"}};b.handler={handleMacRepeat:function(a,b,c){if(b==-1)a.inputChar=c,a.lastEvent="input";else if(a.inputChar&&a.$lastHash==b&&a.$lastKey==c){if(a.lastEvent=="input")a.lastEvent="input1";else if(a.lastEvent=="input1")return!0}else a.$lastHash=b,a.$lastKey=c,a.lastEvent="keypress"},handleKeyboard:function(a,b,c,f,i){if(b!=0&&(c==""||c=="\0"))return null;b==1&&(c="ctrl-"+c);if(a.state=="start"){g.isMac&&this.handleMacRepeat(a,b,c)&&(b=-1,c=a.inputChar);if(b==-1||b==1)return d.inputBuffer.idle&&h[c]?h[c]:{command:{exec:function(a){d.inputBuffer.push(a,c)}}};if(c.length==1&&(b==0||b==4))return{command:"null",passEvent:!0};if(c=="esc"&&b==0)return{command:e.stop}}else{if(c=="esc"||c=="ctrl-[")return a.state="start",{command:e.stop};if(c=="ctrl-w")return{command:"removewordleft"}}},attach:function(a){a.on("click",b.onCursorMove),f.currentMode!=="insert"&&d.coreCommands.stop.exec(a),a.$vimModeHandler=this},detach:function(a){a.removeListener("click",b.onCursorMove),f.noMode(a),f.currentMode="normal"},actions:d.actions,getStatusText:function(){return f.currentMode=="insert"?"INSERT":f.onVisualMode?(f.onVisualLineMode?"VISUAL LINE ":"VISUAL ")+d.inputBuffer.status:d.inputBuffer.status}},b.onCursorMove=function(a){d.onCursorMove(a.editor,a),b.onCursorMove.scheduled=!1}}),ace.define("ace/keyboard/vim/commands",["require","exports","module","ace/keyboard/vim/maps/util","ace/keyboard/vim/maps/motions","ace/keyboard/vim/maps/operators","ace/keyboard/vim/maps/aliases","ace/keyboard/vim/registers"],function(a,b,c){function r(a){q.previous={action:{action:{fn:a}}}}"never use strict";var d=a("./maps/util"),e=a("./maps/motions"),f=a("./maps/operators"),g=a("./maps/aliases"),h=a("./registers"),i=1,j=2,k=3,l=4,m=8,n=function(b,c,d){while(0<c--)b.apply(this,d)},o=function(a){var b="a.renderer,c=b.$cursorLayer.getPixelPosition(),d=c.top,e=m*b.layerConfig.lineHeight;2*e">b.$size.scrollerHeight&&(e=b.$size.scrollerHeight/2),b.scrollTop>d-e&&b.session.setScrollTop(d-e),b.scrollTop+b.$size.scrollerHeight<d+e+b.lineheight&&b.session.setscrolltop(d+e+b.lineheight-b.$size.scrollerheight)},p=b.actions={z:{param:!0,fn:function(a,b,c,d){switch(d){case"z":a.aligncursor(null,.5);break;case"t":a.aligncursor(null,0);break;case"b":a.aligncursor(null,1)}}},r:{param:!0,fn:function(a,b,c,d){d&&d.length&&(n(function(){a.insert(d)},c||1),a.navigateleft())}},r:{fn:function(a,b,c,e){d.insertmode(a),a.setoverwrite(!0)}},"~":{fn:function(a,b,c){n(function(){var b="a.selection.getRange();b.isEmpty()&&b.end.column++;var" c="a.session.getTextRange(b),d=c.toUpperCase();d==c?a.navigateRight():a.session.replace(b,d)},c||1)}}," *":{fn:function(a,b,c,d){a.selection.selectword(),a.findnext(),o(a);var"="" e="a.selection.getRange();a.selection.setSelectionRange(e,!0)}}," #":{fn:function(a,b,c,d){a.selection.selectword(),a.findprevious(),o(a);var"="" f="a.selection.getRange();f.end.row=f.start.row,f.end.column=f.start.column,a.selection.setSelectionRange(f,!0)}},N:{fn:function(a,b,c,d){var" a.navigateright(),a.insert(e.text),a.navigateleft();a.setoverwrite(!0),a.selection.clearselection()}},p:{fn:function(a,b,c,d){var="" a.insert(e.text);a.setoverwrite(!0),a.selection.clearselection()}},j:{fn:function(a,b,c,d){var="" g="Math.min(f.row+(c||1),e.getLength()-1);b.start.column=e.getLine(f.row).length,b.end.column=e.getLine(g).length,b.end.row=g;var" h="" ;for(var="" i="f.row;i<g;i++){var" j="e.getLine(i+1);h+=" "="" "+="" ^\s*(.*)$="" .exec(j)[1]||""}e.replace(b,h),a.movecursorto(f.row,f.column)}},u:{fn:function(a,b,c,d){c="parseInt(c||1,10);for(var" d="this.waitingForParam;if(d)this.exec(a,d,b);else" if(b="==" 0"&&!this.currentcount.length||!b.match(="" ^\d+$="" )||!this.isaccepting(i))if(!this.operator&&this.isaccepting(j)&&f[b])this.operator="{"char":b,count:this.getCount()},this.currentCmd=j,this.accepting=[i,k,l],this.exec(a,{operator:this.operator});else"" if(e[b]&&this.isaccepting(k)){this.currentcmd="k;var" if(g[b]&&this.isaccepting(k))g[b].operator.count="this.getCount(),this.exec(a,g[b]);else" if(p[b]&&this.isaccepting(l)){var="" m="{action:{fn:p[b].fn,count:this.getCount()}};p[b].param?this.waitForParam(m):this.exec(a,m),p[b].acceptsMotion&&(this.idle=!1)}else" this.operator?this.exec(a,{operator:this.operator},b):this.reset();else="" this.currentcount+="b,this.currentCmd=i,this.accepting=[i,j,k,l];if(this.waitingForParam||this.motion||this.operator)this.status+=b;else" if(this.currentcount)this.status="this.currentCount;else{if(!this.status)return;this.status=" "}a._emit("changestatus")},waitforparam:function(a){this.waitingforparam="a},getCount:function(){var"" a="this.currentCount;return" this.currentcount="" ,a&&parseint(a,10)},exec:function(a,b,c){var="" if(g){var="" i&&(i.fn(a,a.getselectionrange(),i.count,c),this.reset());s(a)},isaccepting:function(a){return="" this.accepting.indexof(a)!="=-1},reset:function(){this.operator=null,this.motion=null,this.currentCount=" ",this.status="" ,this.accepting="[i,j,k,l],this.idle=!0,this.waitingForParam=null}};b.coreCommands={start:{exec:function"" t(a){d.insertmode(a),r(t)}},startbeginning:{exec:function="" u(a){a.navigatelinestart(),d.insertmode(a),r(u)}},stop:{exec:function(b){q.reset(),d.onvisualmode="!1,d.onVisualLineMode=!1,q.lastInsertCommands=d.normalMode(b)}},append:{exec:function" v(a){var="" w(a){a.navigatelineend(),d.insertmode(a),r(w)}}};var="" s="b.onCursorMove=function(a,b){if(d.currentMode===" insert"||s.running)return;if(!a.selection.isempty()){s.running="!0;if(d.onVisualLineMode){var"" ace_cursor{="" border-left:="" 2px="" solid="" #333333;}.ace_dark.insert-mode="" .ace_cursor{="" #eeeeee;}.normal-mode="" border:="" 0!important;="" background-color:="" red;="" opacity:="" 0.5;}","vimmode"),c.exports="{onVisualMode:!1,onVisualLineMode:!1,currentMode:" normal",nomode:function(a){a.unsetstyle("insert-mode"),a.unsetstyle("normal-mode"),a.commands.recording&&a.commands.togglerecording(a),a.setoverwrite(!1)},insertmode:function(a){this.currentmode="insert" ,a.setstyle("insert-mode"),a.unsetstyle("normal-mode"),a.setoverwrite(!1),a.keybinding.$data.buffer="" ,a.keybinding.$data.state="insertMode" ,this.onvisualmode="!1,this.onVisualLineMode=!1,this.onInsertReplaySequence?(a.commands.macro=this.onInsertReplaySequence,a.commands.replay(a),this.onInsertReplaySequence=null,this.normalMode(a)):(a._emit("changeStatus"),a.commands.recording||a.commands.toggleRecording(a))},normalMode:function(a){this.currentMode="normal",a.unsetStyle("insert-mode"),a.setStyle("normal-mode"),a.clearSelection();var"" b;return="" a.getoverwrite()||(b="a.getCursorPosition(),b.column">0&&a.navigateLeft()),a.setOverwrite(!0),a.keyBinding.$data.buffer="",a.keyBinding.$data.state="start",this.onVisualMode=!1,this.onVisualLineMode=!1,a._emit("changeStatus"),a.commands.recording?(a.commands.toggleRecording(a),a.commands.macro):[]},visualMode:function(a,b){if(this.onVisualLineMode&&b||this.onVisualMode&&!b){this.normalMode(a);return}a.setStyle("insert-mode"),a.unsetStyle("normal-mode"),a._emit("changeStatus"),b?this.onVisualLineMode=!0:(this.onVisualMode=!0,this.onVisualLineMode=!1)},getRightNthChar:function(a,b,c,d){var e=a.getSession().getLine(b.row),f=e.substr(b.column+1).split(c);return d<f.length?f.slice(0,d).join(c).length:null},getleftnthchar:function(a,b,c,d){var e="a.getSession().getLine(b.row),f=e.substr(0,b.column).split(c);return" d<f.length?f.slice(-1*d).join(c).length:null},torealchar:function(a){return="" a.length="==1?a:/^shift-./.test(a)?a[a.length-1].toUpperCase():" "},copyline:function(a){var"="" b="a.getCursorPosition();a.selection.clearSelection(),a.moveCursorTo(b.row,b.column),a.selection.selectLine(),d._default.isLine=!0,d._default.text=a.getCopyText().replace(/\n$/," "),a.selection.clearselection(),a.movecursorto(b.row,b.column)}}}),ace.define("ace="" keyboard="" vim="" registers",["require","exports","module"],function(a,b,c){"never"="" use="" strict",c.exports="{_default:{text:" ",isline:!1}}}),"use"="" strict",ace.define("ace="" maps="" motions",["require","exports","module","ace="" util","ace="" search","ace="" range"],function(a,b,c){function="" f(a,b){if(b="=" extend")var"="" c="!0;else" var="" d="b;this.nav=function(b){var" if(d)var="" b.selection.setselectionrange(e);if(!e.end)var="" f="e;else" m(a,b,c){return="" l.$options.needle="b,l.$options.backwards=c==-1,l.find(a.session)}var">~!@#$%^&*|+=\[\]{}`~?]/,h=/[.\/\\()\"'-:,.;<>~!@#$%^&*|+=\[\]{}`~?]/,i=/\s/,j=function(a,b){var c=a.selection;this.range=c.getRange(),b=b||c.selectionLead,this.row=b.row,this.col=b.column;var d=a.session.getLine(this.row),e=a.session.getLength();this.ch=d[this.col]||"\n",this.skippedLines=0,this.next=function(){return this.ch=d[++this.col]||this.handleNewLine(1),this.ch},this.prev=function(){return this.ch=d[--this.col]||this.handleNewLine(-1),this.ch},this.peek=function(b){var c=d[this.col+b];return c?c:b==-1?"\n":this.col==d.length-1?"\n":a.session.getLine(this.row+1)[0]||"\n"},this.handleNewLine=function(b){if(b==1)return this.col==d.length?"\n":this.row==e-1?"":(this.col=0,this.row++,d=a.session.getLine(this.row),this.skippedLines++,d[0]||"\n");if(b==-1)return this.row==0?"":(this.row--,d=a.session.getLine(this.row),this.col=d.length,this.skippedLines--,"\n")},this.debug=function(){console.log(d.substring(0,this.col)+"|"+this.ch+"'"+this.col+"'"+d.substr(this.col+1))}},k=a("ace/search").Search,l=new k,n=a("ace/range").Range;c.exports={w:new f(function(a){var b=new j(a);if(b.ch&&h.test(b.ch))while(b.ch&&h.test(b.ch))b.next();else while(b.ch&&!g.test(b.ch))b.next();while(b.ch&&i.test(b.ch)&&b.skippedLines<2)b.next();return b.skippedlines="=2&&b.prev(),{column:b.col,row:b.row}}),W:new" f(function(a){var="" b="new" j(a);while(b.ch&&(!i.test(b.ch)||!!i.test(b.peek(1)))&&b.skippedlines<2)b.next();return="" j(a);b.prev();while(b.ch&&i.test(b.ch)&&b.skippedlines="">-2)b.prev();if(b.ch&&h.test(b.ch))while(b.ch&&h.test(b.ch))b.prev();else while(b.ch&&!g.test(b.ch))b.prev();return b.ch&&b.next(),{column:b.col,row:b.row}}),B:new f(function(a){var b=new j(a);b.prev();while(b.ch&&(!!i.test(b.ch)||!i.test(b.peek(-1)))&&b.skippedLines>-2)b.prev();return b.skippedLines==-2&&b.next(),{column:b.col,row:b.row}},!0),e:new f(function(a){var b=new j(a);b.next();while(b.ch&&i.test(b.ch))b.next();if(b.ch&&h.test(b.ch))while(b.ch&&h.test(b.ch))b.next();else while(b.ch&&!g.test(b.ch))b.next();return b.ch&&b.prev(),{column:b.col,row:b.row}}),E:new f(function(a){var b=new j(a);b.next();while(b.ch&&(!!i.test(b.ch)||!i.test(b.peek(1))))b.next();return{column:b.col,row:b.row}}),l:{nav:function(a){a.navigateRight()},sel:function(a){var b=a.getCursorPosition(),c=b.column,d=a.session.getLine(b.row).length;d&&c!==d&&a.selection.selectRight()}},h:{nav:function(a){var b=a.getCursorPosition();b.column>0&&a.navigateLeft()},sel:function(a){var b=a.getCursorPosition();b.column>0&&a.selection.selectLeft()}},k:{nav:function(a){a.navigateUp()},sel:function(a){a.selection.selectUp()}},j:{nav:function(a){a.navigateDown()},sel:function(a){a.selection.selectDown()}},i:{param:!0,sel:function(a,b,c,d){switch(d){case"w":a.selection.selectWord();break;case"W":a.selection.selectAWord();break;case"(":case"{":case"[":var e=a.getCursorPosition(),f=a.session.$findClosingBracket(d,e,/paren/);if(!f)return;var g=a.session.$findOpeningBracket(a.session.$brackets[d],e,/paren/);if(!g)return;g.column++,a.selection.setSelectionRange(n.fromPoints(g,f));break;case"'":case'"':case"/":var f=m(a,d,1);if(!f)return;var g=m(a,d,-1);if(!g)return;a.selection.setSelectionRange(n.fromPoints(g.end,f.start))}}},a:{param:!0,sel:function(a,b,c,d){switch(d){case"w":a.selection.selectAWord();break;case"W":a.selection.selectAWord();break;case"(":case"{":case"[":var e=a.getCursorPosition(),f=a.session.$findClosingBracket(d,e,/paren/);if(!f)return;var g=a.session.$findOpeningBracket(a.session.$brackets[d],e,/paren/);if(!g)return;f.column++,a.selection.setSelectionRange(n.fromPoints(g,f));break;case"'":case'"':case"/":var f=m(a,d,1);if(!f)return;var g=m(a,d,-1);if(!g)return;f.column++,a.selection.setSelectionRange(n.fromPoints(g.start,f.end))}}},f:{param:!0,handlesCount:!0,nav:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getRightNthChar(a,g,e,c||1);typeof h=="number"&&(f.selection.clearSelection(),f.moveCursorTo(g.row,h+g.column+1))},sel:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getRightNthChar(a,g,e,c||1);typeof h=="number"&&f.moveCursorTo(g.row,h+g.column+1)}},F:{param:!0,handlesCount:!0,nav:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getLeftNthChar(a,g,e,c||1);typeof h=="number"&&(f.selection.clearSelection(),f.moveCursorTo(g.row,g.column-h-1))},sel:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getLeftNthChar(a,g,e,c||1);typeof h=="number"&&f.moveCursorTo(g.row,g.column-h-1)}},t:{param:!0,handlesCount:!0,nav:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getRightNthChar(a,g,e,c||1);typeof h=="number"&&(f.selection.clearSelection(),f.moveCursorTo(g.row,h+g.column))},sel:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getRightNthChar(a,g,e,c||1);typeof h=="number"&&f.moveCursorTo(g.row,h+g.column)}},T:{param:!0,handlesCount:!0,nav:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getLeftNthChar(a,g,e,c||1);typeof h=="number"&&(f.selection.clearSelection(),f.moveCursorTo(g.row,-h+g.column))},sel:function(a,b,c,e){var f=a,g=f.getCursorPosition(),h=d.getLeftNthChar(a,g,e,c||1);typeof h=="number"&&f.moveCursorTo(g.row,-h+g.column)}},"^":{nav:function(a){a.navigateLineStart()},sel:function(a){a.selection.selectLineStart()}},$:{nav:function(a){a.navigateLineEnd()},sel:function(a){a.selection.selectLineEnd()}},0:new f(function(a){return{row:a.selection.lead.row,column:0}}),G:{nav:function(a,b,c,d){!c&&c!==0&&(c=a.session.getLength()),a.gotoLine(c)},sel:function(a,b,c,d){!c&&c!==0&&(c=a.session.getLength()),a.selection.selectTo(c,0)}},g:{param:!0,nav:function(a,b,c,d){switch(d){case"m":console.log("Middle line");break;case"e":console.log("End of prev word");break;case"g":a.gotoLine(c||0);case"u":a.gotoLine(c||0);case"U":a.gotoLine(c||0)}},sel:function(a,b,c,d){switch(d){case"m":console.log("Middle line");break;case"e":console.log("End of prev word");break;case"g":a.selection.selectTo(c||0,0)}}},o:{nav:function(a,b,c,e){c=c||1;var f="";while(0<c--)f+="\n";f.length&&(a.navigatelineend(),a.insert(f),d.insertmode(a))}},o:{nav:function(a,b,c,e){var f="a.getCursorPosition().row;c=c||1;var" g="" ;while(0<c--)g+="\n" ;g.length&&(f="">0?(a.navigateUp(),a.navigateLineEnd(),a.insert(g)):(a.session.insert({row:0,column:0},g),a.navigateUp()),d.insertMode(a))}},"%":new f(function(a){var b=/[\[\]{}()]/g,c=a.getCursorPosition(),d=a.session.getLine(c.row)[c.column];if(!b.test(d)){var e=m(a,b);if(!e)return;c=e.start}var f=a.session.findMatchingBracket({row:c.row,column:c.column+1});return f}),"ctrl-d":{nav:function(a,b,c,d){a.selection.clearSelection(),e(a,a.gotoPageDown)},sel:function(a,b,c,d){e(a,a.selectPageDown)}},"ctrl-u":{nav:function(a,b,c,d){a.selection.clearSelection(),e(a,a.gotoPageUp)},sel:function(a,b,c,d){e(a,a.selectPageUp)}}},c.exports.backspace=c.exports.left=c.exports.h,c.exports.right=c.exports.l,c.exports.up=c.exports.k,c.exports.down=c.exports.j,c.exports.pagedown=c.exports["ctrl-d"],c.exports.pageup=c.exports["ctrl-u"]}),ace.define("ace/keyboard/vim/maps/operators",["require","exports","module","ace/keyboard/vim/maps/util","ace/keyboard/vim/registers"],function(a,b,c){"never use strict";var d=a("./util"),e=a("../registers");c.exports={d:{selFn:function(a,b,c,f){e._default.text=a.getCopyText(),e._default.isLine=d.onVisualLineMode,d.onVisualLineMode?a.removeLines():a.session.remove(b),d.normalMode(a)},fn:function(a,b,c,d){c=c||1;switch(d){case"d":e._default.text="",e._default.isLine=!0;for(var f=0;f<c;f++){a.selection.selectline(),e._default.text+=a.getcopytext();var g="a.getSelectionRange();if(!g.isMultiLine()){lastLineReached=!0;var" h="g.start.row-1,i=a.session.getLine(h).length;g.setStart(h,i),a.session.remove(g),a.selection.clearSelection();break}a.session.remove(g),a.selection.clearSelection()}e._default.text=e._default.text.replace(/\n$/," ");break;default:b&&(a.selection.setselectionrange(b),e._default.text="a.getCopyText(),e._default.isLine=!1,a.session.remove(b),a.selection.clearSelection())}}},c:{selFn:function(a,b,c,e){a.session.remove(b),d.insertMode(a)},fn:function(a,b,c,e){c=c||1;switch(e){case"c":for(var"" f="0;f<c;f++)a.removeLines(),d.insertMode(a);break;default:b&&(a.session.remove(b),d.insertMode(a))}}},y:{selFn:function(a,b,c,f){e._default.text=a.getCopyText(),e._default.isLine=d.onVisualLineMode,a.selection.clearSelection(),d.normalMode(a)},fn:function(a,b,c,d){c=c||1;switch(d){case" y":var"="">":{selFn:function(a,b,c,e){c=c||1;for(var f=0;f<c;f++)a.indent();d.normalmode(a)},fn:function(a,b,c,d){c=parseint(c||1,10);switch(d){case">":var e=a.getCursorPosition();a.selection.selectLine();for(var f=0;f</c;f++)a.indent();d.normalmode(a)},fn:function(a,b,c,d){c=parseint(c||1,10);switch(d){case"></c;f++){a.selection.selectline(),e._default.text+=a.getcopytext();var></c--)f+="\n";f.length&&(a.navigatelineend(),a.insert(f),d.insertmode(a))}},o:{nav:function(a,b,c,e){var></2)b.next();return></f.length?f.slice(0,d).join(c).length:null},getleftnthchar:function(a,b,c,d){var></d+e+b.lineheight&&b.session.setscrolltop(d+e+b.lineheight-b.$size.scrollerheight)},p=b.actions={z:{param:!0,fn:function(a,b,c,d){switch(d){case"z":a.aligncursor(null,.5);break;case"t":a.aligncursor(null,0);break;case"b":a.aligncursor(null,1)}}},r:{param:!0,fn:function(a,b,c,d){d&&d.length&&(n(function(){a.insert(d)},c||1),a.navigateleft())}},r:{fn:function(a,b,c,e){d.insertmode(a),a.setoverwrite(!0)}},"~":{fn:function(a,b,c){n(function(){var></c--)b.apply(this,d)},o=function(a){var>
+      
+    </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/" title="">http://lihaizhou.top/2020/08/09/TCP-IP系列之三次握手-一_files/keybinding-vim/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/09/TCP-IP系列之三次握手-一/" rel="next" title="TCP/IP系列之三次握手(一)">
+                <i class="fa fa-chevron-left"></i> TCP/IP系列之三次握手(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/09/TCP-IP系列之三次握手-一_files/ace/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/background.jpg"
+                alt="Steven Lee" />
+            
+              <p class="site-author-name" itemprop="name">Steven Lee</p>
+              <p class="site-description motion-element" itemprop="description">永远保持好奇心</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Steven Lee</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">Steven的博客共101.5k字</span>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'Hsz9zOlrvMN9ry0R9Jfi5ykJ-gzGzoHsz',
+        appKey: 'MAHOS3RIF7wDFRbEeC7kf3Vr',
+        placeholder: '此处输入评论内容',
+        avatar:'wavatar',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

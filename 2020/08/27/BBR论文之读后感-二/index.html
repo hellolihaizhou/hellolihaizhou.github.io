@@ -88,16 +88,17 @@
 
 
 
-<meta name="description" content="永远保持好奇心">
-<meta property="og:type" content="website">
-<meta property="og:title" content="李海洲的沉淀之路">
-<meta property="og:url" content="http://lihaizhou.top/archives/2020/08/index.html">
+<meta name="description" content="Characterizing the Bottleneck 12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BBR论文之读后感(二)">
+<meta property="og:url" content="http://lihaizhou.top/2020/08/27/BBR论文之读后感-二/index.html">
 <meta property="og:site_name" content="李海洲的沉淀之路">
-<meta property="og:description" content="永远保持好奇心">
+<meta property="og:description" content="Characterizing the Bottleneck 12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-08-27T03:27:03.183Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李海洲的沉淀之路">
-<meta name="twitter:description" content="永远保持好奇心">
+<meta name="twitter:title" content="BBR论文之读后感(二)">
+<meta name="twitter:description" content="Characterizing the Bottleneck 12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in">
 
 
 
@@ -127,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/archives/2020/08/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-二/"/>
 
 
 
 
 
-  <title>归档 | 李海洲的沉淀之路</title>
+  <title>BBR论文之读后感(二) | 李海洲的沉淀之路</title>
   
 
 
@@ -152,7 +153,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
@@ -272,148 +273,263 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲的沉淀之路">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">BBR论文之读后感(二)</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-27T10:50:37+08:00">
+                2020-08-27
+              </time>
+            
+
+            
+
+            
+  	    
+          </span>
+
           
-        
-        嗯..! 目前共计 29 篇日志。 继续努力。
-      </span>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2020">2020</h1>
-          </div>
-        
-        
 
-        
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/08/27/BBR论文之读后感-二/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/27/BBR论文之读后感-二/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/08/27/BBR论文之读后感-二/" itemprop="url">
+          
+
+          
+            <div class="post-wordcount">
               
-                <span itemprop="name">BBR论文之读后感(二)</span>
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,066
+                </span>
               
-            </a>
-        
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-08-27T10:50:37+08:00"
-              content="2020-08-27" >
-          08-27
-        </time>
-      </div>
+              
+                <span class="post-meta-divider">|</span>
+              
 
-    </header>
-  </article>
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
 
+          
 
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/08/27/BBR论文之读后感-一/" itemprop="url">
-              
-                <span itemprop="name">BBR论文之读后感(一)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-08-27T10:19:27+08:00"
-              content="2020-08-27" >
-          08-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/08/09/网络协议系列之聊聊三次握手/" itemprop="url">
-              
-                <span itemprop="name">网络系列之三次握手</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-08-09T17:31:07+08:00"
-              content="2020-08-09" >
-          08-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p>Characterizing the Bottleneck</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">A connection runs <span class="keyword">with</span> the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data <span class="keyword">in</span> flight is equal to the BDP (= BtlBw × RTprop).</span><br><span class="line"></span><br><span class="line">The first condition guarantees that the bottleneck can run at <span class="number">100</span> percent utilization. The second guarantees there is enough data to prevent bottleneck starvation but not overfill the pipe. The rate balance condition alone does not ensure there is no queue, only that it can<span class="string">'t change size (e.g., if a connection starts by sending its 10-packet Initial Window into a five-packet BDP, then runs at exactly the bottleneck rate, five of the 10 initial packets fill the pipe so the excess forms a standing queue at the bottleneck that cannot dissipate).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Similarly, the full pipe condition does not guarantee there is no queue (e.g., a connection sending a BDP in BDP/2 bursts gets full bottleneck utilization, but with an average queue of BDP/4). The only way to minimize the queue at the bottleneck and all along the path is to meet both conditions simultaneously.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>当一个连接满足以下两个条件时，它可以在达到最高的吞吐量的同时保持最低时延：</p>
+<ol>
+<li><p>速率平衡：瓶颈带宽的数据到达速率与BtlBw相等；</p>
+</li>
+<li><p>填满管道：所有的在外数据（inflight data）与BDP（带宽与时延的乘积）相等</p>
+</li>
+</ol>
+<p>其中第一个约束保证了瓶颈带宽可以得到100%利用。而第二个约束保证了流有足够的数据来填满瓶颈链路而且同时不会溢出（排队）。</p>
+<p>第一个条件本身并无法保证路径中不存在队列，它只能保证流的速率不发生改变（例如，考虑一个连接在一开始就发送了10个报文到一个BDP只有5个网络中，并且接下来一直保持瓶颈速率发送。这样子会导致在一开始就填满了管道，并且制造了5个报文的队列，并且这个队列永远不会被消灭）。</p>
+<p>相似地，第二个条件也不能保证链路中没有队列。比如，一个连接可以以burst方式发送BDP数量的报文，若该连接每次发二分之一BDP来达到瓶颈带宽，并且发两次，此时full pipe条件得到满足了，然而网络中的平均队列长度是BDP/4。为了最小化网络中的队列长度，唯一的方式是同时满足以上两个条件。</p>
+<p><strong>额外添加：</strong></p>
+<p>两个条件缺一不可，如果只满足第一个条件，可能会出现实际发送数据超过BDP的情况，这样就会出现排队，如果只满足第二点的话，可能会存在数据包突发的情况，可以理解为中间网络设备转发处理速度赶不上发送端发送的速度了，这样也会有排队。<br>所以要想达到最优的情况，就是同时满足以上两个条件，多么理想的想法！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">BtlBw and RTprop vary over the life <span class="keyword">of</span> a connection, so they must be continuously estimated. TCP currently tracks RTT (the time interval <span class="keyword">from</span> sending a data packet until it is acknowledged) since it<span class="string">'s required for loss detection. At any time t,</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">![](https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-1.png.png )</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">where 𝛈 ≥ 0 represents the "noise" introduced by queues along the path, the receiver'</span>s delayed ack strategy, ack aggregation, etc. RTprop is a physical property <span class="keyword">of</span> the connection<span class="string">'s path and changes only when the path changes. Since path changes happen on time scales » RTprop, an unbiased, efficient estimator at time T is</span></span><br><span class="line"><span class="string">![](https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-2.png.png)</span></span><br><span class="line"><span class="string">(i.e., a running min over time window WR (which is typically tens of seconds to minutes)</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>然而，BtlBw和RTprop在整个连接的生命周期中可能是动态变化的，所以我们需要实时地对它们进行估计。<br>目前TCP为了检测丢包，必须实时地跟踪RTT的大小（发送数据到收到这个包的ack的时间），在任意的时间t</p>
+<p>其中，最后一项表示“噪声”。造成噪声的因素主要有：链路队列，接收方的时延ACK配置，ACK聚合等因素等待。</p>
+<p>RTprop是路径的物理特性，并且只有路径变化才会改变。由于一般来说路径变化的时间尺度远远大于RTprop（这说的是啥玩意，待理解）<br>所以RTprop可以由以下公式进行估计：即，在一个时间窗口中对RTT取最小值。一般将该窗口大小设置为几十秒至几分钟</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Unlike RTT, nothing <span class="keyword">in</span> the TCP spec requires implementations to track bottleneck bandwidth, but a good estimate results <span class="keyword">from</span> tracking delivery rate. When the ack <span class="keyword">for</span> some packet arrives back at the sender, it conveys that packet<span class="string">'s RTT and announces the delivery of data inflight when that packet departed. Average delivery rate between send and ack is the ratio of data delivered to time elapsed: deliveryRate = Δdelivered/Δt. This rate must be ≤ the bottleneck rate (the arrival amount is known exactly so all the uncertainty is in the Δt, which must be ≥ the true arrival interval; thus, the ratio must be ≤ the true delivery rate, which is, in turn, upper-bounded by the bottleneck capacity). Therefore, a windowed-max of delivery rate is an efficient, unbiased estimator of BtlBw:</span></span><br><span class="line"><span class="string">![](https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-3.png.png)</span></span><br><span class="line"><span class="string">where the time window WB is typically six to ten RTTs.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>然而，bottleneck bandwidth的估计不像RTT那样方便，没有一种TCP spec要求实现算法来跟踪估计bottleneck带宽，但是，我们可以通过跟踪发送速率来估计bottleneck带宽。<br>当发送方收到一个ACK报文时，它可以计算出该报文的RTT，并且从发出报文到收到ack报文这段时间的data Inflight。这段时间内的平均发送速率就可以以此计算出来：deliveryRate = delta delivered/ delta t。这个计算出的速率必定小于bottleneck速率（因为delta delivered是确定的，但是delta t会较大）。因此，BtwBw可以根据以下公式进行估计</p>
+<p>其中，时间窗口大小的值一般为6~10个RTT。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TCP must record the departure time <span class="keyword">of</span> each packet to compute RTT. BBR augments that record <span class="keyword">with</span> the total data delivered so each ack arrival yields both an RTT and a delivery rate measurement that the filters convert to RTprop and BtlBw estimates.</span><br><span class="line"></span><br><span class="line">Note that these values are completely independent: RTprop can change (<span class="keyword">for</span> example, on a route change) but still have the same bottleneck, or BtlBw can change (<span class="keyword">for</span> example, when a wireless link changes rate) without the path changing. (This independence is why both constraints have to be known to match sending behavior to delivery path.) Since RTprop is visible only to the left <span class="keyword">of</span> BDP and BtlBw only to the right <span class="keyword">in</span> figure <span class="number">1</span>, they obey an uncertainty principle: whenever one can be measured, the other cannot. Intuitively, <span class="keyword">this</span> is because the pipe has to be overfilled to find its capacity, which creates a queue that obscures the length <span class="keyword">of</span> the pipe. For example, an application running a request/response protocol might never send enough data to fill the pipe and observe BtlBw.</span><br><span class="line"></span><br><span class="line">A multi-hour bulk data transfer might spend its entire lifetime <span class="keyword">in</span> the bandwidth-limited region and have only a single sample <span class="keyword">of</span> RTprop <span class="keyword">from</span> the first packet<span class="string">'s RTT. This intrinsic uncertainty means that in addition to estimators to recover the two path parameters, there must be states that track both what can be learned at the current operating point and, as information becomes stale, how to get to an operating point where it can be relearned.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>TCP必须记录每个报文的离开时间从而计算RTT。BBR必须额外记录已经发送的数据大小，使得在收到每一个ACK之后，计算RTT及发送速率的值，最后得到RTprop和BtlBw的估计值。</p>
+<p>值得注意的是，这两个值是完全独立的：RTprop可以发生变化然而保持bottleneck不变（比如发生路由变化），或者BtlBw可以变化而路径不变（比如无线链路速率发生变化）。（This independence is why both constraints have tobe known to match sending behavior to delivery path.）</p>
+<p>如图1所示，只有在BDP的左边，才能观测到RTprop，并且只有在BDP的右边才能观测到BtlBw，他们遵循了一个不确定性原则：当其中一个可以被观测的时候，另外一个并不能。直觉地，这是因为为了观测出管道的容量，必须填满管道，而这会创造出一个队列从而无法观测到管道的长度。</p>
+<p>例如，一个使用request/response协议的应用可能永远不会发送足够的数据来填满管道，并且观测到BtlBw。一个持续几个小时的大文件传输应用可能永远处在bandwidth-limited区域，而仅仅在第一个报文中的RTT采集到RTprop。这种不确定性机制意味着，在信息变得不明确的时候，必须要有机制来从当前的工作状态中学习到这两个值的其中一个，并且进入对应的工作区来重新学习这两个值。</p>
 
       
-
     </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-二/" title="BBR论文之读后感(二)">http://lihaizhou.top/2020/08/27/BBR论文之读后感-二/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/27/BBR论文之读后感-一/" rel="next" title="BBR论文之读后感(一)">
+                <i class="fa fa-chevron-left"></i> BBR论文之读后感(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -421,6 +537,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -657,6 +780,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

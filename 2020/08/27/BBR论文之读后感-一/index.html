@@ -81,7 +81,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="李海洲的沉淀之路" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="李海洲" type="application/atom+xml" />
 
 
 
@@ -92,11 +92,11 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="BBR论文之读后感(一)">
 <meta property="og:url" content="http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/index.html">
-<meta property="og:site_name" content="李海洲的沉淀之路">
+<meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart1-1.png">
-<meta property="og:updated_time" content="2020-08-27T02:45:44.891Z">
+<meta property="og:updated_time" content="2020-08-27T10:31:20.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BBR论文之读后感(一)">
 <meta name="twitter:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
@@ -136,7 +136,7 @@
 
 
 
-  <title>BBR论文之读后感(一) | 李海洲的沉淀之路</title>
+  <title>BBR论文之读后感(一) | 李海洲</title>
   
 
 
@@ -168,7 +168,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">李海洲的沉淀之路</span>
+        <span class="site-title">李海洲</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -298,7 +298,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲的沉淀之路">
+      <meta itemprop="name" content="李海洲">
     </span>
 
     
@@ -383,7 +383,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,388
+                  4,546
                 </span>
               
 
@@ -399,7 +399,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  18
+                  19
                 </span>
               
             </div>
@@ -460,6 +460,7 @@
 当数据塞满了整条链路的物理容量后，路由器开始启用缓存来存储比特数据，但不影响B端观察到的带宽，这个带宽的极限就是BtlBw，对应于图中那条绿色的BtlBw横线
 当路由器的缓存填满后（BDP+BtlBufSize），整条链路开始丢数据，但B端观察到的带宽极限还是BtlBw，对应于下半图中红点虚线
 </code></pre><p>上半图和下半图的斜率是怎么来的呢，我是这么理解的：<br>横坐标实际发送数据大小设为S，实际带宽这里设为R必定是小于等于<code>BtlBw</code>，实际时延这里设为T肯定是大于等于RTprop<br><code>S=T*R</code> 所以这里<code>T/S=1/R&gt;=1/BtlBw</code>,所以实际情况下斜率往往是比上半图中的更陡峭<br>同理下半图的斜率 <code>R/S=1/T&lt;=1/RTprop</code>,所以实际情况下下半图的斜率往往会更平缓些<br>上下半图的阴影部分是不可达，这个图画的真的是太棒了，一图胜千句！</p>
+<p>当到达最大带宽的时候，RTT开始增长(所有不以增加速率为目的的缓存都是耍流氓！缓存不直接增加速率，缓存通过降低丢包来提高网络利用率！)，无论从RTT视图还是从带宽视图来看，两个操作点都是一致的，这是基本！那么bbr是怎么测量的呢？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先稳定住带宽，当带宽不再增加的时候，bbr认为已经达到最大带宽可，然后在此基础上测量RTT，带宽的RTT的操作点是重合的！就是这么简单且直接。</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">When there isn<span class="string">'t enough data in flight to fill the pipe, RTprop determines behavior; otherwise, BtlBw dominates. Constraint lines intersect at inflight = BtlBw × RTprop, a.k.a. the pipe'</span>s BDP (bandwidth-delay product). Since the pipe is full past <span class="keyword">this</span> point, the inflight - BDP excess creates a queue at the bottleneck, which results <span class="keyword">in</span> the linear dependence <span class="keyword">of</span> RTT on inflight data shown <span class="keyword">in</span> the upper graph. Packets are dropped when the excess exceeds the buffer capacity. Congestion is just sustained operation to the right <span class="keyword">of</span> the BDP line, and congestion control is some scheme to bound how far to the right a connection operates on average.</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p><strong>翻译</strong></p>
 <p>当没有足够的数据来填满管道时，RTprop决定了流的行为（说的啥玩意没看懂）；<br>当有足够的数据填满时，那就变成了BtlBw来决定。这两条约束交汇在点inflight=BtlBw*RTprop，也就是管道的BDP（带宽与时延的乘积）。</p>
@@ -624,7 +625,7 @@
                 alt="Steven Lee" />
             
               <p class="site-author-name" itemprop="name">Steven Lee</p>
-              <p class="site-description motion-element" itemprop="description">永远保持好奇心</p>
+              <p class="site-description motion-element" itemprop="description">恍恍惚惚</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -734,7 +735,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共70.2k字</span>
+  <span class="post-count">Steven的博客共70.4k字</span>
 </div>
         
 

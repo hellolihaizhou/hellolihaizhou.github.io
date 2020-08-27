@@ -88,26 +88,20 @@
 
 
 
-<meta name="description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面其实这">
+<meta name="description" content="Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received Each ack provides new RTT and average delivery rate measurements that update the RTprop and Bt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="为何连接wifi后系统会卡顿一下?">
-<meta property="og:url" content="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/index.html">
+<meta property="og:title" content="BBR论文之读后感(三)">
+<meta property="og:url" content="http://lihaizhou.top/2020/08/27/BBR论文之读后感-三/index.html">
 <meta property="og:site_name" content="李海洲的沉淀之路">
-<meta property="og:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面其实这">
+<meta property="og:description" content="Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received Each ack provides new RTT and average delivery rate measurements that update the RTprop and Bt">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png">
-<meta property="og:updated_time" content="2020-03-05T07:32:03.153Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-2.png.png">
+<meta property="og:updated_time" content="2020-08-27T08:35:37.801Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="为何连接wifi后系统会卡顿一下?">
-<meta name="twitter:description" content="问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下 初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面其实这">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png">
+<meta name="twitter:title" content="BBR论文之读后感(三)">
+<meta name="twitter:description" content="Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received Each ack provides new RTT and average delivery rate measurements that update the RTprop and Bt">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png">
 
 
 
@@ -137,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-三/"/>
 
 
 
 
 
-  <title>为何连接wifi后系统会卡顿一下? | 李海洲的沉淀之路</title>
+  <title>BBR论文之读后感(三) | 李海洲的沉淀之路</title>
   
 
 
@@ -296,7 +290,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-三/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -313,7 +307,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">为何连接wifi后系统会卡顿一下?</h1>
+          <h1 class="post-title" itemprop="name headline">BBR论文之读后感(三)</h1>
         
 
         <div class="post-meta">
@@ -325,8 +319,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-05T11:00:05+08:00">
-                2020-03-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-27T12:53:38+08:00">
+                2020-08-27
               </time>
             
 
@@ -349,19 +343,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/性能/" itemprop="url" rel="index">
-                    <span itemprop="name">性能</span>
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
                   </a>
                 </span>
 
@@ -378,8 +361,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/03/05/为何连接wifi后系统会卡顿一下/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/05/为何连接wifi后系统会卡顿一下/" itemprop="commentCount"></span>
+                <a href="/2020/08/27/BBR论文之读后感-三/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/27/BBR论文之读后感-三/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -401,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,087
+                  2,129
                 </span>
               
 
@@ -417,7 +400,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  10
                 </span>
               
             </div>
@@ -438,49 +421,30 @@
       
 
       
-        <p><strong>问题描述</strong><br>数据流量使用过程中切换到wifi连接，系统全局会卡一下</p>
-<p><strong>初步分析</strong><br>抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动<br>我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。<br>自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/wifi%E5%88%97%E8%A1%A8%E5%8D%A1%E9%A1%BF4.png" alt=""><br>其实这个时间段可以发现deliverInputEvent也没有，其实这一点也可以从Launcher的PendingInputEventQueue区域看出来<br>PS: PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这个阶段对应的是用户进程中了<br>开始卡顿后即红圈后面便没有波峰出现, 说明压根没有input送到应用进程<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-2.png" alt=""></p>
-<p>这个时候，自然而然就有一个疑问:<br>既然应用进程没有收到input事件，那么会不会是input上报的过程中哪个环节出了问题呢？</p>
-<p>再科普下input事件上报的大概流程</p>
-<ol>
-<li>InputReader 读取 Input 事件</li>
-<li>InputReader 将读取的 Input 事件放到 InboundQueue 中</li>
-<li>InputDispatcher 从 InboundQueue 中取出 Input 事件派发到各个 App(连接) 的 OutBoundQueue<br> 同时将事件记录到各个 App(连接) 的 WaitQueue</li>
-<li>App 接收到 Input 事件，同时记录到 PaddingQueue ，然后对事件进行分发处理<br> App 处理完成后，回调 InputManagerService 将负责监听的 WaitQueue 中对应的 Input 移除</li>
-</ol>
-<p>InputReader和InputDispatcher是跑在SystemServer里面的两个Native线程，负责读取和分发Input 事件<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-3.png" alt=""><br>到这里可以明显看出，卡顿时间段内InputReader在不断的读取事件，说明driver没问题，注意这个时候InputDispatcher 没有收到任何input事件并且处于S状态<br>其实InputDispatcher 没有获取到事件的话，不用说oq区域和wq区域肯定也是没有事件的<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-4.png" alt=""><br>意料之中，空空如也，难怪应用进程苦苦等不来事件<br>这里再简要科普下这几个概念<br>说明</p>
-<ul>
-<li>InputReader 负责从 EventHub 里面把 Input 事件读取出来，然后交给 InputDispatcher 进行事件分发</li>
-<li>InputDispatcher 在拿到 InputReader 获取的事件之后，对事件进行包装和分发 (也就是发给对应的)<ul>
-<li>OutboundQueue 里面放的是即将要被派发给对应 AppConnection 的事件</li>
-</ul>
-</li>
-<li>WaitQueue 里面记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件</li>
-<li>PendingInputEventQueue 里面记录的是 App 需要处理的 Input 事件，这里可以看到已经到了应用进程</li>
-<li>deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒</li>
-<li>InputResponse 标识 Input 事件区域</li>
-<li>App 响应 Input 事件 ： 这里是滑动然后松手，也就是我们熟悉的桌面滑动的操作，桌面随着手指的滑动更新画面，松手后触发 Fling 继续滑动，从 Systrace 就可以看到整个事件的流程</li>
-</ul>
-<p>这个时候，事件上报大致问题区域知道了，再回到InputDispatcher ，看下最后是被1726唤醒的<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-5.png" alt=""></p>
-<p>跟到tid 1726区域，居然定位到了systemserver区域，InputDispatcher正常来讲都是由InputReader 唤醒的，这里不免有些困惑</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/native/services/inputflinger/dispatcher/InputDispatcher.cpp;l=2719?q=InputDispatcher.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> InputDispatcher::notifyMotion(<span class="keyword">const</span> NotifyMotionArgs* args) &#123;</span><br><span class="line"><span class="comment">//....</span></span><br><span class="line">    bool needWake;</span><br><span class="line">    &#123; <span class="comment">// acquire lock</span></span><br><span class="line">        mLock.lock();</span><br><span class="line">        <span class="keyword">if</span> (shouldSendMotionToInputFilterLocked(args)) &#123;</span><br><span class="line">            mLock.unlock();</span><br><span class="line">            MotionEvent event;</span><br><span class="line">            event.initialize(args-&gt;deviceId, args-&gt;source, args-&gt;displayId, args-&gt;action,</span><br><span class="line">                             args-&gt;actionButton, args-&gt;flags, args-&gt;edgeFlags, args-&gt;metaState,</span><br><span class="line">                             args-&gt;buttonState, args-&gt;classification, <span class="number">0</span>, <span class="number">0</span>, args-&gt;xPrecision,</span><br><span class="line">                             args-&gt;yPrecision, args-&gt;downTime, args-&gt;eventTime, args-&gt;pointerCount,</span><br><span class="line">                             args-&gt;pointerProperties, args-&gt;pointerCoords);</span><br><span class="line">            policyFlags |= POLICY_FLAG_FILTERED;</span><br><span class="line">            <span class="keyword">if</span> (!mPolicy-&gt;filterInputEvent(&amp;event, policyFlags)) &#123;</span><br><span class="line">                <span class="keyword">return</span>; <span class="comment">// event was consumed by the filter</span></span><br><span class="line">            &#125;</span><br><span class="line">            mLock.lock();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Just enqueue a new motion event.</span></span><br><span class="line">        MotionEntry* newEntry =</span><br><span class="line">                <span class="keyword">new</span> MotionEntry(args-&gt;sequenceNum, args-&gt;eventTime, args-&gt;deviceId, args-&gt;source,</span><br><span class="line">                                args-&gt;displayId, policyFlags, args-&gt;action, args-&gt;actionButton,</span><br><span class="line">                                args-&gt;flags, args-&gt;metaState, args-&gt;buttonState,</span><br><span class="line">                                args-&gt;classification, args-&gt;edgeFlags, args-&gt;xPrecision,</span><br><span class="line">                                args-&gt;yPrecision, args-&gt;downTime, args-&gt;pointerCount,</span><br><span class="line">                                args-&gt;pointerProperties, args-&gt;pointerCoords, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        needWake = enqueueInboundEventLocked(newEntry);</span><br><span class="line">        mLock.unlock();</span><br><span class="line">    &#125; <span class="comment">// release lock</span></span><br><span class="line">    <span class="keyword">if</span> (needWake) &#123;</span><br><span class="line">        mLooper-&gt;wake();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个函数里主要做的事是读取线程InputReaderThread在处理事务并将读取的事件放到队列中<br>可以看到最后mLooper-&gt;wake();这里的looper对应的是InputDispatcher的looper，也就是最后会唤醒InputDispatcher线程<br>而我们这笔问题中InputDispatcher在卡顿期间处于S状态，往上看哪里return了导致没有执行，其实在mPolicy-&gt;filterInputEvent处返回了false并且return了，这里的代码层层追踪会跟到InputManagerService的filterInputEvent()</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/input/InputManagerService.java;l=1828?q=InputManagerService</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Native callback.</span></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">filterInputEvent</span><span class="params">(InputEvent event, <span class="keyword">int</span> policyFlags)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mInputFilterLock) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mInputFilter != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    mInputFilter.filterInputEvent(event, policyFlags);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">                    <span class="comment">/* ignore */</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        event.recycle();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里主要是判断InputFilter是否为空，如果不为空，则会走到mInputFilter.filterInputEvent，可以注意下，这里已经位于IMS也就是systemserver进程<br>我们这个问题始终不为空，原因在于开启了手势识别会设置一个InputFilter导致这里不为空，以便做进一步的事件加工处理，InputManagerService的filterInputEvent()最后调用到injectInputEvent()将这个事件送入mInBoundQueue，并唤醒InputDispatcher，不是本文重点所以代码就不展开叙述<br>至此明白了为何InputReader的唤醒源会跑到systemserver(UI线程)中</p>
-<p>继续看systemserver(UI线程)这段区域，在执行一个广播的onReceive中等锁导致的sleep<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-6.png" alt=""></p>
-<p>这里顺便对Contended on monitor with owner NetworkPolicy进行解读:<br>Monitor指的是当前锁对象的池，在Java中，每个对象都有两个池，锁(monitor)池和等待池：</p>
-<p>锁池（同步队列 SynchronizedQueue ）：假设线程 A 已经拥有了某个对象(注意:不是类 )的锁，而其它的线程想要调用这个对象的某个 synchronized 方法(或者 synchronized 块)，由于这些线程在进入对象的 synchronized 方法之前必须先获得该对象的锁的拥有权，但是该对象的锁目前正被线程 A 拥有，所以这些线程就进入了该对象的锁池中。</p>
-<p>这里用了争夺(contention)这个词，意思是这里由于在和目前对象的锁正被其他对象（Owner）所持有，所以没法得到该对象的锁的拥有权，所以进入该对象的锁池</p>
-<p>Owner : 指的是当前拥有这个对象的锁的对象，这里是NetworkPolicy</p>
-<p>讲的通俗一点<br>systemserver(UI线程)在执行一个广播的onReceive中等一个锁，这个锁此时被NetworkPolicy持有</p>
-<p>自然而然继续看NetworkPolicy区域<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-7.png" alt=""></p>
-<p>可以看到这段时间NetworkPolicy基本处于S状态，此时netd得到调度运行，这点在cpu区域也可以得到证实</p>
-<p>再看下netd区域，卡顿开始的时候也正是netd得到调度的时候，是被2835这个进程唤醒，2835正是NetworkPolicy</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/%E5%88%87%E6%8D%A2%E5%88%B0wifi%E5%90%8E%E5%8D%A1%E9%A1%BF-8.png" alt=""></p>
-<p>到这里可以大致梳理一下卡顿时间内做的事:<br>1.SystemServer中的UI线程在等一个锁，这个锁被NetworkPolicy持有，所以没有发送input事件给InputDispatcher<br>2.NetworkPolicy为何一直不释放呢，是因为其调用了netd，netd执行的时间较长耗时了1s左右，等netd执行结束后NetworkPolicy得到调度继续执行并释放锁<br>3.SystemServer中的UI线程获取到锁，继续发送input事件到mInBoundQueue并唤醒InputDispatcher</p>
-<p>现在的疑问就是NetworkPolicy和SystemServer(UI线程)监听了一样的广播，这个广播的服务端应该是加锁了导致了所有注册的客户端顺序执行<br>其实想想也能猜到应该是wifi状态变化或者网络变化的广播，跟到NetworkManagerService中看下很容易发现NetworkManagerService监听了一个网络变化广播CONNECTIVITY_ACTION<br>但是SystemServer(UI线程)中注册并回调执行的代码位置需要借助traceview进一步定位，这里比较简单不展开讨论</p>
-<p>解决思路看看SystemServer(UI线程)中具体代码处是否能够去掉锁或后台执行，只要不堵在UI线程就行</p>
-<p>这个问题只有开启手势识别或有设置了InputFilter的情况才会出现，最新谷歌代码上发现代码变化没有注册监听，故该问题在新版本上不会存在</p>
+        <h1 id="Matching-the-Packet-Flow-to-the-Delivery-Path"><a href="#Matching-the-Packet-Flow-to-the-Delivery-Path" class="headerlink" title="Matching the Packet Flow to the Delivery Path"></a>Matching the Packet Flow to the Delivery Path</h1><p>The core BBR algorithm has two parts:<br>When an ack is received</p>
+<p>Each ack provides new RTT and average delivery rate measurements that update the RTprop and BtlBw estimates:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">onAck</span>(<span class="params">packet</span>)</span></span><br><span class="line"><span class="function">  <span class="title">rtt</span> = <span class="title">now</span> - <span class="title">packet</span>.<span class="title">sendtime</span></span></span><br><span class="line"><span class="function">  <span class="title">update_min_filter</span>(<span class="params">RTpropFilter, rtt</span>)</span></span><br><span class="line"><span class="function">  <span class="title">delivered</span> += <span class="title">packet</span>.<span class="title">size</span></span></span><br><span class="line"><span class="function">  <span class="title">delivered_time</span> = <span class="title">now</span></span></span><br><span class="line"><span class="function">  <span class="title">deliveryRate</span> = (<span class="params">delivered - packet.delivered</span>) / (<span class="params">delivered_time - packet.delivered_time</span>)</span></span><br><span class="line"><span class="function">  <span class="title">if</span> (<span class="params">deliveryRate &gt; BtlBwFilter.currentMax || ! packet.app_limited</span>)</span></span><br><span class="line"><span class="function">     <span class="title">update_max_filter</span>(<span class="params">BtlBwFilter, deliveryRate</span>)</span></span><br><span class="line"><span class="function">  <span class="title">if</span> (<span class="params">app_limited_until &gt; <span class="number">0</span></span>)</span></span><br><span class="line"><span class="function">     <span class="title">app_limited_until</span> = <span class="title">app_limited_until</span> - <span class="title">packet</span>.<span class="title">size</span></span></span><br></pre></td></tr></table></figure>
+<p>The if checks address the uncertainty issue described in the last paragraph: senders can be application limited, meaning the application runs out of data to fill the network. This is quite common because of request/response traffic. When there is a send opportunity but no data to send, BBR marks the corresponding bandwidth sample(s) as application limited (see send() pseudocode to follow). The code here decides which samples to include in the bandwidth model so it reflects network, not application, limits.<br>BtlBw is a hard upper bound on the delivery rate so a measured delivery rate larger than the current BtlBw estimate must mean the estimate is too low, whether or not the sample was app-limited. Otherwise, application-limited samples are discarded. (Figure 1 shows that in the app-limited region deliveryRate underestimates BtlBw. These checks prevent filling the BtlBw filter with underestimates which would cause data to be sent too slowly.)</p>
+<p><strong>翻译：</strong> </p>
+<p>BBR核心算法包含两大部分：<br>当收到一个ACK报文时：<br>每一个ACK提供了一个新的RTT和新的发送速率估计，BBR将以此为根据来更新RTprop和BtlBw<br>这里略去上面的英文中的伪代码部分<br>伪代码中的if语句是对上一段所讲的不确定性进行估计的：发送方可能受限于应用，发送数据太少，而并没有将管道填满。<br>当发送方采取的协议是request/response类时，这种现象是非常常见的。当没有数据可以发送时，BBR会将对应的带宽估计标志为是应用限制的（见下文伪代码中的send()）。这里的算法是为了决定流应该采集哪些数据，而避免采集那些被应用限制的而不是被网络限制的采集数据。<br>BtlBw是发送速率的上界，所以如果计算出的发送速率大于当前所估计的BtlBw值，那么这表示这个估计值太小了（无论该发送速率是否是应用限制的），我们都应该更新它。否则，那些被应用限制的采集数据将会被丢弃。（如图1所示，在app-limited区域中，deliveryRate低估了BtlBw。这些if判断避免BBR低估了BtlBw而导致发送低速率）。</p>
+<p><strong>额外添加:</strong><br>这里计算发送速率的伪代码算法如此的通俗易懂，当然实际的源代码肯定是很复杂的，不过任何复杂算法最初的雏形一定是像这样简单纯朴</p>
+<h1 id="When-data-is-sent"><a href="#When-data-is-sent" class="headerlink" title="When data is sent"></a>When data is sent</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">To match the packet-arrival rate to the bottleneck link<span class="string">'s departure rate, BBR paces every data packet. (BBR must match the bottleneck rate, which means pacing is integral to the design and fundamental to operation—pacing_rate is BBR'</span>s primary control parameter. A secondary parameter, cwnd_gain, bounds inflight to a small multiple <span class="keyword">of</span> the BDP to handle common network and receiver pathologies (see the later section on Delayed and Stretched ACKs). Conceptually, the TCP send routine looks like the following code. (In Linux, sending uses the efficient FQ/pacing queuing discipline,<span class="number">4</span> which gives BBR line-rate single-connection performance on multigigabit links and handles thousands <span class="keyword">of</span> lower-rate paced connections <span class="keyword">with</span> negligible CPU overhead.)</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">send</span>(<span class="params">packet</span>)</span></span><br><span class="line"><span class="function">  <span class="title">bdp</span> = <span class="title">BtlBwFilter</span>.<span class="title">currentMax</span> × <span class="title">RTpropFilter</span>.<span class="title">currentMin</span></span></span><br><span class="line"><span class="function">  <span class="title">if</span> (<span class="params">inflight &gt;= cwnd_gain × bdp</span>)</span></span><br><span class="line"><span class="function">     // <span class="title">wait</span> <span class="title">for</span> <span class="title">ack</span> <span class="title">or</span> <span class="title">retransmission</span> <span class="title">timeout</span></span></span><br><span class="line"><span class="function">     <span class="title">return</span></span></span><br><span class="line"><span class="function">  <span class="title">if</span> (<span class="params">now &gt;= nextSendTime</span>)</span></span><br><span class="line"><span class="function">     <span class="title">packet</span> = <span class="title">nextPacketToSend</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">     <span class="title">if</span> (<span class="params">! packet</span>)</span></span><br><span class="line"><span class="function">        <span class="title">app_limited_until</span> = <span class="title">inflight</span></span></span><br><span class="line"><span class="function">        <span class="title">return</span></span></span><br><span class="line"><span class="function">     <span class="title">packet</span>.<span class="title">app_limited</span> = (<span class="params">app_limited_until &gt; <span class="number">0</span></span>)</span></span><br><span class="line"><span class="function">     <span class="title">packet</span>.<span class="title">sendtime</span> = <span class="title">now</span></span></span><br><span class="line"><span class="function">     <span class="title">packet</span>.<span class="title">delivered</span> = <span class="title">delivered</span></span></span><br><span class="line"><span class="function">     <span class="title">packet</span>.<span class="title">delivered_time</span> = <span class="title">delivered_time</span></span></span><br><span class="line"><span class="function">     <span class="title">ship</span>(<span class="params">packet</span>)</span></span><br><span class="line"><span class="function">     <span class="title">nextSendTime</span> = <span class="title">now</span> + <span class="title">packet</span>.<span class="title">size</span> / (<span class="params">pacing_gain × BtlBwFilter.currentMax</span>)</span></span><br><span class="line"><span class="function">  <span class="title">timerCallbackAt</span>(<span class="params">send, nextSendTime</span>)</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong> </p>
+<p>为了使得bottleneck链路的报文到达速率和报文离开速率相等，BBR必须进行packet paced。<br>BBR的发送速率必须与bottleneck的速率相等，这意味着BBR的实现需要pacing的支持——pacing_rate是BBR的一个主要控制参数！<br>第二个参数，cwnd_gain，将inflight控制为比BDP稍大一些，从而处理常见的网络机制和接收方机制（参见后文Dealyedand Stretched ACKs）。<br>TCP发送的时候做的事大概如上面的伪代码所示（在Linux中，可以使用FQ/pacing qdisc来发送数据，这可以使得BBR在与几千个低速率的paced流在千兆链路上很好地共存，并且使用FQ这种机制也不会额外造成CPU的负担）。</p>
+<p><strong>额外添加：</strong></p>
+<p>上面说的感觉听上去上挺合理，但是很容易产生这样的疑问：<br>端到端的TCP如何知道带宽到底是多少？如果用测量的话结果具有一个RTT的滞后性。因此你测得的结果永远都是以前的结果而不是现在的结果，由于网络情况存在随机性，更无法预测未来的情景，于是乎，完全按照瓶颈带宽来发送数据是不可能的，我们不得不承认这个结果是滞后的，或者说我们采集到的信息仅仅够算一个所谓的均值，不管怎么样，我们依然会选择Pacing的方式来发送数据，至少在没有新的有别于AIMD的全新数学模型出现之前吧。<br>如此一来，只要我们选择了Pacing，那么就必然要在TCP发送端内置一套数据采集和计算引擎，这是AIMD模型所不需要的。</p>
+<h1 id="Steady-state-behavior"><a href="#Steady-state-behavior" class="headerlink" title="Steady-state behavior"></a>Steady-state behavior</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The rate and amount BBR sends is solely a <span class="function"><span class="keyword">function</span> <span class="title">of</span> <span class="title">the</span> <span class="title">estimated</span> <span class="title">BtlBw</span> <span class="title">and</span> <span class="title">RTprop</span>, <span class="title">so</span> <span class="title">the</span> <span class="title">filters</span> <span class="title">control</span> <span class="title">adaptation</span> <span class="title">in</span> <span class="title">addition</span> <span class="title">to</span> <span class="title">estimating</span> <span class="title">the</span> <span class="title">bottleneck</span> <span class="title">constraints</span>. <span class="title">This</span> <span class="title">creates</span> <span class="title">the</span> <span class="title">novel</span> <span class="title">control</span> <span class="title">loop</span> <span class="title">shown</span> <span class="title">in</span> <span class="title">figure</span> 2, <span class="title">which</span> <span class="title">illustrates</span> <span class="title">the</span> <span class="title">RTT</span> (<span class="params">blue</span>), <span class="title">inflight</span> (<span class="params">green</span>) <span class="title">and</span> <span class="title">delivery</span> <span class="title">rate</span> (<span class="params">red</span>) <span class="title">detail</span> <span class="title">from</span> 700 <span class="title">ms</span> <span class="title">of</span> <span class="title">a</span> 10-<span class="title">Mbps</span>, 40-<span class="title">ms</span> <span class="title">flow</span>. <span class="title">The</span> <span class="title">thick</span> <span class="title">gray</span> <span class="title">line</span> <span class="title">above</span> <span class="title">the</span> <span class="title">delivery</span>-<span class="title">rate</span> <span class="title">data</span> <span class="title">is</span> <span class="title">the</span> <span class="title">state</span> <span class="title">of</span> <span class="title">the</span> <span class="title">BtlBw</span> <span class="title">max</span> <span class="title">filter</span>. <span class="title">The</span> <span class="title">triangular</span> <span class="title">structures</span> <span class="title">result</span> <span class="title">from</span> <span class="title">BBR</span> <span class="title">cycling</span> <span class="title">pacing_gain</span> <span class="title">to</span> <span class="title">determine</span> <span class="title">if</span> <span class="title">BtlBw</span> <span class="title">has</span> <span class="title">increased</span>. <span class="title">The</span> <span class="title">gain</span> <span class="title">used</span> <span class="title">for</span> <span class="title">each</span> <span class="title">part</span> <span class="title">of</span> <span class="title">the</span> <span class="title">cycle</span> <span class="title">is</span> <span class="title">shown</span> <span class="title">time</span>-<span class="title">aligned</span> <span class="title">with</span> <span class="title">the</span> <span class="title">data</span> <span class="title">it</span> <span class="title">influenced</span>. <span class="title">The</span> <span class="title">gain</span> <span class="title">is</span> <span class="title">applied</span> <span class="title">an</span> <span class="title">RTT</span> <span class="title">earlier</span>, <span class="title">when</span> <span class="title">the</span> <span class="title">data</span> <span class="title">is</span> <span class="title">sent</span>. <span class="title">This</span> <span class="title">is</span> <span class="title">indicated</span> <span class="title">by</span> <span class="title">the</span> <span class="title">horizontal</span> <span class="title">jog</span> <span class="title">in</span> <span class="title">the</span> <span class="title">event</span> <span class="title">sequence</span> <span class="title">description</span> <span class="title">running</span> <span class="title">up</span> <span class="title">the</span> <span class="title">left</span> <span class="title">side</span>.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>BBR的发送速率和发送数量完全就是一个关于BtlBw和RTprop的函数，所以BBR应该小心地估计这两个值。这创造了一种新型的闭环控制，如图2所示。图2显示了一个10Mbps，40ms的流在700ms中的RTT（蓝线），inflight（绿线）和发送速率（红线）变化过程。</p>
+<p>注意图中在发送速率上方的灰线是BtlBw最大化滤波器的状态。图中产生的三角形形状是因为BBR的pacing_gain周期性的变化产生的，因为BBR必须以此来探测BtlBw是否提高了。图中展示了该增益值在一个周期不同时间的变化和其影响的数据变化</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png" alt=""></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BBR minimizes delay by spending most <span class="keyword">of</span> its time <span class="keyword">with</span> one BDP <span class="keyword">in</span> flight, paced at the BtlBw estimate. This moves the bottleneck to the sender so it can<span class="string">'t observe BtlBw increases. Consequently, BBR periodically spends an RTprop interval at a pacing_gain &gt; 1, which increases the sending rate and inflight. If BtlBw hasn'</span>t changed, then a queue is created at the bottleneck, increasing RTT, which keeps deliveryRate constant. (This queue is removed by sending at a compensating pacing_gain &lt; <span class="number">1</span> <span class="keyword">for</span> the next RTprop.) If BtlBw has increased, deliveryRate increases and the <span class="keyword">new</span> max immediately increases the BtlBw filter output, increasing the base pacing rate. Thus, BBR converges to the <span class="keyword">new</span> bottleneck rate exponentially fast. Figure <span class="number">3</span> shows the effect on a <span class="number">10</span>-Mbps, <span class="number">40</span>-ms flow <span class="keyword">of</span> BtlBw abruptly doubling to <span class="number">20</span> Mbps after <span class="number">20</span> seconds <span class="keyword">of</span> steady operation (left graph) then dropping to <span class="number">10</span> Mbps after another <span class="number">20</span> seconds <span class="keyword">of</span> steady operation at <span class="number">20</span> Mbps (right graph).</span><br></pre></td></tr></table></figure>
+<p><strong>翻译：</strong></p>
+<p>BBR将它的大部分时间的在外发送数据都保持为一个BDP大小，并且发送速率保持在估计得BtlBw值，这将会最小化时延。<br>但是这会把网络中的瓶颈链路移动到BBR发送方本身，所以BBR无法察觉BtlBw是否上升了。</p>
+<p>所以，BBR周期性的在一个RTprop时间内将pacing_gain设为一个大于1的值，这将会增加发送速率和在外报文。如果BtlBw没有改变，那么这意味着BBR在网络中制造了队列，增大了RTT，而deliveryRate仍然没有改变。（这个队列将会在下个RTprop周期被BBR使用小于1的pacing_gain来消除）。</p>
+<p>如果BtlBw增大了，那么deliveryRate增大了，并且BBR会立即更新BtlBw的估计值，从而增大了发送速率。通过这种机制，BBR可以以指数速度非常快地收敛到瓶颈链路。如图3显示的，我们在1条10Mbps，40ms的流在20s稳定运行之后将BtlBw提高了1倍（20Mbps），然后在第40s又将BtlBw恢复至20Mbps<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-2.png.png" alt=""></p>
+<p>(BBR is a simple instance of a Max-plus control system, a new approach to control based on nonstandard algebra.12 This approach allows the adaptation rate [controlled by the max gain] to be independent of the queue growth [controlled by the average gain]. Applied to this problem, it results in a simple, implicit control loop where the adaptation to physical constraint changes is automatically handled by the filters representing those constraints. A conventional control system would require multiple loops connected by a complex state machine to accomplish the same result.)</p>
 
       
     </div>
@@ -512,7 +476,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/" title="为何连接wifi后系统会卡顿一下?">http://lihaizhou.top/2020/03/05/为何连接wifi后系统会卡顿一下/</a>
+    <a href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-三/" title="BBR论文之读后感(三)">http://lihaizhou.top/2020/08/27/BBR论文之读后感-三/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -534,8 +498,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/04/谁拖慢了列表的滑动速度/" rel="next" title="谁拖慢了列表的滑动速度">
-                <i class="fa fa-chevron-left"></i> 谁拖慢了列表的滑动速度
+              <a href="/2020/08/27/BBR论文之读后感-二/" rel="next" title="BBR论文之读后感(二)">
+                <i class="fa fa-chevron-left"></i> BBR论文之读后感(二)
               </a>
             
           </div>
@@ -543,10 +507,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/05/25/mmap机制初探/" rel="prev" title="mmap机制初探">
-                mmap机制初探 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -601,8 +561,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -664,6 +633,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Matching-the-Packet-Flow-to-the-Delivery-Path"><span class="nav-number">1.</span> <span class="nav-text">Matching the Packet Flow to the Delivery Path</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#When-data-is-sent"><span class="nav-number">2.</span> <span class="nav-text">When data is sent</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Steady-state-behavior"><span class="nav-number">3.</span> <span class="nav-text">Steady-state behavior</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

@@ -88,21 +88,17 @@
 
 
 
-<meta name="description" content="前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念 为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过">
+<meta name="description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
 <meta property="og:type" content="article">
-<meta property="og:title" content="网络系列之三次握手">
-<meta property="og:url" content="http://lihaizhou.top/2020/08/09/网络协议系列之聊聊三次握手/index.html">
+<meta property="og:title" content="BBR论文之读后感(一)">
+<meta property="og:url" content="http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/index.html">
 <meta property="og:site_name" content="李海洲的沉淀之路">
-<meta property="og:description" content="前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念 为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过">
+<meta property="og:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png">
-<meta property="og:updated_time" content="2020-08-10T04:44:55.730Z">
+<meta property="og:updated_time" content="2020-08-27T02:28:03.835Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="网络系列之三次握手">
-<meta name="twitter:description" content="前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念 为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
+<meta name="twitter:title" content="BBR论文之读后感(一)">
+<meta name="twitter:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
 
 
 
@@ -132,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2020/08/09/网络协议系列之聊聊三次握手/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/"/>
 
 
 
 
 
-  <title>网络系列之三次握手 | 李海洲的沉淀之路</title>
+  <title>BBR论文之读后感(一) | 李海洲的沉淀之路</title>
   
 
 
@@ -291,7 +287,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/08/09/网络协议系列之聊聊三次握手/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -308,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">网络系列之三次握手</h1>
+          <h1 class="post-title" itemprop="name headline">BBR论文之读后感(一)</h1>
         
 
         <div class="post-meta">
@@ -320,8 +316,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-09T17:31:07+08:00">
-                2020-08-09
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-27T10:19:27+08:00">
+                2020-08-27
               </time>
             
 
@@ -362,8 +358,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/08/09/网络协议系列之聊聊三次握手/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/09/网络协议系列之聊聊三次握手/" itemprop="commentCount"></span>
+                <a href="/2020/08/27/BBR论文之读后感-一/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/27/BBR论文之读后感-一/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -385,7 +381,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,336
+                  1,629
                 </span>
               
 
@@ -401,7 +397,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  7
                 </span>
               
             </div>
@@ -422,44 +418,29 @@
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了<br>所以想着再梳理下这个”简单”的概念</p>
-<h1 id="为什么要三次握手"><a href="#为什么要三次握手" class="headerlink" title="为什么要三次握手"></a>为什么要三次握手</h1><p>首先先了解下TCP这个概念:<br>TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，<br>唯一能做的就是更加努力，不断重传，通过各种算法保证。也就是说，对于 TCP 来讲，IP 层你丢不丢包，我管不着，但是我在我的层面上，会努力保证可靠性</p>
-<p>接下来我们接着讨论为何需要这三次握手呢？类似如下的描述是网上比较常见的回答<br>三次握手的目的是建立可靠的通信信道，说到通讯，简单来说就是数据的发送与接收，而三次握手最主要的目的就是:双方确认自己与对方的发送与接收是正常的</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。<br>于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。</p>
+<p>因整篇论文内容较多，将分为六篇读后感</p>
+<h1 id="BBR论文部分-1-6"><a href="#BBR论文部分-1-6" class="headerlink" title="BBR论文部分(1/6)"></a>BBR论文部分(1/6)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Measuring bottleneck bandwidth and round-trip propagation time</span><br><span class="line">Neal Cardwell, Yuchung Cheng, C. Stephen Gunn, Soheil Hassas Yeganeh, Van Jacobson</span><br><span class="line"></span><br><span class="line">By all accounts, today<span class="string">'s Internet is not moving data as well as it should. Most of the world'</span>s cellular users experience delays <span class="keyword">of</span> seconds to minutes; public Wi-Fi <span class="keyword">in</span> airports and conference venues is often worse. Physics and climate researchers need to exchange petabytes <span class="keyword">of</span> data <span class="keyword">with</span> global collaborators but find their carefully engineered multi-Gbps infrastructure often delivers at only a few Mbps over intercontinental distances<span class="number">.6</span></span><br><span class="line"></span><br><span class="line">These problems result <span class="keyword">from</span> a design choice made when TCP congestion control was created <span class="keyword">in</span> the <span class="number">1980</span>s—interpreting packet loss <span class="keyword">as</span> <span class="string">"congestion."</span><span class="number">13</span> This equivalence was <span class="literal">true</span> at the time but was because <span class="keyword">of</span> technology limitations, not first principles. As NICs (network interface controllers) evolved <span class="keyword">from</span> Mbps to Gbps and memory chips <span class="keyword">from</span> KB to GB, the relationship between packet loss and congestion became more tenuous.</span><br><span class="line"></span><br><span class="line">Today TCP<span class="string">'s loss-based congestion control—even with the current best of breed, CUBIC11—is the primary cause of these problems. When bottleneck buffers are large, loss-based congestion control keeps them full, causing bufferbloat. When bottleneck buffers are small, loss-based congestion control misinterprets loss as a signal of congestion, leading to low throughput. Fixing these problems requires an alternative to loss-based congestion control. Finding this alternative requires an understanding of where and how network congestion originates.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译</strong></p>
+<p>因为各种原因，今天的互联网并不能像我们所期望的那样很好地传输数据。世界上大部分蜂窝网络用户都会经历几秒乃至几分钟的时延；在公共局域如机场和会议厅等，WIFI质量经常是非常差的。物理和气候学者想要与全球范围内的合作者传输千兆字节级别的数据，但可能会发现他们精心准备的Gbps级别的底层网络在洲际传输中只能达到Mbps级别。这些问题之所以会发生，是因为在80年代设计TCP拥塞控制的时候，TCP将丢包作为“拥塞”的信号。在那个年代，这个假设确实是正确的，但这是因为受限于技术原因。而当网卡的速率从Mbps级别进化为Gbps级别，内存从KB级别进化到GB级别之后，丢包与拥塞的关系变得不那么紧密了。</p>
+<p>今天的这些TCP拥塞控制算法，包括至今为止最好的算法CUBIC，都是基于丢包的。他们是造成这些问题的主要元凶。当瓶颈链路的缓存较大时，这些基于丢包的拥塞控制算法流填满了缓存，造成了bufferbloat。当瓶颈链路的缓存较小时，这些算法会又将丢包作为发生拥塞的信号，从而降低速率导致了较低的吞吐量。</p>
+<p>为了解决这些问题，必须提出一种不是基于丢包的拥塞控制算法，这需要设计者对网络拥塞是如何并且在哪里产生的有非常深刻的理解</p>
+<p><strong>额外添加</strong></p>
+<p>终端设备发的越来越快，中间网络设备的缓冲区越来越大，依靠丢包的算法不是那么明智了，所以需要一种新的拥塞控制算法，就是后面会提到的BBR</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Congestion and Bottlenecks</span><br><span class="line"></span><br><span class="line">At any time, a (full-duplex) TCP connection has exactly one slowest link or bottleneck <span class="keyword">in</span> each direction. The bottleneck is important because:</span><br><span class="line"></span><br><span class="line">• It determines the connection<span class="string">'s maximum data-delivery rate. This is a general property of incompressible flow (e.g., picture a six-lane freeway at rush hour where an accident has reduced one short section to a single lane. The traffic upstream of the accident moves no faster than the traffic through that lane).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">• It'</span>s where persistent queues form. Queues shrink only when a link<span class="string">'s departure rate exceeds its arrival rate. For a connection running at maximum delivery rate, all links upstream of the bottleneck have a faster departure rate so their queues migrate to the bottleneck.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Regardless of how many links a connection traverses or what their individual speeds are, from TCP'</span>s viewpoint an arbitrarily complex path behaves <span class="keyword">as</span> a single link <span class="keyword">with</span> the same RTT (round-trip time) and bottleneck rate. Two physical constraints, RTprop (round-trip propagation time) and BtlBw (bottleneck bandwidth), bound transport performance. (If the network path were a physical pipe, RTprop would be its length and BtlBw its minimum diameter.)</span><br><span class="line"></span><br><span class="line">Figure <span class="number">1</span> shows RTT and delivery rate variation <span class="keyword">with</span> the amount <span class="keyword">of</span> data <span class="keyword">in</span> flight (data sent but not yet acknowledged). Blue lines show the RTprop constraint, green lines the BtlBw constraint, and red lines the bottleneck buffer. Operation <span class="keyword">in</span> the shaded regions isn<span class="string">'t possible since it would violate at least one constraint. Transitions between constraints result in three different regions (app-limited, bandwidth-limited, and buffer-limited) with qualitatively different behavior.</span></span><br></pre></td></tr></table></figure>
+<p><strong>翻译</strong></p>
+<p>在一个TCP连接中，每个传输方向都存在一个最慢的链路，或者说瓶颈链路（bottleneck）。Bottleneck很重要！这是因为：</p>
 <ol>
-<li>第一次握手：Client 什么都不能确认；Server 确认了对方发送正常</li>
-<li>第二次握手：Client 确认了：自己发送、接收正常，对方发送、接收正常；Server 确认了：自己接收正常，对方发送正常</li>
-<li>第三次握手：Client 确认了：自己发送、接收正常，对方发送、接收正常；Server 确认了：自己发送、接收正常，对方发送接收正常</li>
+<li><p>它决定了该连接的最大传输速率（举个例子：如果高速公路上的某一段路发生了车祸，将会导致该道上的车速降低至那一段路的车速）。</p>
+</li>
+<li><p>它是造成队列的元凶！因为只有一个链路的离开速率大于它的到达速率，队列才会缩短。对于一个尽力传输最大速率的连接来说，因为其他的链路速率都比bottleneck大，所以最后会造成bottleneck的队列。</p>
+</li>
 </ol>
-<p>所以三次握手就能确认双发收发功能都正常，缺一不可。</p>
-<p>这个听起来没有问题，如果我们试着用香农的信息论来理解下或许更好理解：<br><code>信息论中，有个很重要的思想：要想消除信息的不确定性，就得引入信息</code><br>将这个思想应用到TCP中，很容易理解TCP的三次握手和四次挥手的必要性：它们的存在以及复杂度，就是为了消除不确定性，这里我们叫「不可靠性」。<br>拿三次握手举例，这里为了描述方便，将通信的两端用字母A和B替代</p>
-<p>A要往B发数据，A要确定两件事：</p>
-<ol>
-<li>B在“那儿”，并且能接受数据 —— B确实存在，并且是活的，能听得见</li>
-<li>B能回应 —— B能发数据，能说话<br>为了消除这两个不确定性，所以必须有前两次握手，即A发送了数据，B收到了，并且能回应——“ACK”<br>同样的，对于B来说，它也要消除以上两个不确定性，通过前两次握手，B知道了A能说，但是不能确定A能听，这就是第三次握手的必要性。</li>
-</ol>
-<h1 id="关于握手的一点问题"><a href="#关于握手的一点问题" class="headerlink" title="关于握手的一点问题"></a>关于握手的一点问题</h1><p>我们都知道TCP连接就是两端的状态维护，中间过程没有所谓的连接，一旦传输失败，一端收到消息，才知道状态的变化</p>
-<p><strong>客户端什么时候建立连接</strong><br>初学时以为是“三次握手”后，双方同时建立连接。显然是做不到的，客户端不知道“应答的应答”有没有到达，以及什么时候到达。<br>同样的问题客户端什么时候断开连接？自然也不能说是四次挥手之后，事实上，客户端发出最后的应答(第四次“挥手”)后，永远无法知道有没有到达。于<br>是有了2MSL的等待，在不确定的网络中，把问题最大程度地解决。</p>
-<p><strong>关于三次握手中如果最后一次丢失了没有传递到服务端会怎么样？</strong><br>回答这个问题之前，我们先看下正常的操作流程是什么样的</p>
-<p>我们先来解释一下这张图：</p>
-<ol>
-<li>在初始时，双端处于 CLOSE 状态，服务端为了提供服务，会主动监听某个端口，进入 LISTEN 状态</li>
-<li>客户端主动发送连接的「SYN」包，之后进入 SYN-SENT 状态，服务端在收到客户端发来的「SYN」包后，回复「SYN,ACK」包，之后进入 SYN-RCVD 状态</li>
-<li>客户端收到服务端发来的「SYN,ACK」包后，可以确认对方存在，此时回复「ACK」包，并进入 ESTABLISHED 状态</li>
-<li>服务端收到最后一个「ACK」包后，也进入 ESTABLISHED 状态</li>
-</ol>
-<p>这是正常的 TCP 三次握手，握手完成后双端都进入 ESTABLISHED 状态，在此之后，就是正常的数据传输过程。</p>
-<p>再回到三次握手中如果出现异常情况会是什么样的，就以最后一次报文丢失为例<br>这个问题查阅了一些过程中，发现是比较有争议的，所以还是以实践出真知为准<br>具体实践例子，可以参见：<a href="https://blog.csdn.net/zerooffdate/article/details/79359726" target="_blank" rel="noopener">TCP三次握手的第三个ack丢了会怎样</a><br>所以有些资料里写的当服务端处于 SYN-RCVD 状态下，收到客户端的数据包后，会直接回复 RTS 包响应，表示服务端错误，并进入 CLOSE 状态。是不对的<br>试想一下，服务端还在通过三次握手阶段确定对方是否真实存在，此时对方的数据已经发来了，那肯定是存在的。<br>所以当服务端处于 SYN-RCVD 状态下时，接收到客户端真实发送来的数据包时，会认为连接已建立，并进入 ESTABLISHED 状态。</p>
-<p>另外这个问题在stackoverflow同样找到了一个比较不错的回答<br><a href="https://stackoverflow.com/questions/16259774/what-if-a-tcp-handshake-segment-is-lost" target="_blank" rel="noopener">What if a TCP handshake segment is lost?</a></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">TCP has a sequence number in all packets. Hence it<span class="string">'s easy to know if a packet was lost or not. If a host doesn'</span>t get an ACK on a packet he just resends it.</span><br><span class="line"></span><br><span class="line">In most cases though, even <span class="keyword">if</span> that ACK was lost, there will be no resending <span class="keyword">for</span> a very simple reason. Directly after the ACK, the host that opened the TCP protocol is likely to start sending data. That data will, as all TCP packets, have an ACK number, so the recipient would get an ACK that way. Hence, the sender of the SYN-ACK should reasonably not care that it didn<span class="string">'t get the ACK, because it gets an "implicit" ACK in the following package.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">The re-send of the SYN-ACK is only necessary of there no data is received at all.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Update: I found the place in the RFC that specified exactly this:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    If our SYN has been acknowledged (perhaps in this incoming segment) the precedence level of the incoming segment must match the local precedence level exactly, if it does not a reset must be sent.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">In other words, if the ACK is dropped but the next packet is not dropped, then everything is fine. Otherwise, the connection must be reset. Which makes perfect sense</span></span><br></pre></td></tr></table></figure>
-<p>这个其实就是tcp的累计ack，我们后面的系列谈tcp时会细谈</p>
-<p>在查找资料的过程中，发现网上有比较常见的一种说法<br>当Client端收到Server的SYN+ACK应答后，其状态变为ESTABLISHED，并发送ACK包给Server；<br>如果此时ACK在网络中丢失，那么Server端该TCP连接的状态为SYN_RECV，并且依次等待3秒、6秒、12秒后重新发送SYN+ACK包，以便Client重新发送ACK包，<br>以便Client重新发送ACK包。Server重发SYN+ACK包的次数，可以通过设置<code>/proc/sys/net/ipv4/tcp_synack_retries</code>修改，默认值为5。如果重发指定次数后，<br>仍然未收到ACK应答，那么一段时间后，Server自动关闭这个连接。<br>但是Client认为这个连接已经建立，如果Client端向Server写数据，Server端将以RST包响应，方能感知到Server的错误。</p>
-<p>这里的最后一句其实是有可能是有问题的，不同的tcp实现可能不同，不一定会直接回复rst，真实的情况很可能是如下这样的<br>当客户端在 ESTABLISHED 状态下，开始发送数据包时，会携带上一个「ACK」的确认序号，所以哪怕客户端响应的「ACK」包丢了，服务端在收到这个数据包时，<br>能够通过包内 ACK 的确认序号，正常进入 ESTABLISHED 状态。</p>
-<p>还有一种安全范畴的非正常情况<br>前面一直在说正常的异常逻辑，双方都还算友善，按规矩做事，出现异常主要也是因为网络等客观问题，接下来说一个恶意的情况。<br>如果客户端是恶意的，在发送「SYN」包后，并收到「SYN,ACK」后就不回复了，那么服务端此时处于一种半连接的状态，<br>虽然服务端会通过 tcp_synack_retries 配置重试的次数，不会无限等待下去，但是这也是有一个时间周期的。<br>如果短时间内存在大量的这种恶意连接，对服务端来说压力就会很大，这就是所谓的 SYN FLOOD 攻击。</p>
-<p>我们上面讨论的都是三次握手过程，四次挥手过程，有兴趣可以参考这篇文章，写的不错<br><a href="https://www.jianshu.com/p/723365a47c6e" target="_blank" rel="noopener">TCP三次握手、四次挥手出现意外情况时，为保证稳定，是如何处理的？</a> </p>
-<h1 id="wireshark看三次握手"><a href="#wireshark看三次握手" class="headerlink" title="wireshark看三次握手"></a>wireshark看三次握手</h1><p>抓了一个投屏的tcpdump，可以看下三次握手的过程<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png" alt=""></p>
-<p>参考文章：<br><a href="https://www.jianshu.com/p/723365a47c6e" target="_blank" rel="noopener">TCP三次握手、四次挥手出现意外情况时，为保证稳定，是如何处理的？</a></p>
+<p>无论一个TCP连接需要穿越多少链路，也无论这些链路的速率各自是多少，从TCP的角度来说，一个极其复杂路径的行为跟一条与它拥有相同RTT和bottleneck速率的简单链路一样（这句话不太好翻译，意思就是不管这条链路多么复杂，在tcp眼里和一条与这条复杂链路同样的RTT及bottleneck的简单链路是一样的）</p>
+<p>这两个参数，RTprop（Round-trippropagation time）和BtlBw（bottleneck bandwidth），决定了传输的性能。</p>
+<p>（打个比方，如果将一条网络路径类比为一个管道，RTprop就是管道的长度，BtlBw就是管道中最短的半径。）</p>
+<p>图1展示了RTT和发送速率与发送数据大小的关系。</p>
+<p>图中的蓝线受到了RTprop的约束，绿线受到BtlBw约束，红线受到瓶颈链路的缓存约束。注意阴影区域的部分是不可达的，因为这会至少违反一项约束。这三种约束形成了3不同的区域，分别为app-limited，bandwidth-limited，buffer-limited。在三种区域，流的行为是完全不同的</p>
 
       
     </div>
@@ -491,7 +472,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2020/08/09/网络协议系列之聊聊三次握手/" title="网络系列之三次握手">http://lihaizhou.top/2020/08/09/网络协议系列之聊聊三次握手/</a>
+    <a href="http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/" title="BBR论文之读后感(一)">http://lihaizhou.top/2020/08/27/BBR论文之读后感-一/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -513,8 +494,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/06/20/Memory-Barrier读书笔记/" rel="next" title="内存屏障">
-                <i class="fa fa-chevron-left"></i> 内存屏障
+              <a href="/2020/08/09/网络协议系列之聊聊三次握手/" rel="next" title="网络系列之三次握手">
+                <i class="fa fa-chevron-left"></i> 网络系列之三次握手
               </a>
             
           </div>
@@ -522,10 +503,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/08/27/BBR论文之读后感-一/" rel="prev" title="BBR论文之读后感(一)">
-                BBR论文之读后感(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -662,7 +639,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要三次握手"><span class="nav-number">2.</span> <span class="nav-text">为什么要三次握手</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关于握手的一点问题"><span class="nav-number">3.</span> <span class="nav-text">关于握手的一点问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#wireshark看三次握手"><span class="nav-number">4.</span> <span class="nav-text">wireshark看三次握手</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BBR论文部分-1-6"><span class="nav-number">2.</span> <span class="nav-text">BBR论文部分(1/6)</span></a></li></ol></div>
             
 
           </div>

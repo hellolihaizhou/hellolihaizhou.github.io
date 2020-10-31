@@ -88,16 +88,21 @@
 
 
 
-<meta name="description" content="恍恍惚惚">
-<meta property="og:type" content="website">
-<meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/page/4/index.html">
+<meta name="description" content="前言之前使用SurfaceView主要就是绘制动画配合canvas还有配合mediaplayer播放视频做引导页，时间间隔比较久了，当时只是api的调用，对其原理没有仔细看过。最近在看音视频这方面的内容，频频看到SurfaceView的身影。打算再回顾一下，不会对如何使用做过多介绍，使用上很简单，可以参见开发者文档的API介绍，本文侧重对其原理进行介绍，温故而知新 在StackOverflow上搜">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对SurfaceView原理性内容的一点回顾">
+<meta property="og:url" content="http://lihaizhou.top/2020/10/31/对SurfaceView原理性内容的一点回顾/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="恍恍惚惚">
+<meta property="og:description" content="前言之前使用SurfaceView主要就是绘制动画配合canvas还有配合mediaplayer播放视频做引导页，时间间隔比较久了，当时只是api的调用，对其原理没有仔细看过。最近在看音视频这方面的内容，频频看到SurfaceView的身影。打算再回顾一下，不会对如何使用做过多介绍，使用上很简单，可以参见开发者文档的API介绍，本文侧重对其原理进行介绍，温故而知新 在StackOverflow上搜">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/surfaceView-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/SurfaceView-2.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/SurfaceView-3.png">
+<meta property="og:updated_time" content="2020-10-31T07:21:17.550Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李海洲">
-<meta name="twitter:description" content="恍恍惚惚">
+<meta name="twitter:title" content="对SurfaceView原理性内容的一点回顾">
+<meta name="twitter:description" content="前言之前使用SurfaceView主要就是绘制动画配合canvas还有配合mediaplayer播放视频做引导页，时间间隔比较久了，当时只是api的调用，对其原理没有仔细看过。最近在看音视频这方面的内容，频频看到SurfaceView的身影。打算再回顾一下，不会对如何使用做过多介绍，使用上很简单，可以参见开发者文档的API介绍，本文侧重对其原理进行介绍，温故而知新 在StackOverflow上搜">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/surfaceView-1.png">
 
 
 
@@ -127,13 +132,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/page/4/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/10/31/对SurfaceView原理性内容的一点回顾/"/>
 
 
 
 
 
-  <title>李海洲</title>
+  <title>对SurfaceView原理性内容的一点回顾 | 李海洲</title>
   
 
 
@@ -152,8 +157,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
@@ -272,9 +276,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -287,7 +291,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/10/31/对SurfaceView原理性内容的一点回顾/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -304,9 +308,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="url">低内存引发的一点思考</a></h1>
+          <h1 class="post-title" itemprop="name headline">对SurfaceView原理性内容的一点回顾</h1>
         
 
         <div class="post-meta">
@@ -318,204 +320,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T20:37:55+08:00">
-                2018-05-13
-              </time>
-            
-
-            
-
-            
-  	    
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/性能/" itemprop="url" rel="index">
-                    <span itemprop="name">性能</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,255
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  5
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          问题平台Android 7.1.1  MT6739
-问题现象需要常驻的进程经常被kill，界面操作不流畅
-日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看ker
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/13/低内存引发的LowMemoryKiller思考/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-	
-	<div>
-	  
-    </div>
-	
-    
-	
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Steven Lee">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/background.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李海洲">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/11/一个定屏重启的问题分析/" itemprop="url">一个定屏重启的问题分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T17:26:17+08:00">
-                2018-05-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-31T14:58:46+08:00">
+                2020-10-31
               </time>
             
 
@@ -556,8 +362,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/11/一个定屏重启的问题分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/11/一个定屏重启的问题分析/" itemprop="commentCount"></span>
+                <a href="/2020/10/31/对SurfaceView原理性内容的一点回顾/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/10/31/对SurfaceView原理性内容的一点回顾/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -579,7 +385,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,256
+                  2,846
                 </span>
               
 
@@ -595,7 +401,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  10
                 </span>
               
             </div>
@@ -616,20 +422,58 @@
       
 
       
-        
-          
-          问题平台Android 7.1.1    MT6739
-问题现象界面定屏并重启
-初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/11/一个定屏重启的问题分析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前使用SurfaceView主要就是绘制动画配合canvas还有配合mediaplayer播放视频做引导页，时间间隔比较久了，当时只是api的调用，对其原理没有仔细看过。最近在看音视频这方面的内容，频频看到SurfaceView的身影。<br>打算再回顾一下，不会对如何使用做过多介绍，使用上很简单，可以参见开发者文档的API介绍，本文侧重对其原理进行介绍，温故而知新</p>
+<p>在StackOverflow上搜索到这样的一个提问 Difference between SurfaceView and View?</p>
+<p>下面的最佳评论是：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Views are all drawn on the same GUI thread which is also used <span class="keyword">for</span> all user interaction.</span><br><span class="line">So <span class="keyword">if</span> you need to update GUI rapidly or <span class="keyword">if</span> the rendering takes too much time and affects user experience then use SurfaceView.</span><br></pre></td></tr></table></figure></p>
+<p>大意说的是View是绘制在主线程的，如果需要频繁绘制界面或者比较复杂耗时的不妨试试<code>SurfaceView</code></p>
+<p>SurfaceView出现最早，解决类似视频播放的问题，可以用单独一个线程来渲染UI，对一些游戏、视频等性能相关的应用非常有益，因为它不会影响主线程对事件的响应。但也有缺点，因为这个Surface不在View hierarchy中，它的显示也不受View的属性控制，所以不能进行平移、缩放等变换，也不能放在其它ViewGroup中，一些View的特性也无法使用。需要注意的是SurfaceHolder.Callback的所有回调方法都是在主线程中回调的。</p>
+<h1 id="概念简介"><a href="#概念简介" class="headerlink" title="概念简介"></a>概念简介</h1><p>Surface官方介绍:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Handle onto a raw buffer that is being managed by the screen compositor.</span><br></pre></td></tr></table></figure></p>
+<p>意思就是Surface是一个raw buffer的句柄,我们可以通过它在raw buffer上进行绘制．</p>
+<p>对应到代码其实就是可以通过Surface获得一个Canvas:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Canvas canvas = mSurface.lockCanvas(<span class="literal">null</span>);</span><br><span class="line"><span class="comment">//使用Canvas进行绘制</span></span><br><span class="line">mSurface.unlockCanvasAndPost(canvas);</span><br></pre></td></tr></table></figure></p>
+<p>而SurfaceView其实就是对Surface进行了一次封装,它内部帮我们管理了一个Surface．我们使用SurfaceView其实最终都是获取到这个Surface去绘制．绘制啥的其实都是在canvas上画的</p>
+<p><strong>SurfaceView、SurfaceHolder、Surface的关系可概括为以下几点</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> SurfaceView是拥有独立绘图层的特殊View，它具有两个Surface，也就是我们所说的双缓冲机制</span><br><span class="line"><span class="number">2.</span> Surface就是指SurfaceView所拥有的那个绘图层，其实它就是内存中的一段绘图缓冲区。它是在SurfaceView所在的<span class="built_in">window</span>可见时创建的，可使用SurfaceHolder.addCallback方法监听Surface的创建与销毁的事件</span><br><span class="line"><span class="number">3.</span> SurfaceHolder是Surface的持有者，SurfaceView通过SurfaceHolder对Surface进行管理控制</span><br></pre></td></tr></table></figure></p>
+<h1 id="View和SurfaceView的差异"><a href="#View和SurfaceView的差异" class="headerlink" title="View和SurfaceView的差异"></a>View和SurfaceView的差异</h1><ol>
+<li>普通View绘制：<br>我们知道View是通过刷新来重绘视图，系统通过发出Vsync信号来进行屏幕的重绘，刷新的时间间隔的话对于60hz屏来说是大概16ms,如果我们可以在16ms以内将绘制工作完成，则没有任何问题，如果我们绘制过程某一些帧耗时较长，则这个时候就有可能会出现掉帧的现象，表现出来的话就是界面有卡顿，影响用户体验</li>
+<li>SurfaceView绘制：SurfaceView的出现正是Android推出用来解决上面问题的<br>看开发者文档上关于SurfaceView的介绍就知道SurfaceView继承自View，所以它本质也是一个 View 组件，可用于在 View 层次结构中嵌入其他合成层。SurfaceView 采用与其他 View 相同的布局参数，因此可以像对待其他任何 View 一样对其进行操作，但 SurfaceView 的内容是透明的。<br>SurfaceView提供了一个专有的Surface来进行绘制，因为不与宿主Windows共用一个Surface，所以可以不在主线程里面进行绘制，在实现复杂的UI同时不会影响到主线程的响应。</li>
+</ol>
+<p><strong>常见使用场景有相机，视频，需要频繁刷新的动画（游戏）</strong></p>
+<p>SurfaceView一个主要目的是可以在第二线程渲染内容，所以要注意：</p>
+<ol>
+<li>SurfaceView与SurfaceHolder.Callback均运行在主线程，在其他线程渲染要注意同步</li>
+<li>要在Surface有效的情况下进行绘制（SurfaceHolder.Callback#surfaceCreated - SurfaceHolder.Callback#surfaceDestroyed）</li>
+</ol>
+<p>SurfaceView和普通View最大的区别归纳就是一句话：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">最显著的区别就是普通view和它的宿主窗口共享一个绘图表面（Surface），SurfaceView虽然也在View的树形结构中，但是它有属于自己的绘图Surface，Surface 内部持有一个Canvas，可以利用这个Canvas绘制。</span><br></pre></td></tr></table></figure></p>
+<p>还有一个区别是：<br>SurfaceView的窗口刷新的时候不需要重绘应用程序的窗口而android普通窗口的视图绘制机制是一层一层的，任何一个子元素或者是局部的刷新都会导致整个视图结构全部重绘一次。</p>
+<p>还有一个非常类似的名词就是<code>GLSurfaceView</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GLSurfaceView是继承子SurfaceView的子类，SurfaceView相比view，最重要的区别是SurafaceView上是自己通过SurfaceFlinger创建了Layer，可以通过各种渲染方法对Surface操作后，直接推送给SurfaceFlinger合成。</span><br><span class="line"></span><br><span class="line">因此，SurfaceView的刷新属于主动刷新，与view不同，view刷新需要等VSYNC之后，才进行绘制操作，进行刷新。GLSurfaceView相比SurfaceView，自己内部已经包含了GLThread线程，不需要自己再创建渲染线程。</span><br><span class="line"></span><br><span class="line">GLSurfaceView在是实现上创建了整套的EGL的环境，因此，我们在渲染的时候，直接使用EGL的操作即可。GLSurfaceView最终的绘制结果，也是绑定到SurfaceView上的</span><br></pre></td></tr></table></figure></p>
+<h2 id="SurfaceView所谓的“挖洞”原理"><a href="#SurfaceView所谓的“挖洞”原理" class="headerlink" title="SurfaceView所谓的“挖洞”原理"></a>SurfaceView所谓的“挖洞”原理</h2><p>SurfaceView里面镶嵌的Surface是在包含SurfaceView的宿主Activity窗口（顶层视图对应的Surface）后面，用来描述SurfaceView的Layer的Z轴位置是小于用来描述其宿主Activity窗口的Layer的Z轴位置的，这样SurfaceView的Layer就被挡住看不见了，SurfaceView提供了一个可见区域，只有在这个可见区域内的surface部分内容才可见，就好像SurfaceView会在宿主Activity窗口上面挖一个“洞”出来，以便它的UI可以漏出来对用户可见，实际上，SurfaceView只不过是在其宿主Activity窗口上设置了一块透明区域</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/surfaceView-1.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/SurfaceView-2.jpeg" alt=""></p>
+<p>如上Activity窗口的顶层视图DecorView及其两个TextView控件都是通过窗口的Surface对应的Canvas绘制在SurfaceFlinger服务中的同一个Layer上，而SurfaceView的UI是通过其自己的Surface对应的Canvas绘制在SurfaceFlinger服务中的另外一个Layer上。</p>
+<p>要了解 SurfaceView ，还须了解它的另外两个组件：Surface 和 SurfaceHolder<br>他们三者之间的关系实质上就是<code>MVC</code>，Model就是数据模型的意思也就是这里的Surface；View即视图也就是这里的SurfaceView；SurfaceHolder很明显可以理解为Controller（控制器）。</p>
+<p>在SurfaceView中你可以通过SurfaceHolder接口访问它内部的surface，而我们执行绘制的方法就是操作这个 Surface内部的Canvas，处理Canvas画的效果和动画，大小，像素等，getHolder()方法可以得到这个SurfaceHolder，通过SurfaceHolder来控制surface的尺寸和格式，或者修改监视surface的变化等等</p>
+<p>SurfaceHolder有三个回调方法可以监听SurfaceView中的surface的生命周期，SurfaceView一开始创建出来后，它拥有的Surface不一定会一起创建出来，SurfaceView变得可见时，surface被创建，SurfaceView隐藏前，surface被销毁，被创建了表示可以开始准备绘制了，而被销毁后我们要释放其他资源，Surfaceview一般会继承SurfaceHolder的Callback接口，SurfaceHolder.Callback具有如下的方法：<br>   surfaceCreated(SurfaceHolder holder)：当Surface第一次创建后会立即调用该函数，可以在该函数中做些和绘制界面相关的初始化工作，一般情况下都是在新线程来绘制界面，所以不要在这个函数中绘制Surface。<br>   surfaceChanged(SurfaceHolder holder, int format, int width,int height)：当Surface的状态（大小和格式）发生变化的时候会调用该函数，在surfaceCreated调用后该函数至少会被调用一次。<br>   surfaceDestroyed(SurfaceHolder holder)：当Surface被摧毁前会调用该函数，该函数被调用后就不能继续使用Surface了，一般在该函数中来清理使用的资源。 </p>
+<p>特别需要注意的是SurfaceView和SurfaceHolder.Callback的所有回调方法都是在主线程中回调的，在绘制前必须先合法的获取 Surface 才能开始绘制内容， SurfaceHolder.Callback.surfaceCreated() 和 SurfaceHolder.Callback.surfaceDestroyed() 之间的状态为合法的，在这之外使用Surface都会出错。</p>
+<p>在使用SurfaceView过程中是不直接和Surface打交道的，由SurfaceHolder的Canvas lockCanvas()或则Canvas lockCanvas(Rect dirty)函数来锁定并且获取Surface中的Canvas画布对象，通过在Canvas上绘制内容来修改Surface中的数据，如果Surface被别的线程占有不可编辑或则尚未创建或者已经被销毁，调用该函数会返回null。</p>
+<h2 id="SurfaceView双缓冲区"><a href="#SurfaceView双缓冲区" class="headerlink" title="SurfaceView双缓冲区"></a>SurfaceView双缓冲区</h2><p>SurfaceView 在更新视图时用到了两张 Canvas对应于两个 Surface，一张 frontCanvas 和一张 backCanvas，每次实际显示的是 frontCanvas，backCanvas 存储的是上一次更改前的视图，当使用 lockCanvas() 获取画布时，得到的实际上是 backCanvas 而不是正在显示的 frontCanvas，之后你在获取到的 backCanvas 上绘制新视图，再 unlockCanvasAndPost(Canvas) 此视图，那么上传的这张 Canvas将替换原来的 frontCanvas 作为新的 frontCanvas，原来的 frontCanvas 将切换到后台作为 backCanvas。例如，如果你已经先后两次绘制了视图 A 和 B，那么你再调用 lockCanvas() 获取视图，获得的将是 A 而不是正在显示的 B，之后你将重绘的 C 视图上传，那么 C 将取代 B 作为新的 frontCanvas 显示在 SurfaceView 上，原来的 B 则转换为 backCanvas。</p>
+<h2 id="如何选择？"><a href="#如何选择？" class="headerlink" title="如何选择？"></a>如何选择？</h2><p>谷歌官方：在 API 24 及更高版本中，建议实现 SurfaceView 而不是 TextureView。</p>
+<p>根据谷歌官方的建议，api 24及以上的版本使用 SurfaceView 而在其他版本的话可以根据二者的特性选择对应的控件。下表为二者正常情况下一些参数的对比情况(仅供参考)。</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/SurfaceView-3.png" alt=""></p>
+<p>从性能和安全性角度出发，使用播放器优先选SurfaceView。</p>
+<ol>
+<li><p>在android 7.0上系统surfaceview的性能比TextureView更有优势，支持对象的内容位置和包含的应用内容同步更新，平移、缩放不会产生黑边。 在7.0以下系统如果使用场景有动画效果，可以选择性使用TextureView</p>
+</li>
+<li><p>由于失效(invalidation)和缓冲的特性，TextureView增加了额外1~3帧的延迟显示画面更新</p>
+</li>
+<li><p>TextureView总是使用GL合成，而SurfaceView可以使用硬件overlay后端，可以占用更少的内存带宽，消耗更少的能量</p>
+</li>
+<li><p>TextureView的内部缓冲队列导致比SurfaceView使用更多的内存</p>
+</li>
+<li><p>SurfaceView： 内部自己持有surface，surface 创建、销毁、大小改变时系统来处理的，通过surfaceHolder 的callback回调通知。当画布创建好时，可以将surface绑定到MediaPlayer中。SurfaceView如果为用户可见的时候，创建SurfaceView的SurfaceHolder用于显示视频流解析的帧图片，如果发现SurfaceView变为用户不可见的时候，则立即销毁SurfaceView的SurfaceHolder，以达到节约系统资源的目的</p>
+</li>
+</ol>
+<h1 id="参考文章："><a href="#参考文章：" class="headerlink" title="参考文章："></a>参考文章：</h1><p><a href="https://juejin.im/entry/6844903465261465613" target="_blank" rel="noopener">https://juejin.im/entry/6844903465261465613</a><br><a href="https://www.jianshu.com/p/b037249e6d31" target="_blank" rel="noopener">https://www.jianshu.com/p/b037249e6d31</a><br><a href="https://www.jianshu.com/p/90a75b9b7115" target="_blank" rel="noopener">https://www.jianshu.com/p/90a75b9b7115</a></p>
+<p><a href="https://blog.csdn.net/u010126792/article/details/86249399" target="_blank" rel="noopener">https://blog.csdn.net/u010126792/article/details/86249399</a></p>
+
       
     </div>
     
@@ -638,6 +482,13 @@
 	
 	<div>
 	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
     </div>
 	
     
@@ -645,17 +496,51 @@
     
 
     
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2020/10/31/对SurfaceView原理性内容的一点回顾/" title="对SurfaceView原理性内容的一点回顾">http://lihaizhou.top/2020/10/31/对SurfaceView原理性内容的一点回顾/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
 
     <footer class="post-footer">
       
 
       
+      
+      
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/27/臭名昭著的bufferbloat/" rel="next" title="臭名昭著的bufferbloat">
+                <i class="fa fa-chevron-left"></i> 臭名昭著的bufferbloat
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -665,14 +550,11 @@
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -680,6 +562,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -700,8 +589,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -763,6 +661,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概念简介"><span class="nav-number">2.</span> <span class="nav-text">概念简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#View和SurfaceView的差异"><span class="nav-number">3.</span> <span class="nav-text">View和SurfaceView的差异</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SurfaceView所谓的“挖洞”原理"><span class="nav-number">3.1.</span> <span class="nav-text">SurfaceView所谓的“挖洞”原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SurfaceView双缓冲区"><span class="nav-number">3.2.</span> <span class="nav-text">SurfaceView双缓冲区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何选择？"><span class="nav-number">3.3.</span> <span class="nav-text">如何选择？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文章："><span class="nav-number">4.</span> <span class="nav-text">参考文章：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -916,6 +830,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

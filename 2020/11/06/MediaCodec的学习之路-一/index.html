@@ -98,7 +98,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/MediaCodec1_1_MediaPlayerFactory.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/MediaCodec1_2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/MediaCodec1_3.png">
-<meta property="og:updated_time" content="2020-11-06T08:06:31.687Z">
+<meta property="og:updated_time" content="2020-11-06T08:13:41.357Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MediaCodec的学习之路(一)">
 <meta name="twitter:description" content="前言MediaPlayer这个接口很多人都用过，位于APP层属于封装比较深的接口，使用上只要遵循开发者文档调用即可，创建播放器对象，注入URL，播放，播放完毕之后release等，这一层纯粹的就是API调用，应用开发者完全不用了解其实现细节。但是MediaPlayer对于视频编解码协议支持较少，只提供三种媒体格式：MP4、3GPP 和 MKV（从Android 4.0开始）。为了播放不支持的格式，">
@@ -429,8 +429,8 @@
 It is part of the Android low-level multimedia support infrastructure (normally used together with MediaExtractor, MediaSync, MediaMuxer, MediaCrypto, MediaDrm, Image, Surface, and AudioTrack.)</code></p>
 <p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/MediaCodec1_1_MediaPlayerFactory.png" alt=""></p>
 <p><code>In broad terms, a codec processes input data to generate output data. It processes data asynchronously and uses a set of input and output buffers. At a simplistic level, you request (or receive) an empty input buffer, fill it up with data and send it to the codec for processing. The codec uses up the data and transforms it into one of its empty output buffers. Finally, you request (or receive) a filled output buffer, consume its contents and release it back to the codec.</code><br>上面说的很简单，看下上面的图就明白了</p>
-<h2 id="Data-Types"><a href="#Data-Types" class="headerlink" title="Data Types"></a>Data Types</h2><p>`<br>Codecs operate on three kinds of data: compressed data, raw audio data and raw video data. All three kinds of data can be processed using ByteBuffer, but you should use a Surface for raw video data to improve codec performance. Surface uses native video buffers without mapping or copying them to ByteBuffers; thus, it is much more efficient.</p>
-<p>You normally cannot access the raw video data when using a Surface, but you can use the ImageReader class to access unsecured decoded (raw) video frames. This may still be more efficient than using ByteBuffers, as some native buffers may be mapped into ByteBuffer#isDirect ByteBuffers. When using ByteBuffer mode, you can access raw video frames using the Image class and getInput/OutputImage(int).<br>`</p>
+<h2 id="Data-Types"><a href="#Data-Types" class="headerlink" title="Data Types"></a>Data Types</h2><p><code>Codecs operate on three kinds of data: compressed data, raw audio data and raw video data. All three kinds of data can be processed using ByteBuffer, but you should use a Surface for raw video data to improve codec performance. Surface uses native video buffers without mapping or copying them to ByteBuffers; thus, it is much more efficient.</code></p>
+<p><code>You normally cannot access the raw video data when using a Surface, but you can use the ImageReader class to access unsecured decoded (raw) video frames. This may still be more efficient than using ByteBuffers, as some native buffers may be mapped into ByteBuffer#isDirect ByteBuffers. When using ByteBuffer mode, you can access raw video frames using the Image class and getInput/OutputImage(int).</code></p>
 <p>这段主要说的是支持的数据类型，初看之后有点云里雾里，不用担心，实操后自然会明白，大致的翻译如下</p>
 <p>编解码器可以处理三种类型的数据：</p>
 <ol>

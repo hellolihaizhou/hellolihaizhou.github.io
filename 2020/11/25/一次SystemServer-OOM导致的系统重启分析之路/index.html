@@ -88,22 +88,24 @@
 
 
 
-<meta name="description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
+<meta name="description" content="测试步骤 MTBF测试(Mean Time Between Failure) 主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数 复现概率 1/200 问题现象 机器出现重启 初步分析从现象上来看，机器发生重启，从日志中看是SystemServer重启，附近有OutOfMemoryErr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个定屏重启的问题分析">
-<meta property="og:url" content="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/index.html">
+<meta property="og:title" content="一次SystemServer OOM导致的系统重启分析之路">
+<meta property="og:url" content="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
+<meta property="og:description" content="测试步骤 MTBF测试(Mean Time Between Failure) 主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数 复现概率 1/200 问题现象 机器出现重启 初步分析从现象上来看，机器发生重启，从日志中看是SystemServer重启，附近有OutOfMemoryErr">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E7%9B%AE%E5%BD%95.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E5%85%B7%E4%BD%93%E5%A0%86%E6%A0%88.png">
-<meta property="og:updated_time" content="2019-12-28T07:00:06.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-6.png">
+<meta property="og:updated_time" content="2020-11-25T01:23:07.797Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个定屏重启的问题分析">
-<meta name="twitter:description" content="问题平台Android 7.1.1    MT6739 问题现象界面定屏并重启 初步分析拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧日志目录如下：看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看 是一个JE的问题导致的重启，猜测是systemServer挂了    Step1：分析日志拿出看家">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png">
+<meta name="twitter:title" content="一次SystemServer OOM导致的系统重启分析之路">
+<meta name="twitter:description" content="测试步骤 MTBF测试(Mean Time Between Failure) 主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数 复现概率 1/200 问题现象 机器出现重启 初步分析从现象上来看，机器发生重启，从日志中看是SystemServer重启，附近有OutOfMemoryErr">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-1.png">
 
 
 
@@ -133,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/"/>
 
 
 
 
 
-  <title>一个定屏重启的问题分析 | 李海洲</title>
+  <title>一次SystemServer OOM导致的系统重启分析之路 | 李海洲</title>
   
 
 
@@ -292,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -309,7 +311,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一个定屏重启的问题分析</h1>
+          <h1 class="post-title" itemprop="name headline">一次SystemServer OOM导致的系统重启分析之路</h1>
         
 
         <div class="post-meta">
@@ -321,8 +323,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-11T17:26:17+08:00">
-                2018-05-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-25T08:59:48+08:00">
+                2020-11-25
               </time>
             
 
@@ -345,8 +347,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/性能/" itemprop="url" rel="index">
+                    <span itemprop="name">性能</span>
                   </a>
                 </span>
 
@@ -363,8 +365,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/11/一个定屏重启的问题分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/11/一个定屏重启的问题分析/" itemprop="commentCount"></span>
+                <a href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -386,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,256
+                  1,726
                 </span>
               
 
@@ -402,7 +404,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  8
                 </span>
               
             </div>
@@ -423,34 +425,67 @@
       
 
       
-        <p><strong>问题平台</strong><br><code>Android 7.1.1</code>    <code>MT6739</code></p>
-<p><strong>问题现象</strong><br><code>界面定屏并重启</code></p>
-<p><strong>初步分析</strong><br>拿到完整的MTK日志，该问题是小米内测发现，了解到当时测试人员的操作就是随便划着划着就卡住了然后重启了，ok，还是乖乖看日志吧<br>日志目录如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E6%97%A5%E5%BF%97%E7%9B%AE%E5%BD%95.png" align="left" style=" width:300px;height:50 px"><br><br><br><br>看到了aee_exp_backup这个文件夹，一切尽在意料之中，进去看看<br><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6.png" align="left" style=" width:300px;height:23 px"><br><br></p>
-<p align="left">是一个JE的问题导致的重启，猜测是systemServer挂了</p>  
-
-<p><strong>Step1：分析日志</strong><br>拿出看家小工具GAT，对于db文件的分析离不开GAT，用GAT解析下来究竟发生了what让我们的小机器重启了呢，解析后文件目录如下</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/db%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E7%9B%AE%E5%BD%95.png" align="left" style=" width:900px;height:500 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>(这里将产品名称马赛克一下，我也不知道为什么这么做，反正就是这么做了，哈哈哈（￣︶￣）↗)</p>
-<p>这里可以看到果然是systemServer进程重启了，发生问题点在systemServer进程中，接着看原因，是个数组越界异常，下标为1，数组长度为2(见上图红色框)，唉？没越界啊，为什么会报越界呢？</p>
-<p>分析具体的堆栈代码之前，先看下日志判断下死机发生时用户当时具体做了些啥  </p>
-<p>首先看下main日志，找到IndexOutOfBoundsException发生时间点<code>09:43:33.818111</code><br>测试人员使用的是user版本，user版本的kernel日志不会打出每行时间戳，userdebug以及eng版本的kernel日志会有具体的时间戳，所以分析user版本的kernel日志会稍稍麻烦一点，通过搜索关键字”UTC”来查看时间戳，这份日志中UTC时间戳每隔二十秒打印<br>异常发生时间点09:43:33.818111，所以是在如下两行之间<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Line <span class="number">176236</span>: &lt;7&gt;[ 1762.546722]  (0)[249:wdtk-0][thread:249][RT:1762546695292] 2018-04-26 01:43:27.105173 UTC;android time 2018-04-26 09:43:27.105173</span><br><span class="line">Line 179752: &lt;7&gt;[ 1782.556698]  (0)[249:wdtk-0][thread:249][RT:1782556690801] 2018-04-26 01:43:47.115173 UTC;android time 2018-04-26 09:43:47.115173</span><br></pre></td></tr></table></figure></p>
-<p><code>9.43.27</code>这行往下数6s左右，大概在<code>178800</code>行附近，ok，去这个行数附近看看<br>在<code>178891</code>行看到了如下信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">7</span>&gt;[ <span class="number">1777.097776</span>] -(<span class="number">0</span>)[<span class="number">1085</span>:android.ui][signal][<span class="number">1085</span>:android.ui]send death sig <span class="number">9</span> to[<span class="number">1068</span>:system_server:R]</span><br></pre></td></tr></table></figure></p>
-<p>sig 9代表SIGNAL_KILL，这里杀掉了system_server进程，在此上面有大量连续的手指触摸日志信息<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923619</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">302</span>, y = <span class="number">148</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923695</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8490</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.923712</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.925815</span>]  (<span class="number">1</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.933972</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8491</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934001</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.934944</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x904</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935112</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger dwon [<span class="number">00</span>] x = <span class="number">303</span>, y = <span class="number">143</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935157</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler before_event  foubin1 irq_flag = <span class="number">8492</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.935169</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]:  touch_event_handler after_event  foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.938970</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock+++blocking=<span class="number">0</span> ,dst_mode=<span class="number">0</span>,dispmode = <span class="number">0</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939000</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;state = <span class="number">240</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.939014</span>]  (<span class="number">0</span>)[<span class="number">412</span>:disp_queue_P0][DISP]primary_display_trigger_nolock pgc-&gt;session_mode = <span class="number">1</span> </span><br><span class="line">&lt;<span class="number">6</span>&gt;[ <span class="number">1772.942542</span>]  (<span class="number">0</span>)[<span class="number">4051</span>:kworker/u8:<span class="number">0</span>][DISP][xun] _ovl_fence_release_callback </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.946983</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler before_disable_irq foubin1 irq_flag = <span class="number">8493</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947013</span>] -(<span class="number">1</span>)[<span class="number">0</span>:swapper/<span class="number">1</span>][ zinitix ]:  tpd_eint_interrupt_handler after_disable_irq  foubin1 irq_flag = <span class="number">8494</span> </span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.947971</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: touch_info.status=<span class="number">0x9</span></span><br><span class="line">&lt;<span class="number">4</span>&gt;[ <span class="number">1772.948138</span>]  (<span class="number">1</span>)[<span class="number">245</span>:mtk-tpd][ zinitix ]: finger [<span class="number">00</span>] up <span class="number">11111</span></span><br></pre></td></tr></table></figure></p>
-<p>可见当时测试人员与屏幕一直在互动，符合测试人员所说的当时在滑动屏幕</p>
-<p><strong>Step2：跟踪源码流程</strong><br>看具体的堆栈信息</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/hellolihaizhou.github.io/master/2018/05/11/%E4%B8%80%E4%B8%AA%E5%AE%9A%E5%B1%8F%E9%87%8D%E5%90%AF%E7%9A%84%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/%E5%85%B7%E4%BD%93%E5%A0%86%E6%A0%88.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br></p>
-<p>emmm…没有看到具体的应用堆栈信息，都是framework里的堆栈，其实看到这里心里大概有数了，应该不是应用的问题，而是系统层面的问题</p>
-<p>好的，撸起袖子打开源码，开始看具体的代码</p>
-<font color="#000000" size="2" face="楷体">libcore/ojluni/src/main/java/java/util/ArrayList.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= size)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IndexOutOfBoundsException(outOfBoundsMsg(index));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (E) elementData[index];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>这里抛出了越界异常，接着往下看</p>
-<font color="#000000" size="2" face="楷体">/frameworks/base/services/core/java/com/android/server/wm/DisplayContent.java</font>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Find the task whose outside touch area (for resizing) (x, y) falls within.</span></span><br><span class="line"><span class="comment"> * Returns null if the touch doesn't fall into a resizing area.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Task <span class="title">findTaskForControlPoint</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> delta = mService.dipToPixel(RESIZE_HANDLE_WIDTH_IN_DP, mDisplayMetrics);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> stackNdx = mStacks.size() - <span class="number">1</span>; stackNdx &gt;= <span class="number">0</span>; --stackNdx) &#123;</span><br><span class="line">        TaskStack stack = mStacks.get(stackNdx);</span><br><span class="line">        <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里出现了异常，理论上不会出现越界的问题，不过如果是多线程访问的情况，鉴于这里并没有同步机制，<br>mStacks又是公用的，很多地方会对其增删修改，这样的话就难以保证不会出现异常了</p>
-<p><strong>问题小结：</strong><br>这个问题看起来是谷歌的bug，避免这种情况可以选择加同步机制。同步机制难免会牺牲性能，不过也增强了代码的稳定性<br>考虑到这个问题至今只是出现了一次，后续没有再出现过，选择忽略不做修改</p>
-<hr>
-<font color="#000000" size="2" face="楷体">本文写于公司，电脑前，慵懒的午后</font>
+        <p><strong>测试步骤</strong></p>
+<p><code>MTBF测试(Mean Time Between Failure)</code></p>
+<p>主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数</p>
+<p><strong>复现概率</strong></p>
+<p>1/200</p>
+<p><strong>问题现象</strong></p>
+<p>机器出现重启</p>
+<h1 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h1><p>从现象上来看，机器发生重启，从日志中看是SystemServer重启，附近有OutOfMemoryError片段打出，猜测是OOM killer起来工作，说明问题发生时候的SystemServer占据的内存已经超出限制值，并且再请求的内存已无法得到继续满足<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: Binder:<span class="number">2203_13</span></span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime: java.lang.OutOfMemoryError: Failed to allocate a <span class="number">328080</span> <span class="keyword">byte</span> allocation with <span class="number">216856</span> free bytes and <span class="number">211</span>KB until OOM, target footprint <span class="number">536870912</span>, growth limit <span class="number">536870912</span></span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.util.ArrayMap.allocArrays(ArrayMap.java:<span class="number">276</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.util.ArrayMap.put(ArrayMap.java:<span class="number">596</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.service.autofill.FillContext.findViewNodesByAutofillIds(FillContext.java:<span class="number">155</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at com.android.server.autofill.Session.fillContextWithAllowedValuesLocked(Session.java:<span class="number">639</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at com.android.server.autofill.Session.access$<span class="number">1300</span>(Session.java:<span class="number">135</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at com.android.server.autofill.Session$AssistDataReceiverImpl.onHandleAssistData(Session.java:<span class="number">502</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at com.android.server.wm.ActivityTaskManagerService.reportAssistContextExtras(ActivityTaskManagerService.java:<span class="number">3332</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.app.IActivityTaskManager$Stub.onTransact(IActivityTaskManager.java:<span class="number">2484</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.os.Binder.execTransactInternal(Binder.java:<span class="number">1157</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">30.488</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> E AndroidRuntime:  at android.os.Binder.execTransact(Binder.java:<span class="number">1126</span>)</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">34.685</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> D OOMEventManagerFK: dumpheap success : /data/anr/system_server_2203.hprof</span><br><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">34.687</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> I am_crash: [<span class="number">16189</span>,<span class="number">0</span>,system_server,-<span class="number">1</span>,java.lang.OutOfMemoryError,</span><br><span class="line">Failed to allocate a <span class="number">328080</span> <span class="keyword">byte</span> allocation with <span class="number">216856</span> free bytes and <span class="number">211</span>KB until OOM, target footprint <span class="number">536870912</span>, </span><br><span class="line">growth limit <span class="number">536870912</span>,ArrayMap.java,<span class="number">276</span>]</span><br></pre></td></tr></table></figure></p>
+<p>字面上看很好理解，申请分配328080 byte，但是实际free的只有216856  bytes，直到内存溢出OOM</p>
+<p>关于<code>FillContext</code>的解释<br>/**</p>
+<ul>
+<li>This class represents a context for each fill request made via {@link</li>
+<li>AutofillService#onFillRequest(FillRequest, CancellationSignal, FillCallback)}.</li>
+<li>It contains a snapshot of the UI state, the view ids that were returned by</li>
+<li>the {@link AutofillService autofill service} as both required to trigger a save</li>
+<li>and optional that can be saved, and the id of the corresponding {@link</li>
+<li>FillRequest}.</li>
+<li><p></p></li>
+<li>This context allows you to inspect the values for the interesting views</li>
+<li>in the context they appeared. Also a reference to the corresponding fill</li>
+<li>request is useful to store meta-data in the client state bundle passed</li>
+<li>to {@link FillResponse.Builder#setClientState(Bundle)} to avoid interpreting</li>
+<li>the UI state again while saving.<br>*/<br>public final class FillContext implements Parcelable {<br> private final int mRequestId;<br> private final @NonNull AssistStructure mStructure;<br> private final @NonNull AutofillId mFocusedId;<br> /**<ul>
+<li>Lookup table AutofillId-&gt;ViewNode to speed up {@link #findViewNodesByAutofillIds}</li>
+<li>This is purely a cache and can be deleted at any time<br>*/<br>@Nullable private ArrayMap&lt;AutofillId, AssistStructure.ViewNode&gt; mViewNodeLookupTable;</li>
+</ul>
+</li>
+</ul>
+<p>代表一种context，即通过<code>AutofillService#onFillRequest(FillRequest, CancellationSignal, FillCallback)</code>构建的context</p>
+<p>包含UI状态的快照，view的id等…..这个context允许你检查感兴趣的视图的值……</p>
+<h1 id="MAT分析"><a href="#MAT分析" class="headerlink" title="MAT分析"></a>MAT分析</h1><p>这个时候根据上面的堆栈日志中列出的，直接去看<code>system_server_2203.hprof</code>这个文件<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">11</span>-<span class="number">12</span> <span class="number">03</span>:<span class="number">26</span>:<span class="number">34.685</span>  <span class="number">1000</span>  <span class="number">2203</span>  <span class="number">5788</span> D OOMEventManagerFK: dumpheap success : /data/anr/system_server_2203.hprof</span><br></pre></td></tr></table></figure></p>
+<p>这个文件直接用MAT打不开，使用Android SDK中的转换工具<code>hprof-conv</code>，将hprof文件转换为标准格式，hprof-conv位于SDK的platform-tools目录下</p>
+<p>命令格式如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv A.hprof B.hprof</span><br></pre></td></tr></table></figure></p>
+<p>在MAT中打开转换后的B.hprof文件，即可对heap信息进行进一步详细分析</p>
+<p>关于MAT的窗口下方的Action标签功能：</p>
+<ol>
+<li>Histogram可以列出内存中的对象，对象的个数以及大小。</li>
+<li>Dominator Tree可以列出那个线程，以及线程下面的那些对象占用的空间。</li>
+<li>Top consumers通过图形列出最大的object。</li>
+<li>Leak Suspects通过MA自动分析泄漏的原因。</li>
+</ol>
+<p>详细可以参见官方文档：<br><a href="https://help.eclipse.org/2020-09/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html" target="_blank" rel="noopener">MAT官方使用文档说明</a></p>
+<p>可以直接使用Histogram，搜索autofill关键字，再按照<code>Retained Heap</code>排序<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-1.png" alt=""></p>
+<p>注：</p>
+<ol>
+<li>Shallow Heap ：一个对象所占用的内存，不包含对其他对象的引用</li>
+<li>Retained Heap ：是shallow Heap的总和（单个对象占用内存*此对象的个数），也就是该对象被GC之后所能回收到内存的总和</li>
+</ol>
+<p>也可以通过<code>Leak Suspects</code>，会展示可能的泄漏点，第一个占据最大的就是和我们日志中对应的<code>FillContext</code>泄漏，共计650个实例被持有，一共占据达到了253M</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-2.png" alt=""></p>
+<p>点击Details后，可以看到有650个实例<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-3.png" alt=""></p>
+<p>随便点击一个查看引用链选择outgoing引用<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-4.png" alt=""></p>
+<p>其中的每一个mStructure中都包含<code>WifiConfigActivity</code>，压力测试下出现如此之多的这个Activity实例，说明很可能存在泄露<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-5.png" alt=""></p>
+<p>这是一个Dialog样式的Activity，但是这个Activity当初设计时存在一个弊端，就是在Activity的onResume中弹出一个Dialog，其实完全可以在Manifest中指定这个Activity为DialogActivity的样式，然后在布局文件中设计为Dialog的样式即可, 这里暂不会重新修改这个Activity的架构，目前先对这个Activity进行测试，看看是否真的会泄露</p>
+<p>测试发现当该Dialog消失后，<code>adb shell dumpsys meminfo com.android.settings</code>打印出来的Activity实例个数并没有减少，说明存在Activity泄露。 引用链为：listener-&gt;AlertDialog-&gt;Activity ,当触碰dialog之外位置或按Home键后，因为设置应用的设计是每次启动都会从主界面开始, 这个文件在onDestory中执行的将Listener置为null并没有走</p>
+<h1 id="修改方案"><a href="#修改方案" class="headerlink" title="修改方案"></a>修改方案</h1><p>修改方案如下：<br>新增一个文件继承自DialogInterface.OnDismissListener<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DetachWifiDialogListener</span> <span class="keyword">implements</span> <span class="title">DialogInterface</span>.<span class="title">OnDismissListener</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String TAG = DetachWifiDialogListener.class.getSimpleName();</span><br><span class="line">    <span class="keyword">private</span> Activity mActivity;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DetachWifiDialogListener</span><span class="params">(Activity activity)</span> </span>&#123;</span><br><span class="line">        mActivity = activity;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDismiss</span><span class="params">(DialogInterface dialog)</span> </span>&#123;</span><br><span class="line">       Log.d(TAG,<span class="string">"Dialog onDismiss"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clearOnDetach</span><span class="params">(Dialog dialog)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dialog.getWindow() == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        dialog.getWindow()</span><br><span class="line">                .getDecorView()</span><br><span class="line">                .getViewTreeObserver()</span><br><span class="line">                .addOnWindowAttachListener(<span class="keyword">new</span> ViewTreeObserver.OnWindowAttachListener() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onWindowAttached</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                       Log.d(TAG, <span class="string">"dialog Attached to Window"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onWindowDetached</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        Log.d(TAG,<span class="string">"dialog Detached to Window"</span>);</span><br><span class="line">                        <span class="keyword">if</span>(mActivity != <span class="keyword">null</span>) &#123;</span><br><span class="line">                           mActivity.finish();</span><br><span class="line">                           mActivity = <span class="keyword">null</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在弹出Dialog后执行clearOnDetach，及时的将Activity finish掉，并且在onPause中(这里因为此处场景特殊，一般在onDestory中)将Listener置空<br>目的是剪断这个引用链<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dismissListener = <span class="keyword">new</span> DetachWifiDialogListener(mWifiConfigActivity.get());</span><br><span class="line"><span class="comment">//....</span></span><br><span class="line">mDialog.show();</span><br><span class="line">dismissListener.clearOnDetach(mDialog);</span><br></pre></td></tr></table></figure></p>
+<p>本地测试下来，<code>dumpsys meminfo</code>出的Activity实例个数在Dialog消失后会减少，说明不存在内存泄露了</p>
+<h1 id="常见示例"><a href="#常见示例" class="headerlink" title="常见示例"></a>常见示例</h1><p>再例举一个最常见的非静态内部类Handler泄漏例子，延迟发送一个消息，此时在消息处理之前退出该界面，就会存在该Activity泄漏的情形</p>
+<p>此时在onDestory内执行<code>removeCallbacksAndMessages</code>，这样的话每次退出界面后就会清空该handler上所有的callback和消息，这样就不会存在<code>MessageQueue-&gt;Handler-&gt;Activity</code>这个引用链</p>
+<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/OOM-6.png" alt=""></p>
 
       
     </div>
@@ -482,7 +517,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/" title="一个定屏重启的问题分析">http://lihaizhou.top/2018/05/11/一个定屏重启的问题分析/</a>
+    <a href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/" title="一次SystemServer OOM导致的系统重启分析之路">http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -504,15 +539,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2020/11/06/MediaCodec的学习之路-一/" rel="next" title="MediaCodec的学习之路(一)">
+                <i class="fa fa-chevron-left"></i> MediaCodec的学习之路(一)
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/" rel="prev" title="低内存引发的一点思考">
-                低内存引发的一点思考 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -567,8 +602,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -630,6 +674,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初步分析"><span class="nav-number">1.</span> <span class="nav-text">初步分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MAT分析"><span class="nav-number">2.</span> <span class="nav-text">MAT分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#修改方案"><span class="nav-number">3.</span> <span class="nav-text">修改方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见示例"><span class="nav-number">4.</span> <span class="nav-text">常见示例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

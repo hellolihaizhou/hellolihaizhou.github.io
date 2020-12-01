@@ -88,22 +88,19 @@
 
 
 
-<meta name="description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
+<meta name="description" content="前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。 以下主要通过一些QA方式来概述  Q：高通上的投屏和谷歌原生的投屏有什么差别吗？ A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ANR的常见类型及解决思路">
-<meta property="og:url" content="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/index.html">
+<meta property="og:title" content="对投屏工作的回顾小结(持续补充)">
+<meta property="og:url" content="http://lihaizhou.top/2020/12/01/对投屏工作的回顾小结-持续补充/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
+<meta property="og:description" content="前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。 以下主要通过一些QA方式来概述  Q：高通上的投屏和谷歌原生的投屏有什么差别吗？ A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/2_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/3_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/4_%E4%B8%BB%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E9%94%81.png">
-<meta property="og:updated_time" content="2019-12-28T07:02:00.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png">
+<meta property="og:updated_time" content="2020-12-01T09:16:44.479Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ANR的常见类型及解决思路">
-<meta name="twitter:description" content="前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。 先说下三种常见类型1：KeyDispatchTimeout(谷歌default 5s，MTK平台上是8s) –主要类型按键或触摸事件在特定时间内无响应2：Broad">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png">
+<meta name="twitter:title" content="对投屏工作的回顾小结(持续补充)">
+<meta name="twitter:description" content="前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。 以下主要通过一些QA方式来概述  Q：高通上的投屏和谷歌原生的投屏有什么差别吗？ A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png">
 
 
 
@@ -133,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2020/12/01/对投屏工作的回顾小结-持续补充/"/>
 
 
 
 
 
-  <title>ANR的常见类型及解决思路 | 李海洲</title>
+  <title>对投屏工作的回顾小结(持续补充) | 李海洲</title>
   
 
 
@@ -292,7 +289,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2020/12/01/对投屏工作的回顾小结-持续补充/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -309,7 +306,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ANR的常见类型及解决思路</h1>
+          <h1 class="post-title" itemprop="name headline">对投屏工作的回顾小结(持续补充)</h1>
         
 
         <div class="post-meta">
@@ -321,8 +318,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-13T14:46:41+08:00">
-                2019-04-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-01T17:08:00+08:00">
+                2020-12-01
               </time>
             
 
@@ -345,8 +342,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/WFD/" itemprop="url" rel="index">
+                    <span itemprop="name">WFD</span>
                   </a>
                 </span>
 
@@ -363,8 +360,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/04/13/ANR的常见类型及解决思路/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/13/ANR的常见类型及解决思路/" itemprop="commentCount"></span>
+                <a href="/2020/12/01/对投屏工作的回顾小结-持续补充/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/12/01/对投屏工作的回顾小结-持续补充/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -386,7 +383,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,335
+                  1,336
                 </span>
               
 
@@ -402,7 +399,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  5
                 </span>
               
             </div>
@@ -423,32 +420,27 @@
       
 
       
-        <p>前年在简书中总结过ANR的一般解决思路，这两天拿出来看了下，觉得有必要重新梳理下，添加些近期遇到的案例<br>本文案例主要源于项目上实际遇到的问题，希望通过梳理之后能够对ANR问题能够快速定位，减少排查时间，同时在遇到棘手问题，能够更加从容。</p>
-<p>先说下三种常见类型<br>1：<code>KeyDispatchTimeout</code>(谷歌default 5s，MTK平台上是8s) –主要类型<br>按键或触摸事件在特定时间内无响应<br>2：<code>BroadcastTimeout</code>(10s)<br>BroadcastReceiver在特定时间内无法处理完成<br>3：<code>ServiceTimeout</code>(20s) –小概率类型<br>Service在特定的时间内无法处理完成</p>
-<p><strong>一般解决步骤</strong></p>
-<p><label style="color:red"><strong>Step1:日志获取&amp;注意事项</strong></label><br>获取日志有一点需要注意，发生ANR后，不要选择结束进程，因为这样AMS会kill掉该进程，有些信息会打印不出来（比如MTK平台上会生成db.XX.ANR，写入到aee_exp文件夹下需要时间），最好是ANR发生后等两三分钟左右，再获取日志</p>
-<p>一般需要data/anr下生成的trace文件以及手机系统日志(一般只需要mobile文件夹)</p>
-<p>以MTK为例，需要如下日志信息：<br>1.aee_exp文件夹(MTK日志目录下，发生ANR会生成)<br>2.MTK目录下的mobilelog文件夹</p>
-<p>aee_exp文件夹一般都是需要的, 对DB进行dump解析，得到ANR发生时场景信息，比如主线程callstack，CPU，memory等，在分析问题根因时很关键</p>
-<p><label style="color:red"><strong>Step2:日志分析一般步骤</strong></label></p>
-<p><label style="color:red">Step2.1 确认时间点(非必需)</label><br>mobilelog文件夹下的events_log,搜索关键字”am_anr”,这一步用于确认ANR时间点，可以搜索到类似如下信息<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">04</span>-<span class="number">29</span> <span class="number">10</span>:<span class="number">00</span>:<span class="number">57.240</span> <span class="number">1267</span> <span class="number">1341</span> I am_anr : [<span class="number">0</span>,<span class="number">6073</span>,com.android.dialer,<span class="number">952745541</span>,Input dispatching timed out</span><br></pre></td></tr></table></figure></p>
-<p>比如上面这行表示ANR类型为<code>Input dispatching timed out</code>, 这种anr的原因的是在viewrootimpl分发事件时，并没有找到focuswindow导致的<br>这一步确认时间点在：10:00:57,进程号:6073</p>
-<p><label style="color:red">Step2.2: 查看ANR时的CPU以及IO率(可选)</label><br>这一步一般来说能基本定位是什么造成了ANR，是IO高还是CPU高，如两者都不是，需进入第三步trace日志分析环节<br>查看mobilelog文件夹下的main_log,搜索关键字<code>&quot;ANR in&quot;</code>,可以看到当时的CPU以及IO率，这一个环节一般来讲主要是看发生ANR时的CPU是否吃紧<br>还有需要注意<code>iowait</code>的占有率，如果占比比较高，则排查的方向要倾向与读取文件操作有关的信息，可以看trace日志中有没有一些读取文件或者操作SD卡的动作</p>
-<p><label style="color:red">Step2.3:分析ANR时的堆栈(必需，最重要的环节)</label><br>ANR发生会在data/anr下生成trace.txt，trace务必要与moile日志匹配，一般来讲直接先看tid=1的堆栈即对应主线程，因为ANR都是主线程执行超时导致</p>
-<p>关于trace日志的分析是ANR问题分析最重要的一个环节，下面将列出平时项目中遇到的ANR案例类型</p>
-<p><strong>ANR常见类型归纳</strong></p>
-<p><label style="color:red">1.主线程Binder调用等待超时</label><br>比如下面的这段<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/1_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br>很明显当时在做Binder通信，并没有waiting to lock等代表死锁的字样，那么说明这个案例即有可能是在等Binder对端响应，我们知道Binder通信对于发起方来说是阻塞等待响应，只有有了返回结果后才会继续执行下去<br>所以，如上这个案例中需要找到对端是哪个进程，这个进程当时在做什么，这时候就需要找到anr文件夹下另外一个文件binderinfo，这里需要找到与我们发起方进程1461通信的是哪个进程<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/2_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:300 px"><br><br><br><br><br>可以看到是1666号这个进程，再回到trace中看下，这个进程当时在做什么<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/3_binder%E7%AD%89%E5%BE%85%E8%B6%85%E6%97%B6.png" align="left" style=" width:700px;height:150 px"><br><br><br><br><br><br><br><br><br><br><br><br>可以看到当时对端在做消息的读取，也就是说这里出了问题，很明显这里我们无法修改，我们这个问题在于主线程执行了Binder请求，对端迟迟未返回便很容易出现这个问题，当前做法异步中执行</p>
-<p><label style="color:red">案例二：主线程等待锁</label><br>比如下面这个主线程的CallStack例子，可以看到如下信息：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/4_%E4%B8%BB%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E9%94%81.png" align="left" style=" width:700px;height:700 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>这个案例中gallery的main thread在执行<code>UploaderChimeraService</code>的onDestroy方法时，需要lock 0x23f65d8b，但这个lock有被upload_periodic GCM Task 拿住，这个thread当前是在做连接网络的动作。从这段信息来看，很有可能与测试时手机连接的网络有关，当时连接的事google的网络，由于墙的原因，无法连接gms的相关server有关</p>
-<p>还有一种情况就是死锁，即形成了头尾相连，互相等待的情况，对于这种问题以及上面案例的解决，一般会尝试将锁改为超时锁，比如lock的trylock，超时会自动释放锁，从而避免一直持有锁的情况发生</p>
-<p><label style="color:red">案例三：卡在IO上</label><br>这种情况一般是和文件操作相关，判断是否是这种情况，可以看mainlog中搜索关键字”ANR in”,看这段信息的最下边，比如下面的信息<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ANRManager: <span class="number">100</span>% TOTAL: <span class="number">2</span>% user + <span class="number">2.1</span>% kernel + <span class="number">95</span>% iowait + <span class="number">0.1</span>% softirq</span><br></pre></td></tr></table></figure></p>
-<p>很明显，IO占比很高，这个时候就需要查看trace日志看当时的callstack，或者在这段ANR点往前看0~4s，看看当时做的什么文件操作，这种场景有遇到过，常见解决方法是对耗时文件操作采取异步操作</p>
-<p><label style="color:red">案例四：主线程有耗时的动作</label><br>这种情况是ANR类型问题里遇到最多的，比如网络访问，访问数据库之类的，都很容易造成主线程堵塞<br>这里以访问数据库来说，这类型引起的ANR，一般来讲看当时的CPU使用情况会发现user占比较高，看trace中主线程当时的信息会发现会有一些比如query像ContentProvider这种数据库的动作。这种情况下，还可以去看eventlog或者mainlog，在ANR发生前后打印出来的信息，比如访问数据库这种，在eventlog中搜索<code>&quot;am_anr&quot;</code>,然后看前后片段，会发现发生ANR的这个进程有很多数据库相关的信息，说明在发生ANR前后主线程一直在忙于访问数据库，这类型的问题常见于图库，联系人，彩短信应用。<br>所以这种问题的解决，一般考虑的是异步解决，异步解决并不是简单的new一个线程，要根据业务场景以及频率来决定，Android常见的异步AsyncTask, IntentService, 线程池(官方四种或自定义), new thread等，一般来说不建议直接new thread</p>
-<p><label style="color:red">案例五：binder线程池被占满</label><br>系统对每个process最多分配15个binder线程，这个是谷歌的设计（/frameworks/native/libs/binder/ProcessState.cpp)<br>如果另一个process发送太多重复binder请求，那么就会导致接收端binder线程被占满，从而处理不了其它的binder请求<br>这本身就是系统的一个限制，如果应用未按照系统的要求来实现对应逻辑，那么就会造成问题。<br>而系统端是不会（也不建议）通过修改系统行为来兼容应用逻辑，否则更容易造成其它根据系统需求正常编写的应用反而出现不可预料的问题。<br>判断Binder是否用完，可在trace中搜关键字”binder_f”，如搜索到表示已用完，然后就要找log其他地方看是谁一直在消耗binder或者是有死锁发生<br>之前有遇到过压力测试手电筒应用，出现BInder线程池被占满情况，解决的思路就是降低极短时间内大量Binder请求的发生，修复的手法是发送BInder请求的函数中做时间差过滤，限定在500ms内最多执行一次</p>
-<p><label style="color:red">案例六：JE或者NE导致ANR</label><br>这种场景有遇到过，ANR前出现频繁NE，NE所在的进程与ANR的进程有交互，在解决了NE后，ANR也不复存在，对于这类在ANR前有JE或者NE，一般思路是先解决JE或NE，再来看ANR是否还存在，如果还存在，那么就看trace 堆栈，如果不存在，则可以基本判定是JE或NE导致</p>
-<p><label style="color:red">案例七：只存在于Monkey测试下</label><br>有些问题是只有在Monkey环境下才能跑出来，平时的user版本用户使用是不会出现的，这种问题的话就没有改动的意义。<br>比如下面这个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ActivityManager: Not finishing activity because controller resumed</span><br><span class="line"><span class="number">03</span>-<span class="number">18</span> <span class="number">07</span>:<span class="number">25</span>:<span class="number">50.901</span> <span class="number">810</span> <span class="number">870</span> I am_anr : [<span class="number">0</span>,<span class="number">25443</span>,android.process.media,<span class="number">1086897733</span>,<span class="function">Input dispatching timed <span class="title">out</span> <span class="params">(Waiting because no window has focus but there is a focused application that may eventually add a window when it finishes starting up.)</span>]</span></span><br></pre></td></tr></table></figure></p>
-<p>发生这个ANR的原因是Contoller将resume的操作给拦截了, 导致Focus不过去, 从而导致ANR，User版本不会有Contoller, 所以不会出现这个 ANR. 所以这个 ANR 可以忽略.</p>
-<hr>
-<font color="#000000" size="2" face="楷体">春和日丽的周末，午后</font>
+        <p>前言<br>主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。</p>
+<p>以下主要通过一些QA方式来概述 </p>
+<p>Q：高通上的投屏和谷歌原生的投屏有什么差别吗？</p>
+<p>A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持<br>      通过使用Presentation、MediaRouter和DisplayManager api，它可以作为一个外部WFD提供给应用程序使用。<br>      按照高通文档的解释，谷歌的miracast和高通的相比，缺乏内容保护支持，性能较低，功耗较高，高通提供了一个增强的Miracast解决方案。</p>
+<p>Q：Miracast Source 软件架构是怎样的？</p>
+<p>A：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png" alt=""><br>个人理解红色标准1和2的代表视频数据的两种来源，分别是USB/摄像头和录制屏幕，4标注代表的是经过V4L2编码后的视频数据从给混合起Mux，5标注代表音频数据送给Mux，合成后压缩成MPEG-2格式的ts流，再通过RTP server即UDP传送，6标注代表的是RTSP的协议栈，RTSP是基于tcp的，主要是客户端和sink端的一系列交互和协商等。</p>
+<p>Q：如果投屏失败了，从tcpdump上如何分析出是哪一步出错了？</p>
+<p>A：正确的流程参见：<a href="http://lihaizhou.top/2020/11/30/%E4%BB%8Etcpdump%E7%9C%8Bmiracast%E7%9A%84play%E6%B5%81%E7%A8%8B/#more">http://lihaizhou.top/2020/11/30/%E4%BB%8Etcpdump%E7%9C%8Bmiracast%E7%9A%84play%E6%B5%81%E7%A8%8B/#more</a>  对照着看就行</p>
+<p>Q：怎么看SessionManagerService在miracast投屏环节中扮演的角色？</p>
+<p>A：个人理解这个类承担的角色比较重要，实现是在vendor中，是一个binder的服务端，起到一个承上启下的作用。<br>      承上的是应用层以及fwk，承下的是主要native层的wifisession打交道。<br>      其实不妨看下这个类中的方法，比如startWfdSession，startUibcSession，setSurface，play, pause，tcpPlaybackControl等几乎都是对WFDSession中的接口所做的一层封装。<br>      所以比较核心的方法还得接着看native层的WFDSession，高通的真正实现封装在so中</p>
+<p>Q：如果投屏遇到花屏了或者其他画面异常的情况，该如何判断是sink还是source的问题，如果是source的话，是哪一步的问题呢？</p>
+<p>A：目前遇到的画面显示异常除了小部分是非问题比如输入法状态栏等隐私保护设计导致的，其他大部分都是网络环境导致的。这里先不考虑可能是sink端解码的问题，假如问题就出在source或者网络，可以先获取发送前的视频流dump.ts，这个ts流已经是音视频合成后的准备通过网络发送的数据。<br>如果这个ts流是正常的，就可以排除是source的问题了，如果这个ts流是有问题的话，就要考虑是不是V4L2编码后的数据是否是正常的了,这个时候可以抓取V4l2 dump获取到编码后的视频数据，这个数据是发给mux的，然后和av数据混合成ts流</p>
+<p>Q：如何判断花屏是否因为是丢包率高导致的？</p>
+<p>A：wireshark打开抓取的tcpdump，选择UDP packet，Right click -&gt; Decode as -&gt; RTP  Then from the tool bar, select Telephony -&gt; RTP-&gt;Stream analysis -&gt; Save Payload<br>. This will open a pop-up which shows the packet loss % rate.</p>
+<p>Q: VirtualDisplay在miracast投屏中是何时创建的，扮演的作用？</p>
+<p>A: 我们先说下手机普通录制视频的流程，一般会先用<code>MediaProjection</code>的<code>createVirtualDisplay</code>创建一个VirtualDisplay，createVirtualDisplay的参数有宽高dpi啥的，还有一个最重要的参数就是surface，这玩意其实就是指向一块内存，surface怎么创建呢，可以使用MediaCodec的createInputSurface创建一个输入surface，也可以自己创建，使用MediaCodec的API创建的话缺乏灵活性，没有办法对一帧一帧数据进行处理。录制屏幕的数据从而而来的呢？MediaCodec的createByCodecName创建一个编码器，然后调用其setCallback，在onOutputBufferAvailable中获取到buffer数据，然后这个时候就可以处理这些录屏数据了。<br>对于VirtualDisplay来说，帧数据的生产者是MediaProjection对象，消费者是向它注册的MediaCodec的Surface对象。</p>
+<p>在miracast投屏环节中，VirtualDisplay是何时创建的呢？<br>WFDSession.java中的notify函数中如下方式：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">                            <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">(Bundle b, <span class="keyword">int</span> SessionId)</span> </span>&#123;</span><br><span class="line">                            <span class="comment">//....</span></span><br><span class="line">                            Surface surface = (Surface) (b</span><br><span class="line">                                    .getParcelable(<span class="string">"surface"</span>));</span><br><span class="line">                            <span class="keyword">if</span> (surface != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                Log.d(mTAG, <span class="string">"Surface supplied by source modules"</span>);</span><br><span class="line">                                <span class="keyword">int</span> flags = <span class="number">0</span>;</span><br><span class="line">                                <span class="comment">// MIUI MOD: START</span></span><br><span class="line">                                <span class="comment">//flags |= DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC</span></span><br><span class="line">                                <span class="comment">//        | DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION;</span></span><br><span class="line">                                flags |= DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC</span><br><span class="line">                                        | DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION</span><br><span class="line">                                        | VIRTUAL_DISPLAY_FLAG_THE_THIRD_SCREEN_PROJECTION;</span><br><span class="line">                                <span class="comment">// END</span></span><br><span class="line">                                <span class="keyword">if</span> (secure == <span class="number">1</span>) &#123;</span><br><span class="line">                                    flags |= DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE;</span><br><span class="line"><span class="comment">//                                            | DisplayManager.VIRTUAL_DISPLAY_FLAG_SUPPORTS_PROTECTED_BUFFERS;</span></span><br><span class="line">                                &#125;</span><br><span class="line">                                mVirtualDisplayDPI = Math.min(width, height)</span><br><span class="line">                                        * DisplayMetrics.DENSITY_XHIGH / <span class="number">1080</span>;</span><br><span class="line">                                <span class="keyword">if</span> (mDisplayManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                    mVirtualDisplay = mDisplayManager</span><br><span class="line">                                            .createVirtualDisplay(</span><br><span class="line">                                                    mPeerDevice.deviceName,</span><br><span class="line">                                                    width,</span><br><span class="line">                                                    height,</span><br><span class="line">                                                    mVirtualDisplayDPI,</span><br><span class="line">                                                    surface, flags);</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br></pre></td></tr></table></figure></p>
+<p>当上层调用创建好WFD session后才会创建这个VirtualDisplay</p>
+<p>Q：隐私投屏是如何实现的？如何做到有些界面在sink端不显示？</p>
+<p>A：我们在WFDSession中createVirtualDisplay时需要传入一个flag参数，文章便在这个flag上，这里新加一个针对隐私的flag，其他界面中的window如果配置了隐私flag的话就不会显示在sink端，fwk端在VirtualDisplayAdapter#performTraversalLocked中判断当前创建的virtualdisplay是否有这个flag，有的话就使能隐私投屏功能</p>
+
       
     </div>
     
@@ -479,7 +471,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/" title="ANR的常见类型及解决思路">http://lihaizhou.top/2019/04/13/ANR的常见类型及解决思路/</a>
+    <a href="http://lihaizhou.top/2020/12/01/对投屏工作的回顾小结-持续补充/" title="对投屏工作的回顾小结(持续补充)">http://lihaizhou.top/2020/12/01/对投屏工作的回顾小结-持续补充/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -501,8 +493,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/12/Launcher应用的重构之路/" rel="next" title="Launcher应用的重构之路">
-                <i class="fa fa-chevron-left"></i> Launcher应用的重构之路
+              <a href="/2020/11/30/从tcpdump看miracast的play流程/" rel="next" title="从tcpdump看miracast的play流程(工具篇)">
+                <i class="fa fa-chevron-left"></i> 从tcpdump看miracast的play流程(工具篇)
               </a>
             
           </div>
@@ -510,10 +502,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/" rel="prev" title="一个SharedPreferences写操作导致的ANR问题分析">
-                一个SharedPreferences写操作导致的ANR问题分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>

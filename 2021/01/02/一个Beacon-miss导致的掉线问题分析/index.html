@@ -88,17 +88,17 @@
 
 
 
-<meta name="description" content="问题平台Android 7.1.1  MT6739 问题现象需要常驻的进程经常被kill，界面操作不流畅 日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样 LMK机制简介在系统内存不足的情况下">
+<meta name="description" content="复现步骤：测试机开启双WiFi且连接测试路由主5G，辅2.4G问题现象：主wifi漫游后不久，辅WiFi出现断连问题概率：必现   辅wifi为什么会断连？先看下辅wifi为何会断连，从测试同事提供的视频来看时间点大概是15:50:07左右   step1:看下这个时间点的辅wifi状态机tip: 过滤的关键字&amp;quot;WifiClientModeImpl:&amp;quot;,打印不同时间点的wifi">
 <meta property="og:type" content="article">
-<meta property="og:title" content="低内存引发的一点思考">
-<meta property="og:url" content="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/index.html">
+<meta property="og:title" content="一个Beacon miss导致的掉线问题分析">
+<meta property="og:url" content="http://lihaizhou.top/2021/01/02/一个Beacon-miss导致的掉线问题分析/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="问题平台Android 7.1.1  MT6739 问题现象需要常驻的进程经常被kill，界面操作不流畅 日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样 LMK机制简介在系统内存不足的情况下">
+<meta property="og:description" content="复现步骤：测试机开启双WiFi且连接测试路由主5G，辅2.4G问题现象：主wifi漫游后不久，辅WiFi出现断连问题概率：必现   辅wifi为什么会断连？先看下辅wifi为何会断连，从测试同事提供的视频来看时间点大概是15:50:07左右   step1:看下这个时间点的辅wifi状态机tip: 过滤的关键字&amp;quot;WifiClientModeImpl:&amp;quot;,打印不同时间点的wifi">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-13T08:45:04.000Z">
+<meta property="og:updated_time" content="2021-01-02T07:03:35.777Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="低内存引发的一点思考">
-<meta name="twitter:description" content="问题平台Android 7.1.1  MT6739 问题现象需要常驻的进程经常被kill，界面操作不流畅 日志分析鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样 LMK机制简介在系统内存不足的情况下">
+<meta name="twitter:title" content="一个Beacon miss导致的掉线问题分析">
+<meta name="twitter:description" content="复现步骤：测试机开启双WiFi且连接测试路由主5G，辅2.4G问题现象：主wifi漫游后不久，辅WiFi出现断连问题概率：必现   辅wifi为什么会断连？先看下辅wifi为何会断连，从测试同事提供的视频来看时间点大概是15:50:07左右   step1:看下这个时间点的辅wifi状态机tip: 过滤的关键字&amp;quot;WifiClientModeImpl:&amp;quot;,打印不同时间点的wifi">
 
 
 
@@ -128,13 +128,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2021/01/02/一个Beacon-miss导致的掉线问题分析/"/>
 
 
 
 
 
-  <title>低内存引发的一点思考 | 李海洲</title>
+  <title>一个Beacon miss导致的掉线问题分析 | 李海洲</title>
   
 
 
@@ -287,7 +287,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/01/02/一个Beacon-miss导致的掉线问题分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -304,7 +304,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">低内存引发的一点思考</h1>
+          <h1 class="post-title" itemprop="name headline">一个Beacon miss导致的掉线问题分析</h1>
         
 
         <div class="post-meta">
@@ -316,8 +316,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T20:37:55+08:00">
-                2018-05-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-02T14:53:50+08:00">
+                2021-01-02
               </time>
             
 
@@ -340,8 +340,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/性能/" itemprop="url" rel="index">
-                    <span itemprop="name">性能</span>
+                  <a href="/categories/wifi/" itemprop="url" rel="index">
+                    <span itemprop="name">wifi</span>
                   </a>
                 </span>
 
@@ -358,8 +358,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/05/13/低内存引发的LowMemoryKiller思考/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="commentCount"></span>
+                <a href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/01/02/一个Beacon-miss导致的掉线问题分析/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -381,7 +381,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,255
+                  1,521
                 </span>
               
 
@@ -397,7 +397,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  8
                 </span>
               
             </div>
@@ -418,20 +418,76 @@
       
 
       
-        <p><strong>问题平台</strong><br><code>Android 7.1.1</code>  <code>MT6739</code></p>
-<p><strong>问题现象</strong><br><code>需要常驻的进程经常被kill，界面操作不流畅</code></p>
-<p><strong>日志分析</strong><br>鉴于当前的手表机器内存512M，机器运行一段时间后，界面不流畅，第一时间怀疑是此时的内存比较吃紧，LMK频繁被触发kill进程，LMK的工作本身比较费时间，会拖慢系统运行速度。查看kernel日志后，发现有很多LMK触发的信息，ok，果然如猜想一样</p>
-<p><strong>LMK机制简介</strong><br>在系统内存不足的情况下，系统开始依据自身的一套进程回收机制来判断要kill掉哪些进程，以腾出内存来供给需要的app。<br>总的来说，进程的<code>oom_adj</code>越大，表示此进程优先级越低，越容易被杀回收；越小，表示进程优先级越高，越不容易被杀回收，kill进程是通过发送SIGKILL信息。这套杀进程回收内存的机制就叫<code>Low Memory Killer</code> ，简称<code>LMK</code>，它是基于Linux内核的<code>OOM Killer</code>机制诞生<br>如果LMK都无法释放出足够的内存空间，那么当为新的进程分配应用程序时将发生<code>Out of Memory</code>异常，这时候<code>OOM_killer</code>开始工作，<code>OOM_killer</code>会在系统内存耗尽的情况下，启用自己算法有选择性的kill 掉一些进程</p>
-<p><strong>常见的提升应用存活率</strong><br>这种问题老生常谈，网上资料一抓一大把，其中不乏各种旁门左道，诸如一像素，互相唤醒，防杀死重启服务之类。<br>这些方法不一定通用，是否奏效依赖Android版本以及手机厂商。<br>比较常规的做法是标记为系统应用，相比于三方应用来讲，系统应用的优先级高一些，当然这个做法前提是有条件且需要。<br>另外一种常见的方式是加入<code>android:persistent=&quot;true&quot;</code>属性，这种方式只对系统应用奏效，这样做的目的是使进程持续占据 Memory不被杀死，现在的512内存手表项目中的Launcher里使用了，该种方式的使用务必谨慎，切记不可滥用<br>还有一个就是降低应用的占用内存，LMK工作时往往会先挑肥的来kill</p>
-<p><strong>如何判断某个应用的进程的oom_adj</strong><br>两个shell命令即可<br>1.<code>ps | grep PackageName</code><br>获取到指定应用的进程ID<br>2.<code>cat /proc/</code><br>进程ID/oom_adj获取到<code>oom_adj</code>数值</p>
-<p><strong>如何判别LMK是否太频繁呢</strong><br>这个其实没有什么标准，从过往的情况来看，看<code>kernel日志</code>中LMK触发的次数，1分钟超过20次就是非常多了</p>
-<p><strong>LMK kill进程顺序的判别依据</strong><br>根据adj的值以及占用内存值<br>现在不少程序会做成进程组形式，以前的项目上有遇到过，一个进程被kill了，另一个好兄弟再把它唤起来，这种互相唤醒的好基友方式会导致RAM无法真正释放，释放的 RAM 马上被吃掉。</p>
-<p><strong>如何修改系统层级的LMK阈值</strong><br>这种修改做法比较少见，之前项目有过一次调整了minfree的值<br>LMK的阈值分两个数组，一个是adj数组，描述process对应的oom_adj，另外一个是minfree数组，描述process所对应的memory的阈值<br>上层可以直接通过读写:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/sys/<span class="keyword">module</span>/lowmemorykiller/parameters/adj</span><br><span class="line">/sys/<span class="keyword">module</span>/lowmemorykiller/parameters/minfree</span><br></pre></td></tr></table></figure></p>
-<p>来进行调整，<code>minfree</code>以KB 为单位<br>当AMS起来后，将根据屏幕分辨率以及内存大小通过调用<code>updateOomLevel</code>方法(<font color="#000000" size="2" face="楷体">Frameworks/base/services/java/com/android/server/am/ProcessList.java</font>)来调整默认的LMK的阈值</p>
-<p><strong>分析LMK问题的常用shell命令</strong><br>如下是分析LMK问题时常用的命令，看名字比较好理解就不一一解释了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">adb shell ps -t &gt; ps.txt</span><br><span class="line">adb shell procrank -s &gt; procrank.txt  </span><br><span class="line">adb shell cat /proc/sys/vm/swappiness  </span><br><span class="line">adb shell cat /proc/meminfo &gt; meminfo.txt</span><br><span class="line">adb shell cat /proc/buddyinfo &gt; buddyinfo.txt</span><br><span class="line">adb shell dumpsys meminfo &gt; dumpsysmemoryinfo.txt</span><br><span class="line">adb shell cat /sys/<span class="keyword">module</span>/lowmemorykiller/parameters/adj &gt; adj.txt</span><br><span class="line">adb shell cat /sys/<span class="keyword">module</span>/lowmemorykiller/parameters/minfree &gt; minfree.txt</span><br></pre></td></tr></table></figure></p>
-<p><strong>小结</strong><br>优先从应用自身角度触发，尽可能降低应用的占用内存，不可一上来就搞一些旁门左道，慎重调整进程的优先级！切记切记<br>像我现在遇到的这个512内存的项目，很多不需要常驻的进程也将自己的优先级设置的很高，打印出来的adj清一色都很低，几乎和systemUI持平，这点实在太不可取，这导致了LMK触发时有些该杀的进程没有kill，反而一些很重要的进程被kill<br>原则上不是用户可以感知的进程没必要将优先级拉的很高，除非是慎重考虑再三觉得十分重要的进程，可以考虑拉高优先级</p>
-<hr>
-<font color="#000000" size="2" face="楷体">住所，电脑前，汗衫，顶着酷似三胖的发型</font>
+        <p>复现步骤：测试机开启双WiFi且连接测试路由主5G，辅2.4G<br>问题现象：主wifi漫游后不久，辅WiFi出现断连<br>问题概率：必现  </p>
+<h1 id="辅wifi为什么会断连？"><a href="#辅wifi为什么会断连？" class="headerlink" title="辅wifi为什么会断连？"></a>辅wifi为什么会断连？</h1><p>先看下辅wifi为何会断连，从测试同事提供的视频来看时间点大概是15:50:07左右  </p>
+<h2 id="step1"><a href="#step1" class="headerlink" title="step1:"></a>step1:</h2><p>看下这个时间点的辅wifi状态机<br><code>tip: 过滤的关键字&quot;WifiClientModeImpl:&quot;,打印不同时间点的wifi状态转移变化</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rec[<span class="number">22</span>]: time=<span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.841</span> processed=ConnectModeState org=ConnectedState dest=DisconnectedState what=SUPPLICANT_STATE_CHANGE_EVENT screen=on <span class="number">0</span> <span class="number">0</span> SSID: <span class="number">2.4</span> BSSID: <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> nid: <span class="number">1</span> state: DISCONNECTED</span><br></pre></td></tr></table></figure>
+<h2 id="step2"><a href="#step2" class="headerlink" title="step2:"></a>step2:</h2><p>看下当前的信号强度以及断线reason值<br>//搜索关键字”NETWORK_DISCONNECTION_EVENT”, 代表网络断开的标志性日志，信号值-21说明信号强度很好，reason为0<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.809</span> NETWORK_DISCONNECTION_EVENT local_gen=<span class="keyword">false</span> reason=<span class="number">0</span>:<span class="number">0x0</span> lastRssi=-<span class="number">21</span> lastFreq=<span class="number">2437</span> lastLinkSpeed=<span class="number">96</span> lastScore=<span class="number">60</span> mobileTxBytes=<span class="number">964</span> mobileRxBytes=<span class="number">476</span> totalTxBytes=<span class="number">711415</span> totalRxBytes=<span class="number">1741111</span> screenOn=<span class="keyword">true</span> cellularData=<span class="keyword">false</span>, supplicantStateChangeEvents: &#123; COMPLETED &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个reason 0其实没有多大的参考意义，对应的802.11 Deauth Reason Codes表格中给出的解释是正常操作，具体的reason需要看fw打印的reason</p>
+<h2 id="step3"><a href="#step3" class="headerlink" title="step3:"></a>step3:</h2><p>确认下辅wifi是底层断线还是上层断线<br>直接看<code>nl80211</code>收到断线的消息早于<code>wpa_supplicant: wlan1</code>可以说明是底层掉线</p>
+<p>//logcat<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.804</span> wifi <span class="number">4855</span> <span class="number">4855</span> D wpa_supplicant: nl80211: Drv Event <span class="number">48</span> (NL80211_CMD_DISCONNECT) received <span class="keyword">for</span> wlan1</span><br><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.804</span> wifi <span class="number">4855</span> <span class="number">4855</span> D wpa_supplicant: nl80211: Disconnect event</span><br><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.804</span> wifi <span class="number">4855</span> <span class="number">4855</span> D wpa_supplicant: wlan1: <span class="function">Event <span class="title">DEAUTH</span> <span class="params">(<span class="number">11</span>)</span> received</span></span><br><span class="line"><span class="function">12-30 15:50:07.804 wifi 4855 4855 D wpa_supplicant: wlan1: Deauthentication notification</span></span><br><span class="line"><span class="function">12-30 15:50:07.804 wifi 4855 4855 D wpa_supplicant: wlan1: * reason 0 <span class="params">(UNKNOWN)</span> locally_generated</span>=<span class="number">1</span></span><br><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.804</span> wifi <span class="number">4855</span> <span class="number">4855</span> D wpa_supplicant: <span class="function">Deauthentication frame <span class="title">IE</span><span class="params">(s)</span> - <span class="title">hexdump</span><span class="params">(len=<span class="number">0</span>)</span>: [NULL]</span></span><br><span class="line"><span class="function">12-30 15:50:07.804 wifi 4855 4855 I wpa_supplicant: wlan1: CTRL-EVENT-DISCONNECTED bssid</span>=<span class="number">3</span>a:<span class="number">72</span>:e4:<span class="number">68</span>:<span class="number">21</span>:e9 reason=<span class="number">0</span> locally_generated=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">12</span>-<span class="number">30</span> <span class="number">15</span>:<span class="number">50</span>:<span class="number">07.805</span> wifi <span class="number">4855</span> <span class="number">4855</span> D wpa_supplicant: wlan1: State: COMPLETED -&gt; DISCONNECTED</span><br></pre></td></tr></table></figure></p>
+<h2 id="step4："><a href="#step4：" class="headerlink" title="step4："></a>step4：</h2><p>到这里我们只知道是底层断线的，具体原因还没找到，此时需要看下driver log以及fw log</p>
+<p>//driver log<br>关键性日志<code>wma_roam_event_callback</code>，代表<code>driver</code>收到<code>fw roam</code>的<code>callback</code>，后面跟着的<code>reason=2</code> 代表本次打算去漫游的原因是<code>beacon miss</code>，但是其实后面并没有实际去漫游的动作，<br>包括<code>roam scan</code>也没有，是因为辅wifi底层不支持漫游，此时信号-25很好</p>
+<pre><code class="java"><span class="number">15</span>:<span class="number">50</span>:<span class="number">07.679517</span> [schedu][<span class="number">0x2021a49e0</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675444</span>]wlan: [<span class="number">4730</span>:D:WMA] wma_roam_event_callback: Reason <span class="number">2</span>, Notif <span class="number">0</span> <span class="keyword">for</span> vdevid <span class="number">1</span>, rssi -<span class="number">25</span>
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.679946</span> [schedu][<span class="number">0x2021a508e</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675533</span>]wlan: [<span class="number">4730</span>:E:PE] lim_ps_offload_handle_missed_beacon_ind: <span class="number">1855</span>: Received Heart Beat Failure
+
+<span class="comment">//收到fw传上来的心跳包失败的消息</span>
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.679961</span> [schedu][<span class="number">0x2021a525e</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675557</span>]wlan: [<span class="number">4730</span>:E:PE] lim_send_heart_beat_timeout_ind: <span class="number">1830</span>: Heartbeat failure from Fw
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.679977</span> [schedu][<span class="number">0x2021a5527</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675594</span>]wlan: [<span class="number">4730</span>:W:PE] lim_handle_heart_beat_failure: <span class="number">494</span>: Heartbeat Failure
+
+<span class="comment">//因为sta没有收到AP发的心跳beacon，所以sta在beacon timeout之前主动发了Probe Req报文探测下AP是否还在</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.679984</span> [schedu][<span class="number">0x2021a55f7</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675605</span>]wlan: [<span class="number">4730</span>:D:PE] lim_handle_heart_beat_failure: <span class="number">515</span>: HB missed from AP. Sending Probe Req
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.680005</span> [schedu][<span class="number">0x2021a5ada</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675670</span>]wlan: [<span class="number">4730</span>:D:PE] Probe req TX: vdev <span class="number">1</span> seq num <span class="number">2077</span> to <span class="number">3</span>a:<span class="number">72</span>:e4:<span class="number">68</span>:<span class="number">21</span>:e9 len <span class="number">158</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.750957</span> [schedu][<span class="number">0x2021a6b29</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675887</span>]wlan: [<span class="number">4730</span>:D:PE] lim_handle_heart_beat_timeout_for_session: <span class="number">4610</span>: Sending Probe <span class="keyword">for</span> Session: <span class="number">1</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.750989</span> [schedu][<span class="number">0x2021a6e9e</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.675934</span>]wlan: [<span class="number">4730</span>:D:HDD] hdd_lost_link_info_cb: <span class="number">1323</span>: rssi on disconnect -<span class="number">25</span>
+
+<span class="comment">//AP没有ACK</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.750995</span> [schedu][<span class="number">0x20222d395</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.704587</span>]wlan: [<span class="number">4730</span>:D:WMA] wma_process_mgmt_tx_completion: <span class="number">2613</span>: status: WMI_MGMT_TX_COMP_TYPE_COMPLETE_NO_ACK wmi_desc_id: <span class="number">63</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.751023</span> [schedu][<span class="number">0x2022f8cef</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.748018</span>]wlan: [<span class="number">4730</span>:I:PE] Deauth TX: vdev <span class="number">1</span> seq_num <span class="number">2078</span> reason <span class="number">4</span> waitForAck <span class="number">0</span> to <span class="number">3</span>a:<span class="number">72</span>:e4:<span class="number">68</span>:<span class="number">21</span>:e9 from <span class="number">34</span>:<span class="number">1</span>c:f0:<span class="number">6f</span>:b6:<span class="number">22</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.751112</span> [schedu][<span class="number">0x2022fa17f</span>][<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.748292</span>]wlan: [<span class="number">4730</span>:D:SME] csr_roam_chk_lnk_deauth_ind: <span class="number">12441</span>: DEAUTH Indication from MAC <span class="keyword">for</span> vdev_id <span class="number">1</span> bssid <span class="number">3</span>a:<span class="number">72</span>:e4:<span class="number">68</span>:<span class="number">21</span>:e9
+</code></pre>
+<p><code>beacon miss</code>的发生不一定会立刻掉线，达到一定数量才会触发掉线吧?<br>接下来在fw log中证实下这个猜想</p>
+<p>//fw log<br>//15:50:07 左右发生bmiss</p>
+<p>//…省略cons_bmiss_count = 8之前的片段</p>
+<pre><code class="java"><span class="number">15</span>:<span class="number">50</span>:<span class="number">05.820871</span> R0: FWMSG: [<span class="number">1891</span>d6b92] [ wlan_swbmiss_offload.c : <span class="number">865</span> ] SWBMISS_TIMER_FN: vdev_id=<span class="number">1</span>, curr_bmiss_bcnt=<span class="number">8</span>, pre_bmiss_detected=<span class="number">1</span>, first_bmiss_detected=<span class="number">0</span>, final_bmiss_detected=<span class="number">0</span>, b_timeout=<span class="number">1</span>, cons_bmiss_count = <span class="number">8</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">05.822430</span> R0: FWMSG: [<span class="number">1893</span>b1a83] [ wlan_swbmiss_offload.c : <span class="number">865</span> ] SWBMISS_TIMER_FN: vdev_id=<span class="number">1</span>, curr_bmiss_bcnt=<span class="number">9</span>, pre_bmiss_detected=<span class="number">1</span>, first_bmiss_detected=<span class="number">0</span>, final_bmiss_detected=<span class="number">0</span>, b_timeout=<span class="number">1</span>, cons_bmiss_count = <span class="number">9</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">05.862506</span> R0: FWMSG: [<span class="number">18958</span>dc54] [ wlan_swbmiss_offload.c : <span class="number">865</span> ] SWBMISS_TIMER_FN: vdev_id=<span class="number">1</span>, curr_bmiss_bcnt=<span class="number">10</span>, pre_bmiss_detected=<span class="number">1</span>, first_bmiss_detected=<span class="number">1</span>, final_bmiss_detected=<span class="number">0</span>, b_timeout=<span class="number">1</span>, cons_bmiss_count = <span class="number">10</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">05.905835</span> R0: FWMSG: [<span class="number">189770</span>d97] [ wlan_swbmiss_offload.c : <span class="number">865</span> ] SWBMISS_TIMER_FN: vdev_id=<span class="number">1</span>, curr_bmiss_bcnt=<span class="number">11</span>, pre_bmiss_detected=<span class="number">1</span>, first_bmiss_detected=<span class="number">1</span>, final_bmiss_detected=<span class="number">0</span>, b_timeout=<span class="number">1</span>, cons_bmiss_count = <span class="number">11</span>
+
+<span class="comment">//.....省略cons_bmiss_count = 12到cons_bmiss_count = 28的片段日志</span>
+
+<span class="number">15</span>:<span class="number">50</span>:<span class="number">07.761702</span> R0: FWMSG: [<span class="number">18</span>b9308fb] [ wlan_swbmiss_offload.c : <span class="number">865</span> ] SWBMISS_TIMER_FN: vdev_id=<span class="number">1</span>, curr_bmiss_bcnt=<span class="number">29</span>, pre_bmiss_detected=<span class="number">1</span>, first_bmiss_detected=<span class="number">1</span>, final_bmiss_detected=<span class="number">0</span>, b_timeout=<span class="number">1</span>, cons_bmiss_count = <span class="number">2915</span>:<span class="number">50</span>:<span class="number">07.761875</span> R0: FWMSG: [<span class="number">18</span>b95f62e] [ wlan_swbmiss_offload.c : <span class="number">563</span> SWBMISS_NULL_SEND_CMPLT: vdev_id=<span class="number">1</span>, isQosNullSuccess=<span class="number">0</span>, isFinalBmiss=<span class="number">1</span>, first_bmiss_detected=<span class="number">1</span>, final_bmiss_detected=<span class="number">1</span>, fbmiss_evnt_posted=<span class="number">0</span>, vbmiss-&gt;connected = <span class="number">1</span>, cons_bmiss_count = <span class="number">30</span>
+</code></pre>
+<p>这里的<code>final_bmiss_detected</code>  ，<code>first_bmiss_detected</code>  解释对应如下</p>
+<pre><code class="java">gRoamBmissFirstBcnt=<span class="number">10</span>
+After consecutive number of beacons missed as configured by gRoamBmissFirstBcnt, <span class="function">the system stays <span class="title">alive</span> <span class="params">(no power collapse)</span> t</span>
+<span class="function">o receive beacons until <span class="keyword">final</span> <span class="title">BMISS</span> <span class="params">(consecutive number of beacons missed as configured by gRoamBmissFinalBcnt)</span> </span>
+<span class="function"></span>
+<span class="function">gRoamBmissFinalBcnt</span>=<span class="number">20</span>
+After consecutive number of beacons missed as configured by gRoamBmissFirstBcnt, 
+<span class="function">the system stays <span class="title">alive</span> <span class="params">(no power collapse)</span> to receive beacons until <span class="keyword">final</span> <span class="title">BMISS</span> <span class="params">(consecutive number of beacons missed as configured by gRoamBmissFinalBcnt)</span></span>
+<span class="function"></span>
+<span class="function">If “p”<span class="params">(gRoamBmissFirstBcnt)</span> beacons are missed in a row, roaming <span class="keyword">module</span> will perform roaming scan and create a channel map.</span>
+<span class="function">If “q”<span class="params">(gRoamBmissFinalBcnt)</span> more beacons are missed, it results in “<span class="keyword">final</span> beacon miss”.</span>
+<span class="function"></span>
+<span class="function">That is a trigger <span class="keyword">for</span> roaming. If we don’t find the candidate, <span class="keyword">this</span> will lead to disconnection.</span>
+</code></pre>
+<p>大概意思是有连续的10个<code>beacon missed</code>发生了，这个时候不会断线，会触发漫游并会继续接收beacon。</p>
+<p>如果在前面连续十个<code>beacon missed</code>之后又发生连续20个<code>beacon missed</code>的话，则会进入<code>final beacon miss</code> ，这个时候如果还没有找到候选AP的话，会最终导致断线<br>所以到这里明白了fw确实总计发生了30次<code>beacon miss</code>，并且由于是辅wifi不支持漫游的缘故，最终以断线收场</p>
+<h2 id="step5："><a href="#step5：" class="headerlink" title="step5："></a>step5：</h2><p>可是beacon miss的原因是什么呢？前面已经分析过断开时信号是-25说明不是信号弱导致，同时也看到了在超时掉线前sta有发probe request即空帧探测AP，没有收到AP的ACK，看上去大概率问题出在AP<br>但是测试同事提的这个问题是在主wifi漫游后才会出现辅wifi掉线，这和主wifi漫游有关系？和channel有关系？</p>
+<p>下一步请求测试同事提供sniffer进一步证实, 此文待续</p>
+
       
     </div>
     
@@ -462,7 +518,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/" title="低内存引发的一点思考">http://lihaizhou.top/2018/05/13/低内存引发的LowMemoryKiller思考/</a>
+    <a href="http://lihaizhou.top/2021/01/02/一个Beacon-miss导致的掉线问题分析/" title="一个Beacon miss导致的掉线问题分析">http://lihaizhou.top/2021/01/02/一个Beacon-miss导致的掉线问题分析/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -484,8 +540,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/11/一个定屏重启的问题分析/" rel="next" title="一个定屏重启的问题分析">
-                <i class="fa fa-chevron-left"></i> 一个定屏重启的问题分析
+              <a href="/2020/12/01/对投屏工作的回顾小结-持续补充/" rel="next" title="对投屏工作的回顾小结(持续补充)">
+                <i class="fa fa-chevron-left"></i> 对投屏工作的回顾小结(持续补充)
               </a>
             
           </div>
@@ -493,10 +549,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/" rel="prev" title="基于开源框架SlidingUpPanel二次开发">
-                基于开源框架SlidingUpPanel二次开发 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -551,8 +603,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -614,6 +675,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#辅wifi为什么会断连？"><span class="nav-number">1.</span> <span class="nav-text">辅wifi为什么会断连？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#step1"><span class="nav-number">1.1.</span> <span class="nav-text">step1:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#step2"><span class="nav-number">1.2.</span> <span class="nav-text">step2:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#step3"><span class="nav-number">1.3.</span> <span class="nav-text">step3:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#step4："><span class="nav-number">1.4.</span> <span class="nav-text">step4：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#step5："><span class="nav-number">1.5.</span> <span class="nav-text">step5：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

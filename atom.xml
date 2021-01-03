@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2021-01-02T07:03:35.777Z</updated>
+  <updated>2021-01-03T05:29:10.015Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>漫游系列之Dense roaming</title>
+    <link href="http://lihaizhou.top/2021/01/03/%E6%BC%AB%E6%B8%B8%E7%B3%BB%E5%88%97%E4%B9%8BDense-roaming/"/>
+    <id>http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/</id>
+    <published>2021-01-03T03:44:39.000Z</published>
+    <updated>2021-01-03T05:29:10.015Z</updated>
+    
+    <content type="html"><![CDATA[<p>本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/denseroam-1.png" alt=""></p><p>对于其中的reason=7代码中定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">typedef <span class="keyword">enum</span> &#123;</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_NONE = <span class="number">0</span>,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_PER,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BMISS,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_LOW_RSSI,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_HIGH_RSSI,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_PERIODIC,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_MAWC,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_DENSE,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BACKGROUND,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_FORCED,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BTM,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_UNIT_TEST,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BSS_LOAD,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_DEAUTH,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_IDLE,</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * <span class="doctag">NOTE:</span> don't add any more ROAM_TRIGGER_REASON values here.</span></span><br><span class="line"><span class="comment">     * There are checks in the FW that require the value of</span></span><br><span class="line"><span class="comment">     * WMI_ROAM_TRIGGER_REASON_MAX to be &lt; 16.</span></span><br><span class="line"><span class="comment">     * Add new ROAM_TRIGGER_REASON values below, inside the</span></span><br><span class="line"><span class="comment">     * WMI_ROAM_TRIGGER_EXT_REASON_ID enum.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_MAX,</span><br><span class="line">&#125; WMI_ROAM_TRIGGER_REASON_ID;</span><br></pre></td></tr></table></figure></p><p>reason=7对应的原因是WMI_ROAM_TRIGGER_REASON_DENSE即dense roaming</p><p>高通对dense roaming的解释<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Dense roaming</span><br><span class="line">Dense-<span class="function">roaming mechanism is a new feature of location retrieval <span class="title">function</span> <span class="params">(LRF)</span> 3.0. This feature retains high throughput when many roamable APs are present nearby and the data traffic is high then.</span></span><br><span class="line"><span class="function">The original Wi-Fi roaming mechanism is designed to enable roaming when the current RSSI value reaches the defined RSSI threshold value, <span class="keyword">for</span> example, -76 dBm. However, in a high dense environment where there are many roamable APs, it is better to start roaming earlier when the traffic is high because high throughput is maintained <span class="keyword">for</span> heavy traffic with minimal power consumption impact. Dense roaming functions in such a manner to retain high throughput during periods of heavy traffic.</span></span><br><span class="line"><span class="function">To provide <span class="keyword">this</span> value-added enhancement, the dense roaming mechanism is designed with the following two principles.</span></span><br><span class="line"><span class="function">■ Relying on other triggered scans, sniffing is performed on the management packets to determine the number of roamable APs that are present then in the environment.</span></span><br><span class="line"><span class="function">■ If a dense roaming environment is <span class="title">found</span> <span class="params">(that is, the number of the found roamable APs is bigger than the configured dense roamable AP threshold value)</span>, and <span class="keyword">if</span> there is significant traffic at that moment, then <span class="keyword">switch</span> to use the dense RSSI threshold value so that the roaming is triggered earlier.</span></span><br></pre></td></tr></table></figure></p><p>Dense意思是密集，dense roaming从字面上意思是密集漫游，上面高通的一段话翻译下来就是：<br>密集漫游<br>密集漫游机制是位置检索功能（LRF）3.0上新增的新feature，<font color="#dd0000">当附近有许多可漫游AP且数据流量很高时，此功能可保持高吞吐量。</font><br>   </p><p>最初的Wi-Fi漫游机制设计是当RSSI值比较低的时候并达到定义的RSSI阈值（例如-76 dBm）时启用漫游。<br>但是，在具有许多可漫游AP的高密度环境中，在流量较高时更早开始漫游是一个更好的措施，因为对于高流量保持高吞吐量，这样对功耗的影响则最小， 密集漫游在繁忙流量期间保持高吞吐量的方式运行。</p><p>为了提供这种增强功能，dense roaming按照以下两个原理设计：</p><ol><li>依靠其他条件触发的扫描，对管理数据包执行嗅探以确定当时环境中存在的可漫游AP的数量。</li><li>如果找到密集漫游环境（即找到的可漫游AP的数量大于配置的密集可漫游AP阈值），并且如果此时有大量流量，<font color="#dd0000">则切换为使用dense RSSI阈值，这样漫游就提前触发了</font><br> </li></ol><p>Q：怎么判断当前符合密集漫游环境？<br>A：<br>Detection of dense environment<br>The dense-roaming mechanism detects if it is a dense environment using the following procedure:  </p><ol><li>With any scan triggered, for example, a host scan from Wi-Fi driver, the roaming module snoops toget the beacon or probe response management frames.  </li><li>If a roamable AP is found, then the roaming module increments an internal count of the roamableAPs.  </li><li>If the number of the roamable APs is greater than the groam_dense_min_aps INI parametervalue, where three is the default value, then change to use dense roaming threshold value as thenew threshold value.<br>The dense roaming threshold value comes from the original threshold valuewith the shift of INI parameter, groam_dense_rssi_thresh_offset value. For example, if theoriginal threshold value is -76 dBm and groam_dense_rssi_thresh_offset INI parametervalue is 10, then the dense roaming threshold value is -66 dBm.</li></ol><p>检测密集环境<br>密集漫游机制使用以下步骤检测当前是否是密集环境：  </p><ol><li>如果有任何扫描（例如，从Wi-Fi驱动程序进行主机扫描）发送的话，漫游模块都会监听以获取信标或探测响应管理帧。  </li><li>如果找到了一个可漫游AP，则漫游模块将增加该可漫游AP的内部计数。  </li><li>如果可漫游AP的数量大于groam_dense_min_aps INI参数值（默认值为3），<font color="#dd0000">则更改为使用密集漫游阈值作为新阈值。</font><br>密集漫游阈值来自原始阈值，并带有INI参数的偏移groam_dense_rssi_thresh_offset值。<br>例如，如果原始阈值是-76 dBm，并且groam_dense_rssi_thresh_offset INI参数值是10，则密集漫游阈值是-66 dBm。</li></ol><p>Q: 即便当前检测到dense roaming环境了，也不一定会触发dense roaming，为什么？<br>参见如下解释：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Dense roaming in dense environment  </span><br><span class="line">During the detection of a dense environment, dense-roaming mechanism is triggered and the followingactions are taken:  </span><br><span class="line"><span class="number">1</span>.  When the current RSSI breaches the dense roaming RSSI threshold value and the data traffic isabove the dense traffic threshold as defined by the INI parameter, gtraffic_threshold, then the active roam scan is triggered.  </span><br><span class="line"><span class="number">2</span>.  When the current RSSI breaches the dense roaming RSSI threshold value and the data traffic isbelow the dense traffic threshold, then update only the threshold value by RSSI different threshold values and <span class="keyword">do</span> not trigger the active roam scan.  </span><br><span class="line"><span class="number">3</span>.  When the RSSI threshold exceeds the original roaming threshold value, <span class="keyword">for</span> example, -<span class="number">76</span> dBm,then <span class="keyword">do</span> not consider the data traffic and trigger the active roam scan.  </span><br><span class="line"><span class="number">4</span>.  If skipping the active roam scan due to insufficient data traffic in the point mentioned previously,then take either of the following steps based on whichever occurs first:a.  If the <span class="keyword">new</span> threshold value is breached first, <span class="keyword">for</span> example, RSSI drops to -<span class="number">71</span> dBm, then check ifthe condition is as the steps <span class="number">1</span> or <span class="number">2</span> mentioned previously and take actions accordingly.b.  If the data traffic is above the dense traffic threshold, then trigger the roaming scan</span><br></pre></td></tr></table></figure></p><p>在密集环境中的密集漫游<br>  在检测密集环境时，将触发密集漫游机制，并采取以下措施：<br>  1.如果当前RSSI值超过了dense roaming的阈值，并且数据流量高于INI参数gtraffic_threshold定义的密集流量阈值时，这时候将触发活动漫游扫描。<br>  2.如果当前的RSSI超过了dense roaming的RSSI阈值并且数据流量低于密集流量阈值时，则仅更新阈值，并不触发漫游扫描。<br>  3.当RSSI阈值超过原始漫游阈值（例如-76 dBm）时，则无需考虑数据流量并触发活动漫游扫描。<br>  4.如果由于前面提到的数据通信量不足而跳过了主动漫游扫描，则采取以下步骤之一(根据哪种情况先发生)：<br>  a)  如果首先突破了新阈值，例如RSSI降至-71 dBm，则请检查条件是否符合前面提到的步骤1或2并采取相应措施<br>  b)  如果数据流量高于密集流量阈值，则触发漫游扫描</p><p>  个人理解：<br>dense roaming有自己的一个阈值，很显然这个值会低于原始的漫游阈值，假设是-66，我们知道原始的一般是-76，比如这个时候RSSI是-67已经超过了-66，并且这个时候数据流量大于规定的阈值，这种情况符合RSSI达到dense roaming阈值且处于大数据流量情况，此时直接触发漫游扫描。<br>但是如果此时虽然RSSI达到了但是数据流量不够大没有达标，那么只是更新dense roaming阈值，并不会触发漫游扫描。这里我们知道了原来dense roaming的阈值是动态变化的，这点后面看日志也能看出来。<br>这个时候假设dense roaming阈值调整了，比如又降低了一点达到了-71，这个时候会采取下面两个步骤之一，就看哪个先发生</p><ol><li>当前RSSI先达到新阈值了，则执行1&amp;2步骤</li><li>如果此时数据流量高于阈值了，直接漫游！</li></ol>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下：&lt;br&gt;&lt;img src=&quot;https://raw.githubusercontent.com/hellolihaizhou/
+      
+    
+    </summary>
+    
+      <category term="网络 wifi" scheme="http://lihaizhou.top/categories/%E7%BD%91%E7%BB%9C-wifi/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一个Beacon miss导致的掉线问题分析</title>
@@ -459,33 +482,6 @@
         &lt;p&gt;用户日常使用手机过程中慢或者卡顿统一归结为丢帧问题，简单总结下：&lt;/p&gt;
 &lt;p&gt;1 内存不足&lt;br&gt;2 app使用的绘制方式区别&lt;br&gt;3 app使用的编译方式区别&lt;br&gt;4 app自身问题&lt;/p&gt;
 &lt;figure class=&quot;highlight javascript&quot;&gt;
-      
-    
-    </summary>
-    
-      <category term="Android" scheme="http://lihaizhou.top/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Android input系统</title>
-    <link href="http://lihaizhou.top/2019/12/15/Android%20input%E7%B3%BB%E7%BB%9F/"/>
-    <id>http://lihaizhou.top/2019/12/15/Android input系统/</id>
-    <published>2019-12-15T05:31:51.000Z</published>
-    <updated>2019-12-28T07:03:28.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>一次input的耗时时间分布</p><ul><li>T1 表示 硬件中断的时间</li><li>T2 表示 InputReader 从 /dev/input/xxx 读出事件的时间</li><li>T3 表示 InputDispatcher 向 app 进程发送事件的时间</li><li>T4 表示 app 主线程开始处理输入事件的时间</li><li>T5 表示 app 主线程完成处理输入事件的时间<br>一次用户输入事件的传递过程可以简化为: 硬件 -&gt; kernel -&gt; system_server -&gt; app</li></ul><p>system_server 耗时: T3 - T2<br>frameworks/native/libs/input/InputTransport.cpp<br>应用处理耗时: T5 - T4<br>frameworks/base / core/java/android/view/InputEventReceiver.java</p><h3 id="代码分布"><a href="#代码分布" class="headerlink" title="代码分布"></a>代码分布</h3><p>frameworks/native/services/inputflinger/</p><ul><li>InputDispatcher.cpp</li><li>InputReader.cpp</li><li>InputManager.cpp</li><li>EventHub.cpp</li><li>InputListener.cpp</li></ul><p>frameworks/native/libs/input/</p><ul><li>InputTransport.cpp</li><li>Input.cpp</li><li>InputDevice.cpp</li><li>Keyboard.cpp</li><li>KeyCharacterMap.cpp</li><li>IInputFlinger.cpp</li></ul><p>frameworks/base/services/core/</p><ul><li>java/com/android/server/input/InputManagerService.java</li><li>jni/com_android_server_input_InputManagerService.cpp</li></ul><p>Input模块的主要组成：</p><ul><li>Native层的InputReader负责从EventHub取出事件并处理，再交给InputDispatcher；</li><li>Native层的InputDispatcher接收来自InputReader的输入事件，并记录WMS的窗口信息，用于派发事件到合适的窗口；</li><li>Java层的InputManagerService跟WMS交互，WMS记录所有窗口信息，并同步更新到IMS，为InputDispatcher正确派发事件到ViewRootImpl提供保障</li></ul><p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/input(1" alt="input事件流转路线">-Input%E4%BA%8B%E4%BB%B6%E7%AE%A1%E7%90%86.png?raw=true)</p><p>1、输入硬件<br>说白了就是任何接受外界刺激，然后将刺激转换为电信号（例如机械能，使得电路导通后产生电信号）的设备，然后向CPU发出硬件中断，然后CPU查找操作系统的中断向量表中相对应的中断编号，调用操作系统的相应的代码段，此处如果有对应的驱动程序的话，操作系统会调用驱动程序对输入设备产生的电信号进行解析和转换成标准的linux内核规定的事件信息结构。</p><p>2、输入设备驱动<br>在linux内核层，处理硬件电信号，并转换成linux内核标准事件信息结构。然后linux会将这些事件信息写入/dev/input/下对应的虚拟设备中。</p><p>3、/dev/input<br>linux写入输入事件的位置，被linux虚拟化成虚拟输入设备文件（字符设备）。</p><p>4、EventHub<br>安卓的事件核心、负责从linux虚拟化输入设备中获取到所有事件。</p><p>framework/native/services/inputflinger/EventHub.h</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;一次input的耗时时间分布&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;T1 表示 硬件中断的时间&lt;/li&gt;
-&lt;li&gt;T2 表示 InputReader 从 /dev/input/xxx 读出事件的时间&lt;/li&gt;
-&lt;li&gt;T3 表示 InputDispatcher 向 app 进程发送事件
       
     
     </summary>

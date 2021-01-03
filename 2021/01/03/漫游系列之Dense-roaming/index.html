@@ -88,16 +88,19 @@
 
 
 
-<meta name="description" content="恍恍惚惚">
-<meta property="og:type" content="website">
-<meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/categories/性能/index.html">
+<meta name="description" content="本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下： 对于其中的reason=7代码中定义如下：12345678910111213141516171819202122232425typedef enum &amp;#123;    WMI_ROAM_TRIGGER_REASON_NONE = 0,    WMI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="漫游系列之Dense roaming">
+<meta property="og:url" content="http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="恍恍惚惚">
+<meta property="og:description" content="本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下： 对于其中的reason=7代码中定义如下：12345678910111213141516171819202122232425typedef enum &amp;#123;    WMI_ROAM_TRIGGER_REASON_NONE = 0,    WMI">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/denseroam-1.png">
+<meta property="og:updated_time" content="2021-01-03T05:29:10.015Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李海洲">
-<meta name="twitter:description" content="恍恍惚惚">
+<meta name="twitter:title" content="漫游系列之Dense roaming">
+<meta name="twitter:description" content="本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下： 对于其中的reason=7代码中定义如下：12345678910111213141516171819202122232425typedef enum &amp;#123;    WMI_ROAM_TRIGGER_REASON_NONE = 0,    WMI">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/denseroam-1.png">
 
 
 
@@ -127,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/categories/性能/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/"/>
 
 
 
 
 
-  <title>分类: 性能 | 李海洲</title>
+  <title>漫游系列之Dense roaming | 李海洲</title>
   
 
 
@@ -152,7 +155,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
@@ -272,139 +275,263 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
-
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>性能<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/" itemprop="url">
-              
-                <span itemprop="name">一次SystemServer OOM导致的系统重启分析之路</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">漫游系列之Dense roaming</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-11-25T08:59:48+08:00"
-              content="2020-11-25" >
-          11-25
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-03T11:44:39+08:00">
+                2021-01-03
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+  	    
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络-wifi/" itemprop="url" rel="index">
+                    <span itemprop="name">网络 wifi</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/01/03/漫游系列之Dense-roaming/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/01/03/漫游系列之Dense-roaming/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,836
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/12/26/如何快速定位kernel错误/" itemprop="url">
-              
-                <span itemprop="name">如何快速定位kernel错误</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-12-26T20:08:49+08:00"
-              content="2019-12-26" >
-          12-26
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/12/21/一个返回卡顿2s问题的分析解决之路/" itemprop="url">
-              
-                <span itemprop="name">一个返回卡顿2s问题的分析解决之路</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-12-21T17:54:10+08:00"
-              content="2019-12-21" >
-          12-21
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/05/13/低内存引发的LowMemoryKiller思考/" itemprop="url">
-              
-                <span itemprop="name">低内存引发的一点思考</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-05-13T20:37:55+08:00"
-              content="2018-05-13" >
-          05-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <p>本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/denseroam-1.png" alt=""></p>
+<p>对于其中的reason=7代码中定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">typedef <span class="keyword">enum</span> &#123;</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_NONE = <span class="number">0</span>,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_PER,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BMISS,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_LOW_RSSI,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_HIGH_RSSI,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_PERIODIC,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_MAWC,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_DENSE,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BACKGROUND,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_FORCED,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BTM,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_UNIT_TEST,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_BSS_LOAD,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_DEAUTH,</span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_IDLE,</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * <span class="doctag">NOTE:</span> don't add any more ROAM_TRIGGER_REASON values here.</span></span><br><span class="line"><span class="comment">     * There are checks in the FW that require the value of</span></span><br><span class="line"><span class="comment">     * WMI_ROAM_TRIGGER_REASON_MAX to be &lt; 16.</span></span><br><span class="line"><span class="comment">     * Add new ROAM_TRIGGER_REASON values below, inside the</span></span><br><span class="line"><span class="comment">     * WMI_ROAM_TRIGGER_EXT_REASON_ID enum.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    WMI_ROAM_TRIGGER_REASON_MAX,</span><br><span class="line">&#125; WMI_ROAM_TRIGGER_REASON_ID;</span><br></pre></td></tr></table></figure></p>
+<p>reason=7对应的原因是WMI_ROAM_TRIGGER_REASON_DENSE即dense roaming</p>
+<p>高通对dense roaming的解释<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Dense roaming</span><br><span class="line">Dense-<span class="function">roaming mechanism is a new feature of location retrieval <span class="title">function</span> <span class="params">(LRF)</span> 3.0. This feature retains high throughput when many roamable APs are present nearby and the data traffic is high then.</span></span><br><span class="line"><span class="function">The original Wi-Fi roaming mechanism is designed to enable roaming when the current RSSI value reaches the defined RSSI threshold value, <span class="keyword">for</span> example, -76 dBm. However, in a high dense environment where there are many roamable APs, it is better to start roaming earlier when the traffic is high because high throughput is maintained <span class="keyword">for</span> heavy traffic with minimal power consumption impact. Dense roaming functions in such a manner to retain high throughput during periods of heavy traffic.</span></span><br><span class="line"><span class="function">To provide <span class="keyword">this</span> value-added enhancement, the dense roaming mechanism is designed with the following two principles.</span></span><br><span class="line"><span class="function">■ Relying on other triggered scans, sniffing is performed on the management packets to determine the number of roamable APs that are present then in the environment.</span></span><br><span class="line"><span class="function">■ If a dense roaming environment is <span class="title">found</span> <span class="params">(that is, the number of the found roamable APs is bigger than the configured dense roamable AP threshold value)</span>, and <span class="keyword">if</span> there is significant traffic at that moment, then <span class="keyword">switch</span> to use the dense RSSI threshold value so that the roaming is triggered earlier.</span></span><br></pre></td></tr></table></figure></p>
+<p>Dense意思是密集，dense roaming从字面上意思是密集漫游，上面高通的一段话翻译下来就是：<br>密集漫游<br>密集漫游机制是位置检索功能（LRF）3.0上新增的新feature，<font color="#dd0000">当附近有许多可漫游AP且数据流量很高时，此功能可保持高吞吐量。</font><br>   </p>
+<p>最初的Wi-Fi漫游机制设计是当RSSI值比较低的时候并达到定义的RSSI阈值（例如-76 dBm）时启用漫游。<br>但是，在具有许多可漫游AP的高密度环境中，在流量较高时更早开始漫游是一个更好的措施，因为对于高流量保持高吞吐量，这样对功耗的影响则最小， 密集漫游在繁忙流量期间保持高吞吐量的方式运行。</p>
+<p>为了提供这种增强功能，dense roaming按照以下两个原理设计：</p>
+<ol>
+<li>依靠其他条件触发的扫描，对管理数据包执行嗅探以确定当时环境中存在的可漫游AP的数量。</li>
+<li>如果找到密集漫游环境（即找到的可漫游AP的数量大于配置的密集可漫游AP阈值），并且如果此时有大量流量，<font color="#dd0000">则切换为使用dense RSSI阈值，这样漫游就提前触发了</font><br> </li>
+</ol>
+<p>Q：怎么判断当前符合密集漫游环境？<br>A：<br>Detection of dense environment<br>The dense-roaming mechanism detects if it is a dense environment using the following procedure:  </p>
+<ol>
+<li>With any scan triggered, for example, a host scan from Wi-Fi driver, the roaming module snoops toget the beacon or probe response management frames.  </li>
+<li>If a roamable AP is found, then the roaming module increments an internal count of the roamableAPs.  </li>
+<li>If the number of the roamable APs is greater than the groam_dense_min_aps INI parametervalue, where three is the default value, then change to use dense roaming threshold value as thenew threshold value.<br>The dense roaming threshold value comes from the original threshold valuewith the shift of INI parameter, groam_dense_rssi_thresh_offset value. For example, if theoriginal threshold value is -76 dBm and groam_dense_rssi_thresh_offset INI parametervalue is 10, then the dense roaming threshold value is -66 dBm.</li>
+</ol>
+<p>检测密集环境<br>密集漫游机制使用以下步骤检测当前是否是密集环境：  </p>
+<ol>
+<li>如果有任何扫描（例如，从Wi-Fi驱动程序进行主机扫描）发送的话，漫游模块都会监听以获取信标或探测响应管理帧。  </li>
+<li>如果找到了一个可漫游AP，则漫游模块将增加该可漫游AP的内部计数。  </li>
+<li>如果可漫游AP的数量大于groam_dense_min_aps INI参数值（默认值为3），<font color="#dd0000">则更改为使用密集漫游阈值作为新阈值。</font><br>密集漫游阈值来自原始阈值，并带有INI参数的偏移groam_dense_rssi_thresh_offset值。<br>例如，如果原始阈值是-76 dBm，并且groam_dense_rssi_thresh_offset INI参数值是10，则密集漫游阈值是-66 dBm。</li>
+</ol>
+<p>Q: 即便当前检测到dense roaming环境了，也不一定会触发dense roaming，为什么？<br>参见如下解释：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Dense roaming in dense environment  </span><br><span class="line">During the detection of a dense environment, dense-roaming mechanism is triggered and the followingactions are taken:  </span><br><span class="line"><span class="number">1</span>.  When the current RSSI breaches the dense roaming RSSI threshold value and the data traffic isabove the dense traffic threshold as defined by the INI parameter, gtraffic_threshold, then the active roam scan is triggered.  </span><br><span class="line"><span class="number">2</span>.  When the current RSSI breaches the dense roaming RSSI threshold value and the data traffic isbelow the dense traffic threshold, then update only the threshold value by RSSI different threshold values and <span class="keyword">do</span> not trigger the active roam scan.  </span><br><span class="line"><span class="number">3</span>.  When the RSSI threshold exceeds the original roaming threshold value, <span class="keyword">for</span> example, -<span class="number">76</span> dBm,then <span class="keyword">do</span> not consider the data traffic and trigger the active roam scan.  </span><br><span class="line"><span class="number">4</span>.  If skipping the active roam scan due to insufficient data traffic in the point mentioned previously,then take either of the following steps based on whichever occurs first:a.  If the <span class="keyword">new</span> threshold value is breached first, <span class="keyword">for</span> example, RSSI drops to -<span class="number">71</span> dBm, then check ifthe condition is as the steps <span class="number">1</span> or <span class="number">2</span> mentioned previously and take actions accordingly.b.  If the data traffic is above the dense traffic threshold, then trigger the roaming scan</span><br></pre></td></tr></table></figure></p>
+<p>在密集环境中的密集漫游<br>  在检测密集环境时，将触发密集漫游机制，并采取以下措施：<br>  1.如果当前RSSI值超过了dense roaming的阈值，并且数据流量高于INI参数gtraffic_threshold定义的密集流量阈值时，这时候将触发活动漫游扫描。<br>  2.如果当前的RSSI超过了dense roaming的RSSI阈值并且数据流量低于密集流量阈值时，则仅更新阈值，并不触发漫游扫描。<br>  3.当RSSI阈值超过原始漫游阈值（例如-76 dBm）时，则无需考虑数据流量并触发活动漫游扫描。<br>  4.如果由于前面提到的数据通信量不足而跳过了主动漫游扫描，则采取以下步骤之一(根据哪种情况先发生)：<br>  a)  如果首先突破了新阈值，例如RSSI降至-71 dBm，则请检查条件是否符合前面提到的步骤1或2并采取相应措施<br>  b)  如果数据流量高于密集流量阈值，则触发漫游扫描</p>
+<p>  个人理解：<br>dense roaming有自己的一个阈值，很显然这个值会低于原始的漫游阈值，假设是-66，我们知道原始的一般是-76，比如这个时候RSSI是-67已经超过了-66，并且这个时候数据流量大于规定的阈值，这种情况符合RSSI达到dense roaming阈值且处于大数据流量情况，此时直接触发漫游扫描。<br>但是如果此时虽然RSSI达到了但是数据流量不够大没有达标，那么只是更新dense roaming阈值，并不会触发漫游扫描。这里我们知道了原来dense roaming的阈值是动态变化的，这点后面看日志也能看出来。<br>这个时候假设dense roaming阈值调整了，比如又降低了一点达到了-71，这个时候会采取下面两个步骤之一，就看哪个先发生</p>
+<ol>
+<li>当前RSSI先达到新阈值了，则执行1&amp;2步骤</li>
+<li>如果此时数据流量高于阈值了，直接漫游！</li>
+</ol>
 
       
     </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
 
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/" title="漫游系列之Dense roaming">http://lihaizhou.top/2021/01/03/漫游系列之Dense-roaming/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/" rel="next" title="一个Beacon miss导致的掉线问题分析">
+                <i class="fa fa-chevron-left"></i> 一个Beacon miss导致的掉线问题分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -412,6 +539,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -648,6 +782,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

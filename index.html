@@ -582,7 +582,7 @@ Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,283
+                  1,091
                 </span>
               
 
@@ -598,7 +598,7 @@ Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  4
                 </span>
               
             </div>
@@ -621,8 +621,9 @@ Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说
       
         
           
-          写在前面之所以把这个案例拿出来，倒不是因为这个案例花费了较多的时间去分析，而是因为通过这个案例，深深感受到了系统的脆弱，不同于常见的应用卡顿，在进退应用，下拉状态栏，亮灭屏等场景下操作都异常卡顿，是一个整机卡顿的案例。
-最开始的时候怀疑是低内存导致的，在拿到出现问题的机器后，查看了内存和负载情况，发
+          日志抓取在问题机器上抓了一份Systrace1.操作步骤: 进入设置界面滑动再退出2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。
+问题分析从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上
+来到对端1188_19线程所在区域
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -2375,7 +2376,7 @@ A：Google WFD 支持AVC,
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">Steven的博客共80.0k字</span>
+  <span class="post-count">Steven的博客共79.8k字</span>
 </div>
         
 

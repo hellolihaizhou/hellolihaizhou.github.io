@@ -95,12 +95,12 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。 以下主要通过一些QA方式来概述  Q：高通上的投屏和谷歌原生的投屏有什么差别吗？ A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png">
-<meta property="og:updated_time" content="2021-09-08T12:39:07.879Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast/miracast.png">
+<meta property="og:updated_time" content="2021-10-16T05:46:53.087Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对投屏工作的回顾小结(持续补充)">
 <meta name="twitter:description" content="前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。 以下主要通过一些QA方式来概述  Q：高通上的投屏和谷歌原生的投屏有什么差别吗？ A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/Miracast/miracast.png">
 
 
 
@@ -425,7 +425,7 @@
 <p>Q：高通上的投屏和谷歌原生的投屏有什么差别吗？</p>
 <p>A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持<br>      通过使用Presentation、MediaRouter和DisplayManager api，它可以作为一个外部WFD提供给应用程序使用。<br>      按照高通文档的解释，谷歌的miracast和高通的相比，缺乏内容保护支持，性能较低，功耗较高，高通提供了一个增强的Miracast解决方案。</p>
 <p>Q：Miracast Source 软件架构是怎样的？</p>
-<p>A：<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast.png" alt=""><br>个人理解红色标准1和2的代表视频数据的两种来源，分别是USB/摄像头和录制屏幕，4标注代表的是经过V4L2编码后的视频数据从给混合起Mux，5标注代表音频数据送给Mux，合成后压缩成MPEG-2格式的ts流，再通过RTP server即UDP传送，6标注代表的是RTSP的协议栈，RTSP是基于tcp的，主要是客户端和sink端的一系列交互和协商等。</p>
+<p>A：<br><img src="http://blog.lihaizhou.top/Miracast/miracast.png" alt=""><br>个人理解红色标准1和2的代表视频数据的两种来源，分别是USB/摄像头和录制屏幕，4标注代表的是经过V4L2编码后的视频数据从给混合起Mux，5标注代表音频数据送给Mux，合成后压缩成MPEG-2格式的ts流，再通过RTP server即UDP传送，6标注代表的是RTSP的协议栈，RTSP是基于tcp的，主要是客户端和sink端的一系列交互和协商等。</p>
 <p>Q：如果投屏失败了，从tcpdump上如何分析出是哪一步出错了？</p>
 <p>A：正确的流程参见：<br><a href="http://lihaizhou.top/2020/11/30/%E4%BB%8Etcpdump%E7%9C%8Bmiracast%E7%9A%84play%E6%B5%81%E7%A8%8B/#more">从tcpdump看miracast的play流程(工具篇)</a></p>
 <p>Q：怎么看SessionManagerService在miracast投屏环节中扮演的角色？</p>

@@ -95,17 +95,17 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="前言：基于高通平台，其他平台都是类似的本文作为工具篇，记录下来的目的是以便后续如再接触投屏工作能够快速对照上手 当我们开始准备连接sink设备时，开始的时候，source会创建一个socket监听着并等待sink端过来连接，sink端会触发”connect”的socket函数并开始tcp 握手之路，这个时候source接收到之后，它会触发”accept”的socket函数来处理sink发过俩的连接">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play01.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play02.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play03.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play04.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play05.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play06.png">
-<meta property="og:updated_time" content="2021-09-08T12:39:20.518Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play01.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play02.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play03.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play04.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play05.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play06.png">
+<meta property="og:updated_time" content="2021-10-16T06:00:43.111Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从tcpdump看miracast的play流程(工具篇)">
 <meta name="twitter:description" content="前言：基于高通平台，其他平台都是类似的本文作为工具篇，记录下来的目的是以便后续如再接触投屏工作能够快速对照上手 当我们开始准备连接sink设备时，开始的时候，source会创建一个socket监听着并等待sink端过来连接，sink端会触发”connect”的socket函数并开始tcp 握手之路，这个时候source接收到之后，它会触发”accept”的socket函数来处理sink发过俩的连接">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play01.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/Miracast_play/miracast-play01.png">
 
 
 
@@ -427,13 +427,13 @@
       
         <p>前言：<br>基于高通平台，其他平台都是类似的<br>本文作为工具篇，记录下来的目的是以便后续如再接触投屏工作能够快速对照上手</p>
 <p>当我们开始准备连接sink设备时，开始的时候，source会创建一个socket监听着并等待sink端过来连接，sink端会触发”connect”的socket函数并开始tcp 握手之路，这个时候source接收到之后，它会触发”accept”的socket函数来处理sink发过俩的连接请求</p>
-<p>开始是握手 Key Message #1~#4<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play01.png" alt=""></p>
-<p>RTSP connect M1~M8:<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play02.png" alt=""></p>
-<p>DHCP ACK<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play03.png" alt=""></p>
+<p>开始是握手 Key Message #1~#4<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play01.png" alt=""></p>
+<p>RTSP connect M1~M8:<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play02.png" alt=""></p>
+<p>DHCP ACK<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play03.png" alt=""></p>
 <p>如果这里DHCP Discover -&gt; DHCP ACK耗时超过 5s, 对于一些sink设备来说它就不会继续发 SYN 消息了 ，因此连接会阻塞在这里<br>所以如果遇到sink没有发送SYN的话就要看看这里的DHCP是否耗时太久了</p>
-<p>SYN handshake Sink should send SYN message to 7236 port at this step:<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play04.png" alt=""></p>
-<p>Get/Set parameter<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play05.png" alt=""></p>
-<p>Play<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/miracast-play06.png" alt=""></p>
+<p>SYN handshake Sink should send SYN message to 7236 port at this step:<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play04.png" alt=""></p>
+<p>Get/Set parameter<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play05.png" alt=""></p>
+<p>Play<br><img src="http://blog.lihaizhou.top/Miracast_play/miracast-play06.png" alt=""></p>
 
       
     </div>

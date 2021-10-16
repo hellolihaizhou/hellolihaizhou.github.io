@@ -95,13 +95,13 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received Each ack provides new RTT and average delivery rate measurements that update the RTprop and Bt">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-2.png.png">
-<meta property="og:updated_time" content="2020-08-27T10:59:05.000Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart3-1.png.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart3-2.png.png">
+<meta property="og:updated_time" content="2021-10-16T06:40:48.773Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BBR论文之读后感(三)">
 <meta name="twitter:description" content="Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received Each ack provides new RTT and average delivery rate measurements that update the RTprop and Bt">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/BBR3/BBRpart3-1.png.png">
 
 
 
@@ -438,12 +438,12 @@
 <p><strong>翻译：</strong></p>
 <p>BBR的发送速率和发送数量完全就是一个关于BtlBw和RTprop的函数，所以BBR应该小心地估计这两个值。这创造了一种新型的闭环控制，如图2所示。图2显示了一个10Mbps，40ms的流在700ms中的RTT（蓝线），inflight（绿线）和发送速率（红线）变化过程。</p>
 <p>注意图中在发送速率上方的灰线是BtlBw最大化滤波器的状态。图中产生的三角形形状是因为BBR的pacing_gain周期性的变化产生的，因为BBR必须以此来探测BtlBw是否提高了。图中展示了该增益值在一个周期不同时间的变化和其影响的数据变化</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-1.png.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/BBR3/BBRpart3-1.png.png" alt=""></p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BBR minimizes delay by spending most <span class="keyword">of</span> its time <span class="keyword">with</span> one BDP <span class="keyword">in</span> flight, paced at the BtlBw estimate. This moves the bottleneck to the sender so it can<span class="string">'t observe BtlBw increases. Consequently, BBR periodically spends an RTprop interval at a pacing_gain &gt; 1, which increases the sending rate and inflight. If BtlBw hasn'</span>t changed, then a queue is created at the bottleneck, increasing RTT, which keeps deliveryRate constant. (This queue is removed by sending at a compensating pacing_gain &lt; <span class="number">1</span> <span class="keyword">for</span> the next RTprop.) If BtlBw has increased, deliveryRate increases and the <span class="keyword">new</span> max immediately increases the BtlBw filter output, increasing the base pacing rate. Thus, BBR converges to the <span class="keyword">new</span> bottleneck rate exponentially fast. Figure <span class="number">3</span> shows the effect on a <span class="number">10</span>-Mbps, <span class="number">40</span>-ms flow <span class="keyword">of</span> BtlBw abruptly doubling to <span class="number">20</span> Mbps after <span class="number">20</span> seconds <span class="keyword">of</span> steady operation (left graph) then dropping to <span class="number">10</span> Mbps after another <span class="number">20</span> seconds <span class="keyword">of</span> steady operation at <span class="number">20</span> Mbps (right graph).</span><br></pre></td></tr></table></figure>
 <p><strong>翻译：</strong></p>
 <p>BBR将它的大部分时间的在外发送数据都保持为一个BDP大小，并且发送速率保持在估计得BtlBw值，这将会最小化时延。<br>但是这会把网络中的瓶颈链路移动到BBR发送方本身，所以BBR无法察觉BtlBw是否上升了。</p>
 <p>所以，BBR周期性的在一个RTprop时间内将pacing_gain设为一个大于1的值，这将会增加发送速率和在外报文。如果BtlBw没有改变，那么这意味着BBR在网络中制造了队列，增大了RTT，而deliveryRate仍然没有改变。（这个队列将会在下个RTprop周期被BBR使用小于1的pacing_gain来消除）。</p>
-<p>如果BtlBw增大了，那么deliveryRate增大了，并且BBR会立即更新BtlBw的估计值，从而增大了发送速率。通过这种机制，BBR可以以指数速度非常快地收敛到瓶颈链路。如图3显示的，我们在1条10Mbps，40ms的流在20s稳定运行之后将BtlBw提高了1倍（20Mbps），然后在第40s又将BtlBw恢复至20Mbps<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart3-2.png.png" alt=""></p>
+<p>如果BtlBw增大了，那么deliveryRate增大了，并且BBR会立即更新BtlBw的估计值，从而增大了发送速率。通过这种机制，BBR可以以指数速度非常快地收敛到瓶颈链路。如图3显示的，我们在1条10Mbps，40ms的流在20s稳定运行之后将BtlBw提高了1倍（20Mbps），然后在第40s又将BtlBw恢复至20Mbps<br><img src="http://blog.lihaizhou.top/BBR3/BBRpart3-2.png.png" alt=""></p>
 <p><strong>额外添加</strong></p>
 <p><a href="https://blog.csdn.net/dog250/article/details/52972502?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159850579919725211953968%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=159850579919725211953968&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_v2~rank_blog_v1-13-52972502.pc_v2_rank_blog_v1&amp;utm_term=BBR&amp;spm=1018.2118.3001.4187" target="_blank" rel="noopener">https://blog.csdn.net/dog250/article/details/52972502?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159850579919725211953968%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&amp;request_id=159850579919725211953968&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_v2~rank_blog_v1-13-52972502.pc_v2_rank_blog_v1&amp;utm_term=BBR&amp;spm=1018.2118.3001.4187</a></p>
 <p>(BBR is a simple instance of a Max-plus control system, a new approach to control based on nonstandard algebra.12 This approach allows the adaptation rate [controlled by the max gain] to be independent of the queue growth [controlled by the average gain]. Applied to this problem, it results in a simple, implicit control loop where the adaptation to physical constraint changes is automatically handled by the filters representing those constraints. A conventional control system would require multiple loops connected by a complex state machine to accomplish the same result.)</p>

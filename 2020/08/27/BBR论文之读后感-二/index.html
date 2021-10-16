@@ -95,14 +95,14 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="Characterizing the Bottleneck 12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-1.png.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-2.png.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-3.png.png">
-<meta property="og:updated_time" content="2020-08-27T04:52:38.000Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart2-1.png.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart2-2.png.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart2-3.png.png">
+<meta property="og:updated_time" content="2021-10-16T06:42:53.147Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BBR论文之读后感(二)">
 <meta name="twitter:description" content="Characterizing the Bottleneck 12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-1.png.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/BBR3/BBRpart2-1.png.png">
 
 
 
@@ -436,16 +436,16 @@
 <p><strong>额外添加：</strong></p>
 <p>两个条件缺一不可，如果只满足第一个条件，可能会出现实际发送数据超过BDP的情况，这样就会出现排队，如果只满足第二点的话，可能会存在数据包突发的情况，可以理解为中间网络设备转发处理速度赶不上发送端发送的速度了，这样也会有排队。<br>所以要想达到最优的情况，就是同时满足以上两个条件，多么理想的想法！</p>
 <p>BtlBw and RTprop vary over the life of a connection, so they must be continuously estimated. TCP currently tracks RTT (the time interval from sending a data packet until it is acknowledged) since it’s required for loss detection. At any time t,</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-1.png.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/BBR3/BBRpart2-1.png.png" alt=""></p>
 <p>where 𝛈 ≥ 0 represents the “noise” introduced by queues along the path, the receiver’s delayed ack strategy, ack aggregation, etc. RTprop is a physical property of the connection’s path and changes only when the path changes. Since path changes happen on time scales » RTprop, an unbiased, efficient estimator at time T is</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-2.png.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/BBR3/BBRpart2-2.png.png" alt=""></p>
 <p>(i.e., a running min over time window WR (which is typically tens of seconds to minutes)</p>
 <p><strong>翻译：</strong></p>
 <p>然而，BtlBw和RTprop在整个连接的生命周期中可能是动态变化的，所以我们需要实时地对它们进行估计。<br>目前TCP为了检测丢包，必须实时地跟踪RTT的大小（发送数据到收到这个包的ack的时间），在任意的时间t</p>
 <p>其中，最后一项表示“噪声”。造成噪声的因素主要有：链路队列，接收方的时延ACK配置，ACK聚合等因素等待。<br>RTprop是路径的物理特性，并且只有路径变化才会改变。由于一般来说路径变化的时间尺度远远大于RTprop（这说的是啥玩意，待理解）<br>所以RTprop可以由以下公式进行估计：</p>
 <p>（在一个时间窗口中对RTT取最小值。一般将该窗口大小设置为几十秒至几分钟）</p>
 <p>Unlike RTT, nothing in the TCP spec requires implementations to track bottleneck bandwidth, but a good estimate results from tracking delivery rate. When the ack for some packet arrives back at the sender, it conveys that packet’s RTT and announces the delivery of data inflight when that packet departed. Average delivery rate between send and ack is the ratio of data delivered to time elapsed: deliveryRate = Δdelivered/Δt. This rate must be ≤ the bottleneck rate (the arrival amount is known exactly so all the uncertainty is in the Δt, which must be ≥ the true arrival interval; thus, the ratio must be ≤ the true delivery rate, which is, in turn, upper-bounded by the bottleneck capacity). Therefore, a windowed-max of delivery rate is an efficient, unbiased estimator of BtlBw: </p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart2-3.png.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/BBR3/BBRpart2-3.png.png" alt=""></p>
 <p>where the time window WB is typically six to ten RTTs.</p>
 <p><strong>翻译：</strong></p>
 <p>然而，bottleneck bandwidth的估计不像RTT那样方便，没有一种TCP spec要求实现算法来跟踪估计bottleneck带宽，但是，我们可以通过跟踪发送速率来估计bottleneck带宽。<br>当发送方收到一个ACK报文时，它可以计算出该报文的RTT，并且从发出报文到收到ack报文这段时间的data Inflight。这段时间内的平均发送速率就可以以此计算出来：deliveryRate = delta delivered/ delta t。这个计算出的速率必定小于bottleneck速率（因为delta delivered是确定的，但是delta t会较大）。因此，BtwBw可以根据以下公式进行估计</p>

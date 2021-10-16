@@ -95,12 +95,12 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart1-1.png">
-<meta property="og:updated_time" content="2020-08-27T10:31:20.000Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/BBR3/BBRpart1-1.png">
+<meta property="og:updated_time" content="2021-10-16T06:41:19.641Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BBR论文之读后感(一)">
 <meta name="twitter:description" content="前言拥塞控制本身是个比较发散的话题，首先需要说明一点我对这方面其实一窍不通，为了找资料在网上也看了不少文章，但是很多文章都是平铺直叙的讲述，所以很多没看完就放弃了。于是打算看下论文《BBR: Congestion-Based Congestion Control》，这篇文章还是比较有意思，看完多少知道了一点BBR的皮毛。 因整篇论文内容较多，将分为六篇读后感 BBR论文部分(1/6)1234567">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart1-1.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/BBR3/BBRpart1-1.png">
 
 
 
@@ -443,7 +443,7 @@
 <p>（打个比方，如果将一条网络路径类比为一个管道，RTprop就是管道的长度，BtlBw就是管道中最短的半径。）</p>
 <p>图1展示了RTT和发送速率与发送数据大小的关系。</p>
 <p>图中的蓝线受到了RTprop的约束，绿线受到BtlBw约束，红线受到瓶颈链路的缓存约束。注意阴影区域的部分是不可达的，因为这会至少违反一项约束。这三种约束形成了3不同的区域，分别为app-limited，bandwidth-limited，buffer-limited。在三种区域，流的行为是完全不同的</p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/BBRpart1-1.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/BBR3/BBRpart1-1.png" alt=""></p>
 <p><strong>额外添加</strong></p>
 <p>这里重点提到了bottleneck，其实我们很容易想到如果这条链路上如果传输速率和瓶颈速度相近，是否会降低bottlebloat的概率呢？其实这只是其中一个条件，后面会提到。这里提到的两个参数后面会贯穿整篇论文：RTprop（Round-trippropagation time）和BtlBw（bottleneck bandwidth）</p>
 <p>RTprop：光信号从A端到B端的最小时延（因为是一个来回其实是2倍时延），这取决于物理距离<br>BtlBw：在A到B的链路中，它的带宽取决于最慢的那段链路的带宽，称为瓶颈带宽，可以想象为光纤的粗细</p>

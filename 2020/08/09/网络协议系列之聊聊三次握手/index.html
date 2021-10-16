@@ -95,14 +95,14 @@
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念 为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png">
-<meta property="og:updated_time" content="2020-08-10T04:44:55.000Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png">
+<meta property="og:updated_time" content="2021-10-16T06:52:33.183Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络系列之三次握手">
 <meta name="twitter:description" content="前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念 为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png">
 
 
 
@@ -456,9 +456,9 @@
 <p>这里的最后一句其实是有可能是有问题的，不同的tcp实现可能不同，不一定会直接回复rst，真实的情况很可能是如下这样的<br>当客户端在 ESTABLISHED 状态下，开始发送数据包时，会携带上一个「ACK」的确认序号，所以哪怕客户端响应的「ACK」包丢了，服务端在收到这个数据包时，<br>能够通过包内 ACK 的确认序号，正常进入 ESTABLISHED 状态。</p>
 <p>还有一种安全范畴的非正常情况<br>前面一直在说正常的异常逻辑，双方都还算友善，按规矩做事，出现异常主要也是因为网络等客观问题，接下来说一个恶意的情况。<br>如果客户端是恶意的，在发送「SYN」包后，并收到「SYN,ACK」后就不回复了，那么服务端此时处于一种半连接的状态，<br>虽然服务端会通过 tcp_synack_retries 配置重试的次数，不会无限等待下去，但是这也是有一个时间周期的。<br>如果短时间内存在大量的这种恶意连接，对服务端来说压力就会很大，这就是所谓的 SYN FLOOD 攻击。</p>
 <p>我们上面讨论的都是三次握手过程，四次挥手过程，有兴趣可以参考这篇文章，写的不错<br><a href="https://www.jianshu.com/p/723365a47c6e" target="_blank" rel="noopener">TCP三次握手、四次挥手出现意外情况时，为保证稳定，是如何处理的？</a> </p>
-<h1 id="wireshark看三次握手"><a href="#wireshark看三次握手" class="headerlink" title="wireshark看三次握手"></a>wireshark看三次握手</h1><p>抓了一个投屏的tcpdump，可以看下三次握手的过程<br><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png" alt=""></p>
-<p><img src="https://raw.githubusercontent.com/hellolihaizhou/saveImg/master/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png" alt=""></p>
+<h1 id="wireshark看三次握手"><a href="#wireshark看三次握手" class="headerlink" title="wireshark看三次握手"></a>wireshark看三次握手</h1><p>抓了一个投屏的tcpdump，可以看下三次握手的过程<br><img src="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B1.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B2.png" alt=""></p>
+<p><img src="http://blog.lihaizhou.top/HandShake/TCP%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B3.png" alt=""></p>
 <p>参考文章：<br><a href="https://www.jianshu.com/p/723365a47c6e" target="_blank" rel="noopener">TCP三次握手、四次挥手出现意外情况时，为保证稳定，是如何处理的？</a></p>
 
       

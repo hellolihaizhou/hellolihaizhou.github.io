@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2021-10-16T04:59:55.924Z</updated>
+  <updated>2021-10-19T02:39:18.772Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>案例分析:切换应用后高概率操作无响应(Systrace)</title>
+    <link href="http://lihaizhou.top/2021/10/19/%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90-%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%90%8E%E9%AB%98%E6%A6%82%E7%8E%87%E6%93%8D%E4%BD%9C%E6%97%A0%E5%93%8D%E5%BA%94-Systrace/"/>
+    <id>http://lihaizhou.top/2021/10/19/案例分析-切换应用后高概率操作无响应-Systrace/</id>
+    <published>2021-10-19T02:34:51.000Z</published>
+    <updated>2021-10-19T02:39:18.772Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h4><p>内部群里不止一个同事反馈切换应用后滑动界面无响应，而且概率较高，根据描述微信，飞书等应用均能够复现，说明不是应用问题，需要从系统侧进行排查。</p><h4 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h4><p>问题出现时，抓取了一份Systrace</p><p>定位问题区域</p><p><img src="http://blog.lihaizhou.top/compact/compact1.png" alt="img"></p><p>除了开头的首帧，没有其它帧</p><p><img src="http://blog.lihaizhou.top/compact/compact2.png" alt="img"></p><p>为何没有帧呢？10S141ms微信adj切换到0(0代表前台)，说明这段时间微信确实处于前台。</p><p><img src="http://blog.lihaizhou.top/compact/compact3.png" alt="img"></p><p>此时很快注意到一个现象，这个时间段微信多个线程均处于非IO导致的D状态</p><p><img src="http://blog.lihaizhou.top/compact/compact4.png" alt="img"></p><p>到这里有点不解，暂时先放着，后面会解答，先看下输入事件是否正常</p><p>底层InputDispatcher，可以看到是有事件的</p><p><img src="http://blog.lihaizhou.top/compact/compact5.png" alt="img"></p><p>再来到SystemServer区域，没有事件</p><p><img src="http://blog.lihaizhou.top/compact/compact6.png" alt="img"></p><ol><li><strong>OutboundQueue</strong> 里面放的是即将要被派发给对应 AppConnection 的事件</li><li><strong>WaitQueue</strong> 记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件</li></ol><p>到这里能够解释的通，正是由于应用自身处于D状态导致不能够正常接收事件</p><p>所以毫无疑问，对应的应用微信deliverInputEvent 区域肯定也是没有任何输入事件的。</p><p>ps：deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒</p><p><img src="http://blog.lihaizhou.top/compact/compact7.png" alt="img"></p><p>思路是明确的，此时需要调查应用为何会处于D状态，因为等锁？可是搜了一圈没有看到等锁</p><p>很快注意到这么一个现象，在这个无响应期间，应用的匿名页占用呈下降趋势，Swap呈上升趋势，说明此时该进程在进行内存压缩。</p><p><img src="http://blog.lihaizhou.top/compact/compact8.png" alt="img"></p><p>再来到压缩区域看下，果不其然的确在进行压缩</p><p><img src="http://blog.lihaizhou.top/compact/compact9.png" alt="img"></p><p>可是为何会耗时如此之长，以前测试过最长也就1s左右，是因为压缩的内容太大导致的吗？</p><p>来到微信所在区域，可以看到其内存总计565M，匿名页大概109M，File大概446M，数值并不算高</p><p><img src="http://blog.lihaizhou.top/compact/compact10.png" alt="img"></p><p>那么为何会耗时如此之久呢？</p><p>命令打印下压缩算法终于揭开谜底，因为有同事将原先的lz4压缩算法改为了zstd导致，沟通后将算法修改为lz4后问题消失。</p><hr><p>入秋了，注意保暖！</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;问题背景&quot;&gt;&lt;a href=&quot;#问题背景&quot; class=&quot;headerlink&quot; title=&quot;问题背景&quot;&gt;&lt;/a&gt;问题背景&lt;/h4&gt;&lt;p&gt;内部群里不止一个同事反馈切换应用后滑动界面无响应，而且概率较高，根据描述微信，飞书等应用均能够复现，说明不是应用问题，需要从
+      
+    
+    </summary>
+    
+      <category term="性能" scheme="http://lihaizhou.top/categories/%E6%80%A7%E8%83%BD/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>对进程压缩消费Zram速度的优化</title>
@@ -465,29 +488,6 @@
     </summary>
     
       <category term="性能" scheme="http://lihaizhou.top/categories/%E6%80%A7%E8%83%BD/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>如何快速定位kernel错误</title>
-    <link href="http://lihaizhou.top/2019/12/26/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8Dkernel%E9%94%99%E8%AF%AF/"/>
-    <id>http://lihaizhou.top/2019/12/26/如何快速定位kernel错误/</id>
-    <published>2019-12-26T12:08:49.000Z</published>
-    <updated>2021-09-08T12:38:44.112Z</updated>
-    
-    <content type="html"><![CDATA[<p>比如在定位systrace卡顿问题时，最后跟到kernel中<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.png?raw=true" alt="systrace卡顿"></p><p>可以看到阻塞在<br>{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”}</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mi@mi-OptiPlex<span class="number">-7060</span>:~<span class="regexp">/Code_mi/</span>F7_code/prebuilts/gdb/linux-x86/bin$ ./gdb</span><br><span class="line">GNU gdb (GDB) <span class="number">7.11</span></span><br><span class="line">Copyright (C) <span class="number">2016</span> Free Software Foundation, Inc.</span><br><span class="line">License GPLv3+: GNU GPL version <span class="number">3</span> or later &lt;http:<span class="comment">//gnu.org/licenses/gpl.html&gt;</span></span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.  Type <span class="string">"show copying"</span></span><br><span class="line">and <span class="string">"show warranty"</span> <span class="keyword">for</span> details.</span><br><span class="line">This GDB was configured <span class="keyword">as</span> <span class="string">"x86_64-linux-gnu"</span>.</span><br><span class="line">Type <span class="string">"show configuration"</span> <span class="keyword">for</span> configuration details.</span><br><span class="line">For bug reporting instructions, please see:</span><br><span class="line">&lt;http:<span class="comment">//www.gnu.org/software/gdb/bugs/&gt;.</span></span><br><span class="line">Find the GDB manual and other documentation resources online at:</span><br><span class="line">&lt;http:<span class="comment">//www.gnu.org/software/gdb/documentation/&gt;.</span></span><br><span class="line">For help, type <span class="string">"help"</span>.</span><br><span class="line">Type <span class="string">"apropos word"</span> to search <span class="keyword">for</span> commands related to <span class="string">"word"</span>.</span><br><span class="line">(gdb) file <span class="string">'/home/mi/日志/vmliux/out/target/product/merlin/obj/KERNEL_OBJ/vmlinux'</span> </span><br><span class="line"><span class="comment">//此时输入file后面跟vmlinux文件，vmlinux在symbols中，具体路径在out/target/product/libra/obj/KERNEL_OBJ/下</span></span><br><span class="line">Reading symbols <span class="keyword">from</span> /home/mi/日志/vmliux/out/target/product/merlin/obj/KERNEL_OBJ/vmlinux...done.</span><br><span class="line"></span><br><span class="line">(gdb) list*teei_forward_call+<span class="number">0xac</span>  <span class="comment">//list*后面跟上偏移位</span></span><br><span class="line"><span class="number">0xffffff80087fe9d8</span> is <span class="keyword">in</span> teei_forward_call (<span class="regexp">/home/</span>work/merlin-q-dev-build/kernel<span class="number">-4.14</span>/drivers/misc/mediatek/teei/<span class="number">300</span>/tz_driver/teei_smc_call.c:<span class="number">128</span>).</span><br></pre></td></tr></table></figure><p>这种情况适用于像NE问题或者一些watchdog问题等</p><p>还有一种情况是像如下图中</p><p><img src="https://github.com/hellolihaizhou/saveImg/blob/master/7d36fef5-b40b-439b-bd69-fd65e393e8be.png?raw=true" alt="systrace卡顿2"></p><p>这种情况稍微有点麻烦<br>知道地址该如何反向定位函数名和偏移呢, 这个时候就需要用到objdump，-d后面跟的是vmlinux的地址，最后会将汇编语言导入到vmlinux.txt中，此时搜索后五位即 fb684</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aarch64-linux-android-objdump -d vmlinux &gt; vmlinux.txt</span><br></pre></td></tr></table></figure><p>搜索到如下结果</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffffff80087fb674:    <span class="number">14000004</span>     b    ffffff80087fb684 &lt;teei_forward_call+<span class="number">0xac</span>&gt;</span><br></pre></td></tr></table></figure><p>这个时候在用gdb配合vmlinux定位teei_forward_call+0xac就可以了</p><p>汇总下<br>分析工具</p><ul><li>addr2line：用来分析单个pc地址对应的源码行数，比如示例log中的第13行中的#00 pc 0004097c，0004097c就是crash时pc调用的堆栈地址，用这个地址就可以分析出对应在源码中的行数；</li><li>objdump：用来把相应的so变成汇编语言的asm文件，然后根据地址信息（比如0004097c）就可以找到更加详细的相关函数信息；</li><li>ndk-stack：用来把log信息全部翻译成更加详细的带源码行数信息的log，相当于是在整个crash堆栈信息都执行addr2line命令。</li></ul><p>linux自带addr2line命令。使用Windows的，在sdk中安装了NDK之后，在ndk中就带有这些工具。<br>比如addr2line工具在：sdk\ndk-bundle\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin下面，同时这个bin下面包含很多其他工具，比如objdump，readelf等；<br>ndk-stack工具则在sdk\ndk-bundle下面；</p><h3 id="使用addr2line查找代码位置"><a href="#使用addr2line查找代码位置" class="headerlink" title="使用addr2line查找代码位置"></a>使用addr2line查找代码位置</h3><p>执行如下的命令，多个指针地址可以在<br><img src="https://github.com/hellolihaizhou/saveImg/blob/master/16111918_pm7h.jpg?raw=true" alt=""></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-addr2line –e obj/local/armeabi/libhello-jni.so <span class="number">00004</span>de8 <span class="number">000056</span>c8 <span class="number">00004</span>fb4 <span class="number">00004</span>f58</span><br></pre></td></tr></table></figure><p>PS：</p><ul><li>crash log与对应的so一定要对应起来。即错误的情况是：你拿了一份旧的log，然后你修改了so相关的源码，然后编译出来了新的so，你拿着这个新的so以及旧log中的地址去让addr2line等分析，那肯定是得不到正确的结果的</li><li>带symbols的so文件<br>对于比如手机公司的开发人员来说，一般来说出问题的so对应的带symbols的so都在out/target/product/&lt;model_name&gt;/symbols/system/lib/下面，而对于常见的使用AndroidStudio开发的单个应用来说，其对应的带symbols的在&lt;PROJECT_ROOT&gt;\app\src\main\obj\local\<abi>\下面的so，而不能是\app\src\main\libs\<abi>的，这里面的是不包含symbols信息的，拿这个去分析，输出的结果就是“??:?”。其实这两个so的体积对比也是很明显的的，在我的应用中，前一个带symbols的so的体积为7M多，而后一个只有2M</abi></abi></li></ul><h3 id="使用objdump获取函数信息"><a href="#使用objdump获取函数信息" class="headerlink" title="使用objdump获取函数信息"></a>使用objdump获取函数信息</h3><p>使用如下命令导出函数表</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-androideabi-objdump –S obj/local/armeabi/libhello-jni.so &gt; hello.asm</span><br></pre></td></tr></table></figure><p>在生成的asm文件中查找刚刚我们定位的两个关键指针00004fb4和00004f58，搜索后四位<br>可以显示对应的函数名，这样再配合addressline的结果堪称完美，可以得到对应文件的某一行并且知道对应的函数名(其实addr2line就够了)</p><p>参考文章:<br><a href="https://www.oschina.net/question/2241352_213433" target="_blank" rel="noopener">如何定位Android NDK开发中遇到的错误</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;比如在定位systrace卡顿问题时，最后跟到kernel中&lt;br&gt;&lt;img src=&quot;https://github.com/hellolihaizhou/saveImg/blob/master/950ffc39-d5dc-47d7-a57b-3e774cae457d.pn
-      
-    
-    </summary>
-    
-      <category term="稳定性" scheme="http://lihaizhou.top/categories/%E7%A8%B3%E5%AE%9A%E6%80%A7/"/>
     
     
   </entry>

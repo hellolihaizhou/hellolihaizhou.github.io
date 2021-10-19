@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/compact/compact8.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/compact/compact9.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/compact/compact10.png">
-<meta property="og:updated_time" content="2021-10-19T02:39:18.772Z">
+<meta property="og:updated_time" content="2021-10-19T02:43:01.643Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="案例分析:切换应用后高概率操作无响应(Systrace)">
 <meta name="twitter:description" content="问题背景内部群里不止一个同事反馈切换应用后滑动界面无响应，而且概率较高，根据描述微信，飞书等应用均能够复现，说明不是应用问题，需要从系统侧进行排查。 问题分析问题出现时，抓取了一份Systrace 定位问题区域  除了开头的首帧，没有其它帧  为何没有帧呢？10S141ms微信adj切换到0(0代表前台)，说明这段时间微信确实处于前台。  此时很快注意到一个现象，这个时间段微信多个线程均处于非IO">
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  587
+                  599
                 </span>
               
 
@@ -463,7 +463,7 @@
 <p>那么为何会耗时如此之久呢？</p>
 <p>命令打印下压缩算法终于揭开谜底，因为有同事将原先的lz4压缩算法改为了zstd导致，沟通后将算法修改为lz4后问题消失。</p>
 <hr>
-<p>入秋了，注意保暖！</p>
+<p>你总是这么优秀，入秋了，天气转凉，记得添衣哈~</p>
 
       
     </div>

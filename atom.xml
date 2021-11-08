@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2021-11-01T10:06:11.284Z</updated>
+  <updated>2021-11-08T06:45:49.228Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>案例分析:打开应用后操作界面无响应(Systrace)</title>
+    <link href="http://lihaizhou.top/2021/11/08/%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90-%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%90%8E%E9%AB%98%E6%A6%82%E7%8E%87%E6%93%8D%E4%BD%9C%E6%97%A0%E5%93%8D%E5%BA%94-Systrace/"/>
+    <id>http://lihaizhou.top/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/</id>
+    <published>2021-11-08T02:34:51.000Z</published>
+    <updated>2021-11-08T06:45:49.228Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h4><p>打开应用(热启动)后，概率性出现手指滑动界面无任何响应(界面控件支持上下滑动)</p><h4 id="Systrace角度分析"><a href="#Systrace角度分析" class="headerlink" title="Systrace角度分析"></a>Systrace角度分析</h4><p>先看下应用区域帧绘制的情况</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact2.png" alt="图片"></p><p>这个时间段除了开头的几帧，后面几乎是空白的，复现时手指明明是一直滑动的。</p><p>先确认下input事件是否正常，在分析input事件流转是否正常之前</p><p>我们先简单的介绍下input事件大概的流转过程</p><blockquote><p>1.触摸屏每隔几毫秒扫描一次，如果有触摸事件，那么把事件上报到对应的驱动</p><p>2.InputReader 读取触摸事件交给 InputDispatcher 进行事件派发</p><p>3.InputDispatcher 将触摸事件发给注册了 Input 事件的 App</p><p>4.app 拿到事件之后，进行 Input 事件分发，如果此事件分发的过程中，App的</p><p>UI 发生变化，那么会请求 Vsync，则进行一帧的绘制</p></blockquote><p>先看下input down的时间点</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact3.png" alt="图片"></p><p>后面的事件是连续且密集的，说明我们复现抓取的时候，报点是没有问题的。</p><p>这个时候我们注意到一个奇怪的现象，outBoundQueue和waitQueue是空的。</p><p>关于outBoundQueue和waitQueue简单介绍下</p><blockquote><p>1.当应用窗口准备就绪，将mPendingEvent转移到outBoundQueue队列，对应的是即将要被派发给对应 AppConnection 的事件。</p><p>2.当outBoundQueue不为空，且应用管道对端连接状态正常，则将数据从outboundQueue中取出事件，放入waitQueue队列，记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件。</p></blockquote><p>如果outBoundQueue和waitQueue是空的话，说明此时应用窗口未就绪。我们操作时窗口明明可见的，难道应用D状态了？</p><p>带着这个疑问，我们再次回到应用所在区域</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact4.png" alt="图片"></p><p>可以看到飞书热启后，多个运行线程处于非IO导致的D状态，另外结合基本没有占据CPU资源这一情况。</p><p>可以认定之所以应用没有响应down事件，正是由于其处于非IO导致的D状态。</p><p>下面就需要调查为何应用D状态了，很快在应用区域注意到一个现象</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact5.png" alt="图片"></p><p>我们知道匿名页被压缩换到Zram通常出现在kswapd回收内存场景中。</p><p>但是还有一种场景我们可能会忽略，那就是adj变化触发的进程压缩同样会消费Zram。</p><p>为了验证是进程压缩导致，来到压缩线程所在区域。为了看起来更直观，将down事件和压缩线程放在一起</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact6.png" alt="图片"></p><p>到这里我们可以确定飞书之所以没有响应到input down事件，正是由于其当时正在进行进程压缩从而导致其处于D状态。</p><h4 id="问题完整时间线"><a href="#问题完整时间线" class="headerlink" title="问题完整时间线"></a>问题完整时间线</h4><p>到这里我们将这个案例完整的故事情节还原出来</p><ol><li><p>在一次退出飞书后，此时引起adj变化，进入压缩判断环节，此时满足一系列条件(如匿名页大小, 前后时间差, adj值)后，压缩线程开始对飞书应用进行压缩。</p></li><li><p>很快再次打开飞书(29s793ms)</p></li><li><p>此时手指按下开始滑动(29s988ms)(不松手)，注意这个时候压缩还未完成，飞书仍处于进程压缩导致的D状态中，所以未能响应down事件。</p><p>我们知道一个事件序列是由down+若干move+up组成，由于down事件丢失以至于后面的move事件未能响应。</p></li><li><p>飞书压缩完成(30s598ms)，该主界面进程压缩过程持续约882.6ms，完成后飞书解除D状态。</p></li></ol><p>这个过程简单点说，在飞书可见后，如果上次压缩未完成，这时候手指按下的down事件都会被丢弃。</p><p>这也解释了为何该问题在快速切换场景下更容易出现</p><h4 id="压缩速度"><a href="#压缩速度" class="headerlink" title="压缩速度"></a>压缩速度</h4><p>这个时候，你可能会觉得疑惑，是不是压缩速度慢导致的这个问题?</p><p>下面我们将试着计算问题时的”压缩速度”, 这里对压缩速度之所以加引号后面会解释</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact7.png" alt="图片"></p><p>从我们这次复现的Systrace来看，飞书压缩完成后，其Swap占据从118.8M增长到232.7M，共计压缩了约114M的匿名页，共计耗时882ms</p><p>用压缩量除以耗时时间得出”压缩速度”约129M/s。</p><p>影响压缩速度的因素可能有哪些呢？</p><p><strong>主要是压缩算法，CPU频率，DDR频率，内存读写性能这几方面因素</strong></p><p>我们从Systrace中再看下压缩期间的CPU运行情况</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact8.png" alt="图片"></p><p>可以看到有较多的Runnable (Preempted)，说明该时间段内可能负载较重，存在CPU争抢的情况。</p><p>除了等CPU的片段外，还有很多片段跑在了小核上</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact9.png" alt="图片"></p><p>这也是为何上面提到的”压缩速度”加引号的原因。正好压缩的耗时882ms并不是一直在running状态。</p><p>其实这点比较好理解，好比你开车上班，短短的五公里的车程却有二十个红绿灯，这个时候用路程除以耗时得出的”车速”，严格意义上说并不准确。</p><h4 id="测试实验"><a href="#测试实验" class="headerlink" title="测试实验"></a>测试实验</h4><p>我们前面已经发现压缩期间很多片段跑在了小核上，那么如果给压缩线程更高的CPU资源权重，是否能提升”压缩速度”呢？</p><p>于是，对压缩线程占据CPU的权重进行调整后，再次抓取了一份Systrace</p><p><img src="http://blog.lihaizhou.top/Systrace_cpmpact/Systrace_compact10.png" alt="图片"></p><p>从修改后抓取的Systrace可以看到，这次压缩线程确实大部分时候跑在了大核上。</p><p>从图中可以看到本次压缩了约144M匿名页，耗时约450ms，”压缩速度”约320M/s</p><p>相比修改前，”压缩速度”提升了近三倍，但是其实仍然不够快，还是会有一定概率发生手指按下时，正好落在压缩未完成的时间段内，只是相比之前大幅降低了该问题复现概率。</p><h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>如果压缩算法已经确认是最优的选择(平衡压缩率和解压缩速度)情况下，通过尽量赋予压缩线程更高的CPU优先级确实能够缩短耗时(假设压缩量固定)，但是最大的影响因素在于内存读写性能。</p><hr><p>愿你秃顶归来，内心依旧少年</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;问题现象&quot;&gt;&lt;a href=&quot;#问题现象&quot; class=&quot;headerlink&quot; title=&quot;问题现象&quot;&gt;&lt;/a&gt;问题现象&lt;/h4&gt;&lt;p&gt;打开应用(热启动)后，概率性出现手指滑动界面无任何响应(界面控件支持上下滑动)&lt;/p&gt;
+&lt;h4 id=&quot;Systrace角度
+      
+    
+    </summary>
+    
+      <category term="性能" scheme="http://lihaizhou.top/categories/%E6%80%A7%E8%83%BD/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>第三视角: 一个ART GC的优化故事</title>
@@ -58,29 +82,6 @@
     </summary>
     
       <category term="ART" scheme="http://lihaizhou.top/categories/ART/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>案例分析:切换应用后高概率操作无响应(Systrace)</title>
-    <link href="http://lihaizhou.top/2021/10/19/%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90-%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%90%8E%E9%AB%98%E6%A6%82%E7%8E%87%E6%93%8D%E4%BD%9C%E6%97%A0%E5%93%8D%E5%BA%94-Systrace/"/>
-    <id>http://lihaizhou.top/2021/10/19/案例分析-切换应用后高概率操作无响应-Systrace/</id>
-    <published>2021-10-19T02:34:51.000Z</published>
-    <updated>2021-10-19T03:03:23.387Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h4><p>飞书群里多个同事反馈切换应用后操作界面无响应，且概率较高，微信，飞书等应用均能复现，说明非单个应用问题，下面从系统侧排查。</p><h4 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h4><p>问题出现时，抓取了一份Systrace</p><p>定位问题区域</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact1.png" alt="img"></p><p>除了开头的首帧，没有其它帧</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact2.png" alt="img"></p><p>为何没有帧呢？10S141ms微信adj切换到0(0代表前台)，说明这段时间微信确实处于前台。</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact3.png" alt="img"></p><p>此时很快注意到一个现象，这个时间段微信多个线程均处于非IO导致的D状态</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact4.png" alt="img"></p><p>到这里有点不解，暂时先放着，后面会解答，先看下输入事件是否正常</p><p>底层InputDispatcher，可以看到是有事件的</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact5.png" alt="img"></p><p>再来到SystemServer区域，没有事件</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact6.png" alt="img"></p><ol><li><strong>OutboundQueue</strong> 里面放的是即将要被派发给对应 AppConnection 的事件</li><li><strong>WaitQueue</strong> 记录的是已经派发给 AppConnection 但是 App 还在处理没有返回处理成功的事件</li></ol><p>到这里能够解释的通，正是由于应用自身处于D状态导致不能够正常接收事件</p><p>所以毫无疑问，对应的应用微信deliverInputEvent 区域肯定也是没有任何输入事件的。</p><p>ps：deliverInputEvent 标识 App UI Thread 被 Input 事件唤醒</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact7.png" alt="img"></p><p>思路是明确的，此时需要调查应用为何会处于D状态，因为等锁？可是搜了一圈没有看到等锁</p><p>很快注意到这么一个现象，在这个无响应期间，应用的匿名页占用呈下降趋势，Swap呈上升趋势，说明此时该进程在进行内存压缩。</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact8.png" alt="img"></p><p>再来到压缩区域看下，果不其然的确在进行压缩</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact9.png" alt="img"></p><p>可是为何会耗时如此之长，以前测试过最长也就1s左右，是因为压缩的内容太大导致的吗？</p><p>来到微信所在区域，可以看到其内存总计565M，匿名页大概109M，File大概446M，数值并不算高</p><p><img src="http://blog.lihaizhou.top/%E8%BF%9B%E7%A8%8B%E5%8E%8B%E7%BC%A9%E5%AF%BC%E8%87%B4%E5%88%87%E6%8D%A2%E5%BA%94%E7%94%A8%E5%8D%A1%E9%A1%BF/compact10.png" alt="img"></p><p>那么为何会耗时如此之久呢？</p><p>命令打印下压缩算法终于揭开谜底，因为有同事将原先的lz4压缩算法改为了zstd导致，沟通后将算法修改为lz4后问题消失。</p><hr><p>你这么优秀，还这么善解人意，入秋了天气转凉，保护好智慧的大脑，记得添衣~</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h4 id=&quot;问题背景&quot;&gt;&lt;a href=&quot;#问题背景&quot; class=&quot;headerlink&quot; title=&quot;问题背景&quot;&gt;&lt;/a&gt;问题背景&lt;/h4&gt;&lt;p&gt;飞书群里多个同事反馈切换应用后操作界面无响应，且概率较高，微信，飞书等应用均能复现，说明非单个应用问题，下面从系统侧排查。&lt;
-      
-    
-    </summary>
-    
-      <category term="性能" scheme="http://lihaizhou.top/categories/%E6%80%A7%E8%83%BD/"/>
     
     
   </entry>

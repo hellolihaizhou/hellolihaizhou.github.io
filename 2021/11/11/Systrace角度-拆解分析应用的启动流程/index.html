@@ -88,27 +88,39 @@
 
 
 
-<meta name="description" content="日志抓取在问题机器上抓了一份Systrace1.操作步骤: 进入设置界面滑动再退出2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。 问题分析从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上来到对端1188_19线程所在区域，看下这个时间点1188_19在做什么操作？1188_19是SystemServer中的线程，从上图可">
+<meta name="description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AMS锁严重竞争导致的整机卡顿">
-<meta property="og:url" content="http://lihaizhou.top/2021/09/18/AMS锁严重竞争导致的整机卡顿/index.html">
+<meta property="og:title" content="Systrace角度: 拆解分析应用的启动流程">
+<meta property="og:url" content="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="日志抓取在问题机器上抓了一份Systrace1.操作步骤: 进入设置界面滑动再退出2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。 问题分析从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上来到对端1188_19线程所在区域，看下这个时间点1188_19在做什么操作？1188_19是SystemServer中的线程，从上图可">
+<meta property="og:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast1.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast2.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast3.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast4.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast5.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast6.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast7.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast8.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast9.png">
-<meta property="og:updated_time" content="2021-10-16T05:13:46.925Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart3.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart4.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart5.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart6.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart7.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart8.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart9.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart10.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart11.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart12.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart13.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart14.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart15.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart16.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart17.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart18.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart19.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart20.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart21.png">
+<meta property="og:updated_time" content="2021-11-11T11:49:33.776Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AMS锁严重竞争导致的整机卡顿">
-<meta name="twitter:description" content="日志抓取在问题机器上抓了一份Systrace1.操作步骤: 进入设置界面滑动再退出2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。 问题分析从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上来到对端1188_19线程所在区域，看下这个时间点1188_19在做什么操作？1188_19是SystemServer中的线程，从上图可">
-<meta name="twitter:image" content="http://blog.lihaizhou.top/AMS_lock/broadcast1.png">
+<meta name="twitter:title" content="Systrace角度: 拆解分析应用的启动流程">
+<meta name="twitter:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png">
 
 
 
@@ -138,13 +150,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/2021/09/18/AMS锁严重竞争导致的整机卡顿/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/"/>
 
 
 
 
 
-  <title>AMS锁严重竞争导致的整机卡顿 | 李海洲</title>
+  <title>Systrace角度: 拆解分析应用的启动流程 | 李海洲</title>
   
 
 
@@ -297,7 +309,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/09/18/AMS锁严重竞争导致的整机卡顿/">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Steven Lee">
@@ -314,7 +326,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">AMS锁严重竞争导致的整机卡顿</h1>
+          <h1 class="post-title" itemprop="name headline">Systrace角度: 拆解分析应用的启动流程</h1>
         
 
         <div class="post-meta">
@@ -326,8 +338,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-18T10:37:49+08:00">
-                2021-09-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-11T19:40:26+08:00">
+                2021-11-11
               </time>
             
 
@@ -368,8 +380,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2021/09/18/AMS锁严重竞争导致的整机卡顿/" itemprop="commentCount"></span>
+                <a href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/11/11/Systrace角度-拆解分析应用的启动流程/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -391,7 +403,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,091
+                  2,036
                 </span>
               
 
@@ -407,7 +419,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  7
                 </span>
               
             </div>
@@ -428,17 +440,127 @@
       
 
       
-        <h5 id="日志抓取"><a href="#日志抓取" class="headerlink" title="日志抓取"></a>日志抓取</h5><p>在问题机器上抓了一份Systrace<br>1.操作步骤: 进入设置界面滑动再退出<br>2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。</p>
-<h5 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h5><p>从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast1.png" alt=""><br>来到对端1188_19线程所在区域，看下这个时间点1188_19在做什么操作？<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast2.png" alt=""><br>1188_19是SystemServer中的线程，从上图可以看出，它在等AMS锁<br>到这里大致梳理如下<br>1.进入设置应用走到onResume环节时，调用到AMS的registerReceiverWithFeature注册广播，这是应用启动过程中很常见的操作，但是此时registerReceiverWithFeature执行操作被block了，因为执行registerReceiverWithFeature需要申请到AMS锁才行。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Intent <span class="title">registerReceiverWithFeature</span><span class="params">(IApplicationThread caller, String callerPackage,</span></span></span><br><span class="line"><span class="function"><span class="params">   String callerFeatureId, IIntentReceiver receiver, IntentFilter filter,</span></span></span><br><span class="line"><span class="function"><span class="params">   String permission, <span class="keyword">int</span> userId, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">   <span class="comment">//省略部分代码</span></span><br><span class="line">   <span class="keyword">boolean</span> instantApp;</span><br><span class="line">   <span class="keyword">synchronized</span>(<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (caller != <span class="keyword">null</span>) &#123;</span><br><span class="line">          callerApp = getRecordForAppLocked(caller);</span><br><span class="line">          <span class="keyword">if</span> (callerApp == <span class="keyword">null</span>) &#123;</span><br><span class="line">              <span class="keyword">throw</span> <span class="keyword">new</span> SecurityException(</span><br><span class="line">                  <span class="string">"Unable to find app for caller "</span> + caller</span><br><span class="line">                      + <span class="string">" (pid="</span> + Binder.getCallingPid()</span><br><span class="line">                      + <span class="string">") when registering receiver "</span> + receiver);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">//省略部分代码</span></span><br><span class="line">      &#125;</span><br><span class="line">    <span class="comment">//省略部分代码</span></span><br></pre></td></tr></table></figure>
-<p>2.此时Settings的registerReceiverWithFeature在等ActivityManagerService#finishReceiver释放锁，但其实ActivityManagerService#finishReceiver本身也是在等锁，锁在1188_6这个线程手中。<br>图中有一处waiters=6说明还有其它六处加上这次调用共计7处在等AMS的锁<br>纵观整个应用操作片段，发现很多地方都在等AMS锁，这也说明了为何系统会全局卡顿。</p>
-<p>看下真正持有锁的1188_6这个线程,这个线程持有锁的这段时间内，大部分时候都是running状态<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast3.png" alt=""><br>全局搜索了下在一分钟不到的时间内触发了197次，而且单次基本都在200ms之久。<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast4.png" alt=""><br>为此对比了下正常情况下的Systrace，两分钟的时间内共触发14次，平均一分钟7次，且每次updateOomAdj_finishReceiver执行时间都不超过1ms<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast5.png" alt=""></p>
-<p>到这里大概整理下<br>1.<strong>为何updateOomAdj_finishReceiver会调用这么频繁?</strong><br>  updateOomAdj_finishReceiver是在广播处理结束后会触发调用，问题机器上一分钟调用197次，正常情况下一分钟调用次数是个位数.<br>2.<strong>为何updateOomAdj_finishReceiver耗时这么久?</strong><br>  单次执行都在200ms左右，这也意味着每次持有AMS锁大概200ms，也就意味着一分钟的时间finishReceiver持有AMS锁时间高达39s，这也解释了从Systrace看很多地方都在等AMS锁。<br>  测试了下正常情况下，updateOomAdj_finishReceiver单次执行时间最长一般不会超过1ms</p>
-<p>下面先从广播来源分析，updateOomAdj_finishReceiver触发频繁的原因</p>
-<h6 id="频繁触发原因"><a href="#频繁触发原因" class="headerlink" title="频繁触发原因"></a>频繁触发原因</h6><p>以导致设置应用resume耗时严重的这次updateOomAdj_finishReceiver为例<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast6.png" alt=""><br>1416对应的是SystemUI中线程，直接来到SystemServer区域看下广播部分<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast7.png" alt=""><br>再从全局来看<br><img src="http://blog.lihaizhou.top/AMS_lock/broadcast8.png" alt=""><br>可以看到com.android.providers.media.module以及SystemUI这两个模块在交替不间断的发送android.intent.action.MEDIA_SCANNER_SCAN_FILE这个广播，查看代码得知是com.android.providers.media.module这个模块处理扫描文件事务后会发送MEDIA_SCANNER_SCAN_FILE这个广播给SystemUI，SystemUI收到这个广播进行一系列的业务处理，然后再次发送MEDIA_SCANNER_SCAN_FILE这个广播出来。<br>这种业务设计肯定是不合理的，这里暂不继续讨论这种做法的缘由。</p>
-<h6 id="单次处理耗时"><a href="#单次处理耗时" class="headerlink" title="单次处理耗时"></a>单次处理耗时</h6><p><img src="http://blog.lihaizhou.top/AMS_lock/broadcast9.png" alt=""><br>从上图可以看到，问题发生时，SystemUI模块中单次处理该模块耗时达到1s多，这也和问题机器上SystemUI下拉栏滑动极其卡顿能够对应上。<br>结论: SystemUI主线程中广播处理耗时导致滑动很卡顿</p>
-<h5 id="问题结论"><a href="#问题结论" class="headerlink" title="问题结论"></a>问题结论</h5><p>主要由于如下两点原因导致:<br>1.SystemUI中不合理的高频广播，导致AMS@finishReceiver触发频繁并持有AMS锁，造成了全局AMS锁争抢极其严重。<br>2.SystemUI主线程中单次处理广播耗时较长，加剧了卡顿的现象。</p>
-<p>PS: SystemUI这个模块比较特殊，它不像其他应用模块。对于应用模块而言，即便是一直收发广播，卡顿也只是会局限在这个应用操作环节中，不会影响到其他模块。但是SystemUI就不同了，它是可以一直运行着，并且此时你可以操作其他任何应用。</p>
+        <p>上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。</p>
+<p>应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。</p>
+<p>本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。</p>
+<h4 id="测试步骤"><a href="#测试步骤" class="headerlink" title="测试步骤"></a>测试步骤</h4><ol>
+<li><p>使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再forceStop</p>
+</li>
+<li><p>手机放置五分钟后，确保机器未发热，此时打开Systrace录制，通过高速相机拍摄，点击icon冷启，再forceStop下，再次冷启，循环做五组</p>
+</li>
+</ol>
+<p>取耗时最长一次925ms为例进行分析，时间范围起始点:   以手指落下接触到icon为起点，以支付宝首页内容完全加载出为结束点</p>
+<h4 id="Input事件"><a href="#Input事件" class="headerlink" title="Input事件"></a>Input事件</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png" alt="img"></p>
+<p>关键时间点</p>
+<ol>
+<li>AppLaunch_dispatchPtr:Up:  5s 617ms</li>
+<li>Launcher中接收到input事件:   5s 620ms</li>
+</ol>
+<p>从up事件到Launcher接收到最早的input事件耗时约3ms</p>
+<p>这个过程大致就是：</p>
+<ol>
+<li>inputReader从Eventhub中获取到input事件后</li>
+<li>inputReader将事件给inputDispatcher，inputDispatcher会将事件放到 “iq” 队列中(图中没有列出)</li>
+<li>这个时候开始寻找处理这个input事件的目标窗口了，这个案例中对应的就是Launcher，找到后放在oq队列中，等着发送给Launcher</li>
+<li>事件发送出去后，将事件放到图中的wq队列中，等Launcher消费过这个事件后，会通知inputDisp已经消费完成，图中的wq凸起点会消失</li>
+</ol>
+<p>这里顺便说下，我们平时经常会遇到input类型的ANR，对应的正是wq的等待时长。</p>
+<p>简单理解就是事件发给应用窗口了，这个时候开始倒计时，如果5s内(我们项目上客制化为8s)应用窗口没有告知inputDispatcher这个事件消费完成，说明应用窗口无响应了，就会触发ANR。</p>
+<p>如果5s内应用窗口处理完成了并告知inputDispatcher后，inputDispatcher就会从 “wq” 队列中及时移除待处理事件避免ANR。</p>
+<h4 id="创建进程"><a href="#创建进程" class="headerlink" title="创建进程"></a>创建进程</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart2.png" alt="img"></p>
+<p>时间关键点: </p>
+<p>\1. fork进程起点 5s 652ms，耗时6ms</p>
+<p>这里顺便介绍下关于fork进程花费时间的优化，Android R上新增了一个usap的机制，大意是会预先fork一些空进程放在池中，这样可以省去应用fork的时间。</p>
+<p>有些厂商会定制化这块内容，将这些预先fork出来的空进程指定包名，比如用户感知较强的微信支付宝等，这样的在支付宝冷启时，这里就不会有fork的片段，其实就是空间换时间的做法。</p>
+<p>但是这种做法不太适合小内存机器，相比内存的额外开销所带来的仅仅几毫秒的提速，似乎并不是特别划算。</p>
+<p>\2. Launcher将自身pause 5s 665ms</p>
+<p>大概过程就是检测到前台此时resume状态的Activity是Launcher界面，就会通知桌面应用的 Activity 进入 Paused 状态，有些厂商会定制化桌面icon按压的效果，我手头的小米手机上按压会有一个置灰缩小的动画。</p>
+<p>Launcher onpause执行完成之后，便会开始启动动画，对应的会是一连串的帧。</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart3.png" alt="img"></p>
+<p>前面的内容大致对应了</p>
+<p>点击icon-&gt;input事件的分发-&gt; fork进程 -&gt; Launcher onpause</p>
+<p>launcher启动动画的过程中，支付宝开始同步执行生命周期，如果支付宝生命周期执行结束，则启动动画也会结束并切换到应用窗口</p>
+<h4 id="应用初始化环节"><a href="#应用初始化环节" class="headerlink" title="应用初始化环节"></a>应用初始化环节</h4><p>这块大致的过程是:</p>
+<p>ZygoteInit-&gt;ActivityThreadMain-&gt;BindApplication-&gt;StartActivity-&gt;onresume-&gt;doFrame-&gt;display</p>
+<p>对于应用开发人员而言，关注点是从BindApplication开始，这个时间点是应用开发者最早能够控制的时间点。</p>
+<p>ZygoteInit-&gt;ActivityThreadMain</p>
+<ul>
+<li><p>ZygoteInit -&gt; 5s 669ms   标识支付宝进程初始化开始，创建binder线程池之类的事务</p>
+</li>
+<li><p>ActivityThreadMain  -&gt; 5s 670ms  创建并启动主线程的 loop 消息循环；通过 binder 调用 AMS 的 attachApplication 接口将自己 attach 注册到 AMS 中。</p>
+</li>
+</ul>
+<h5 id="bindApplication"><a href="#bindApplication" class="headerlink" title="bindApplication"></a>bindApplication</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart4.png" alt="img"></p>
+<p>关键时间点</p>
+<p>bindApplication 起始点5s 676ms，耗时112ms</p>
+<p>bindApplication段CPU运行情况</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart5.png" alt="img"></p>
+<p>bindApplication耗时拆分</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart6.png" alt="img"></p>
+<h5 id="activityStart"><a href="#activityStart" class="headerlink" title="activityStart"></a>activityStart</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart7.png" alt="img"></p>
+<p>这个过程简单概述下来就是</p>
+<ol>
+<li>创建 Activity 的 Context；</li>
+<li>通过反射创建 Activity 对象；</li>
+<li>执行 Activity 的 attach 动作，其中会创建应用窗口的 PhoneWindow 对象并设置 WindowManage；</li>
+<li>执行应用 Activity 的 onCreate 生命周期函数，并在 setContentView 中创建窗口的 DecorView 对象；</li>
+</ol>
+<p>activityStart时间段CPU执行情况</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart8.png" alt="img"></p>
+<p>activityStart拆分耗时</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart9.png" alt="img"></p>
+<h5 id="activityResume"><a href="#activityResume" class="headerlink" title="activityResume"></a>activityResume</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart10.png" alt="img"></p>
+<p>这个阶段主要对应的操作</p>
+<ol>
+<li>执行应用 Activity 的 onResume 生命周期函数；</li>
+<li>执行 WindowManager 的 addView 动作开启视图绘制逻辑；</li>
+<li>创建 Activity 的 ViewRootImpl 对象；</li>
+<li>执行 ViewRootImpl 的 setView 函数开启 UI 界面绘制动作；</li>
+</ol>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart11.png" alt="img"></p>
+<h4 id="SplashActivity首帧"><a href="#SplashActivity首帧" class="headerlink" title="SplashActivity首帧"></a>SplashActivity首帧</h4><p>市面上有很多应用打开后会有一个启动界面，这个界面叫做SplashActivity，一般会在这个页面可以做一些App数据初始化的工作。</p>
+<p>如果应用没有SplashActivity的话，那这个环节可以直接跳过直接来到应用首页帧即可。</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart12.png" alt="img"></p>
+<p>关键时间点: 启动页首帧 5s 893ms ,耗时37ms</p>
+<p>首帧绘制结束时间点 5s931ms</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart13.png" alt="img"></p>
+<p>注意一点的是:</p>
+<p>这里的finish draw只有在mDrawsNeededToReport为0时才会打印</p>
+<p>mDrawsNeededToReport的含义是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A count of the number of calls to pendingDrawFinished we require to notify the WM drawing is complete.</span><br></pre></td></tr></table></figure>
+<p>简单的理解这次的绘制序列结束后会打印，所以我们在首页帧后面找不到finish draw是因为首页会加载很多内容，对应的是会有很多帧才能完成，所以首页帧的结束点用finish draw并不适用。</p>
+<p>还有一点值得注意，因为我们这个案例中是以支付宝为例的，支付宝是有SplashActivity的 ，所以Systrace中你所看到的launching: com.eg.android.AlipayGphone耗时不能代表整个启动过程。</p>
+<p>只能粗略的代表启动到SplashActivity首帧的耗时， 但是可以在和竞品数据对比时作为一个参考指标</p>
+<p>可以看到launching: com.eg.android.AlipayGphone共计耗费了286.6ms</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart14.png" alt="img"></p>
+<p>到这里 , 从dispatchPtr:Up的5s 617ms到SplashActivity首帧绘制结束时间点5s931ms，共耗时314ms</p>
+<h4 id="首页帧"><a href="#首页帧" class="headerlink" title="首页帧"></a>首页帧</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart15.png" alt="img"></p>
+<p>这一帧的cpu运行情况</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart16.png" alt="img"></p>
+<p>cpu运行情况</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart17.png" alt="img"></p>
+<p>渲染结束后将buffer queue到SF的队列中</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart18.png" alt="img"></p>
+<h4 id="冷启动结束帧"><a href="#冷启动结束帧" class="headerlink" title="冷启动结束帧"></a>冷启动结束帧</h4><p>对于有源码的应用，定义结束帧会比较简单，加载哪个view或layout能够大致代表界面内容显示完全作为owner你是清楚的。</p>
+<p>但是对于三方应用比如我们这个案例，没有其源代码，可以通过高速相机先大致确认下时间范围，然后在范围区域内的几帧逐一看。</p>
+<p>可以先查看下支付宝首页的布局，比如这里home_advertisement.xml对应主界面上的中间广告页，这个布局的加载完成，其后面紧跟着的一帧我我们就认为是结束帧。</p>
+<p>所以我们在对比竞品的Systrace时也要以home_advertisement.xml加载后的一帧为结束点。</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart19.png" alt="img"></p>
+<p>SF侧以及渲染线程侧</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart20.png" alt="img"></p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart21.png" alt="img"></p>
+<p>关键时间点: </p>
+<p>SF中bufferQueue对应的支付宝这一帧的buffer被消费后的时间点是 6s554ms</p>
+<p>这个时间点可以基本认为是冷启动最后的时间点</p>
+<p>到这里我们计算下冷启的大概耗时</p>
+<ul>
+<li><p>inputReader中读取到up事件起始点 : 5s 617ms</p>
+</li>
+<li><p>首页内容完全加载第一帧时间点: 6s554ms</p>
+</li>
+</ul>
+<p>整个冷启动过程共计耗时937ms，和我们高速相机测算的925ms比较接近</p>
+<h4 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h4><p>到这里，对于支付宝的整个启动流程拆解结束，希望通过本文能够加深对应用启动流程的理解，后面会另行成文分析和竞品机的差异细节。</p>
 
       
     </div>
@@ -470,7 +592,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lihaizhou.top/2021/09/18/AMS锁严重竞争导致的整机卡顿/" title="AMS锁严重竞争导致的整机卡顿">http://lihaizhou.top/2021/09/18/AMS锁严重竞争导致的整机卡顿/</a>
+    <a href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/" title="Systrace角度: 拆解分析应用的启动流程">http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -492,8 +614,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/" rel="next" title="GC超时导致的后台应用崩溃问题分析">
-                <i class="fa fa-chevron-left"></i> GC超时导致的后台应用崩溃问题分析
+              <a href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/" rel="next" title="案例分析:打开应用后操作界面无响应(Systrace)">
+                <i class="fa fa-chevron-left"></i> 案例分析:打开应用后操作界面无响应(Systrace)
               </a>
             
           </div>
@@ -501,10 +623,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/10/16/对进程压缩消费Zram速度的优化/" rel="prev" title="对进程压缩消费Zram速度的优化">
-                对进程压缩消费Zram速度的优化 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -641,7 +759,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#日志抓取"><span class="nav-number">1.</span> <span class="nav-text">日志抓取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#问题分析"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#频繁触发原因"><span class="nav-number">2.1.</span> <span class="nav-text">频繁触发原因</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#单次处理耗时"><span class="nav-number">2.2.</span> <span class="nav-text">单次处理耗时</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#问题结论"><span class="nav-number">3.</span> <span class="nav-text">问题结论</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试步骤"><span class="nav-number">1.</span> <span class="nav-text">测试步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Input事件"><span class="nav-number">2.</span> <span class="nav-text">Input事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建进程"><span class="nav-number">3.</span> <span class="nav-text">创建进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用初始化环节"><span class="nav-number">4.</span> <span class="nav-text">应用初始化环节</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#bindApplication"><span class="nav-number">4.1.</span> <span class="nav-text">bindApplication</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#activityStart"><span class="nav-number">4.2.</span> <span class="nav-text">activityStart</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#activityResume"><span class="nav-number">4.3.</span> <span class="nav-text">activityResume</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SplashActivity首帧"><span class="nav-number">5.</span> <span class="nav-text">SplashActivity首帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#首页帧"><span class="nav-number">6.</span> <span class="nav-text">首页帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#冷启动结束帧"><span class="nav-number">7.</span> <span class="nav-text">冷启动结束帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写在最后"><span class="nav-number">8.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
             
 
           </div>

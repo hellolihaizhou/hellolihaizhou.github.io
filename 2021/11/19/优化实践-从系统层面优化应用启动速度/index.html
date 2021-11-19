@@ -88,16 +88,24 @@
 
 
 
-<meta name="description" content="恍恍惚惚">
-<meta property="og:type" content="website">
-<meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/categories/Android/index.html">
+<meta name="description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单，以其中的支付宝为例 如下是测试提供的支付宝冷启数据 (通过高速相机，以手指松开为起点，以首页内容加载出为结束点)  从高速相机均值数据上，我们的机器上冷启支付宝">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优化实践:从系统层面优化应用启动速度">
+<meta property="og:url" content="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="恍恍惚惚">
+<meta property="og:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单，以其中的支付宝为例 如下是测试提供的支付宝冷启数据 (通过高速相机，以手指松开为起点，以首页内容加载出为结束点)  从高速相机均值数据上，我们的机器上冷启支付宝">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess3.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess4.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess5.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess6.png">
+<meta property="og:updated_time" content="2021-11-19T02:11:58.300Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李海洲">
-<meta name="twitter:description" content="恍恍惚惚">
+<meta name="twitter:title" content="优化实践:从系统层面优化应用启动速度">
+<meta name="twitter:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单，以其中的支付宝为例 如下是测试提供的支付宝冷启数据 (通过高速相机，以手指松开为起点，以首页内容加载出为结束点)  从高速相机均值数据上，我们的机器上冷启支付宝">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/startProcess/startProcess1.png">
 
 
 
@@ -127,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/categories/Android/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/"/>
 
 
 
 
 
-  <title>分类: Android | 李海洲</title>
+  <title>优化实践:从系统层面优化应用启动速度 | 李海洲</title>
   
 
 
@@ -152,7 +160,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
@@ -272,311 +280,332 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
-
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Android<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://blog.lihaizhou.top/%E4%B8%AA%E4%BA%BA/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/12/15/Android-Vsync/" itemprop="url">
-              
-                <span itemprop="name">Android-Vsync</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">优化实践:从系统层面优化应用启动速度</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-12-15T20:42:18+08:00"
-              content="2019-12-15" >
-          12-15
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-19T10:00:24+08:00">
+                2021-11-19
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+  	    
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能/" itemprop="url" rel="index">
+                    <span itemprop="name">性能</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/11/19/优化实践-从系统层面优化应用启动速度/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/11/19/优化实践-从系统层面优化应用启动速度/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,560
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/12/15/Android input系统/" itemprop="url">
-              
-                <span itemprop="name">Android input系统</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-12-15T13:31:51+08:00"
-              content="2019-12-15" >
-          12-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/04/12/Launcher应用的重构之路/" itemprop="url">
-              
-                <span itemprop="name">Launcher应用的重构之路</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-04-12T20:19:11+08:00"
-              content="2019-04-12" >
-          04-12
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/" itemprop="url">
-              
-                <span itemprop="name">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-03-11T22:19:11+08:00"
-              content="2019-03-11" >
-          03-11
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/03/Android输入系统系列-4-分发输入消息/" itemprop="url">
-              
-                <span itemprop="name">Android输入系统系列(4)----分发输入消息</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-03T23:14:08+08:00"
-              content="2018-07-03" >
-          07-03
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/" itemprop="url">
-              
-                <span itemprop="name">Android输入系统系列(3)----读取RawEvent</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-03T22:10:50+08:00"
-              content="2018-07-03" >
-          07-03
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/12/Android输入系统系列-2-EventHub/" itemprop="url">
-              
-                <span itemprop="name">Android输入系统系列(2)----EventHub</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-12T22:11:02+08:00"
-              content="2018-06-12" >
-          06-12
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/07/Android输入系统系列-1-InputManagerService/" itemprop="url">
-              
-                <span itemprop="name">Android输入系统系列(1)----InputManagerService</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-07T19:42:10+08:00"
-              content="2018-06-07" >
-          06-07
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/06/一个滑动冲突问题的分析流程/" itemprop="url">
-              
-                <span itemprop="name">一个滑动冲突问题的分析流程</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-06T21:58:15+08:00"
-              content="2018-06-06" >
-          06-06
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/" itemprop="url">
-              
-                <span itemprop="name">一个底层内存分配异常导致无法进入launcher问题分析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-05-31T10:31:47+08:00"
-              content="2018-05-31" >
-          05-31
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <blockquote>
+<p>应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点</p>
+</blockquote>
+<h4 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h4><p>最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单，以其中的支付宝为例</p>
+<p>如下是测试提供的支付宝冷启数据</p>
+<p>(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess1.png" alt=""></p>
+<p>从高速相机均值数据上，我们的机器上冷启支付宝比竞品机慢了29%，另外通过实测同时打开，直观感受上发现绝大部分时候确实慢于竞品机。</p>
+<p>顺便说一句:</p>
+<p>测试冷启速度最佳方式是通过高速相机，这种方式最贴近用户实际感受，其次便是通过Systrace，但是Systrace的结束帧的确定是个技术活(没有源码情况下)。</p>
+<h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>本文将以支付宝为例进行讨论，对于支付宝这种体积的App，在启动过程中会起来上百个业务操作，但是其冷启耗时却能够控制在几百毫秒，笔者觉得已经是非常之优秀了。</p>
+<p>其实这种头部App会有专门的性能团队进行优化，相信支付宝已经做了很多的优化工作。</p>
+<p>本文将致力于回答如下两个问题</p>
+<ol>
+<li>同样的App版本，同样的配置，为何我们的机器启动速度会比竞品机慢？</li>
+<li>如何优化提升我们机器上的应用启动速度？</li>
+</ol>
+<h4 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h4><ol>
+<li>App和系统角度分别看启动速度优化</li>
+<li>CPU提频</li>
+<li>Dex2oat策略优化</li>
+<li>抑制GC次数</li>
+<li>IO优化</li>
+<li>优化后实测数据</li>
+<li>写在最后</li>
+<li>参考文献</li>
+</ol>
+<h4 id="App-amp-系统角度看启动速度优化"><a href="#App-amp-系统角度看启动速度优化" class="headerlink" title="App&amp;系统角度看启动速度优化"></a>App&amp;系统角度看启动速度优化</h4><h5 id="应用角度看启动优化"><a href="#应用角度看启动优化" class="headerlink" title="##### 应用角度看启动优化"></a>##### 应用角度看启动优化</h5><p>对于应用启动优化手段比较常规，主要有如下几种:</p>
+<ol>
+<li>启动页主题之类的替换，达到视觉上的速度加快，并非真的快了。</li>
+<li>初始化的生命周期内一些繁重业务或者库加载尽可能的延迟加载，异步加载，用的时候再加载。</li>
+<li>布局上的优化，尽可能降低布局的复杂度，在需要用的时再加载</li>
+<li>主动dex2oat，需要注意的是在Android10+上谷歌限制了应用进程主动dex2oat，但是其实还是有办法触发，只是实现上会稍微麻烦一点，这里不展开讨论。</li>
+</ol>
+<p>这些常规的优化步骤是最基础的，但是实际优化起来并不一定容易，特别是一些庞大的团队合作App。</p>
+<p>以笔者曾经经历过的MI项目上的启动优化，由于项目业务代码实在太繁杂，初始化代码里充斥了各种回调各种插件，还有很多锁等待，文件读写，反射hook，网络操作等耗时的操作，梳理优化的过程需要有足够的耐心，需要不少的沟通成本。</p>
+<p>对于应用开发人员而言，分析应用自身的耗时分析手段比较常规，最常见的手段就是Systrace，traceview，simpleperf等，实在不行代码里进行插桩埋点，因为有源代码，一切都好办。</p>
+<p>而对于一些头部App比如抖音支付宝等，这类App往往有专门的性能团队，可能会涉及到GC优化，dex2oat优化，文件重排列降低IO次数等门槛较高的方向。</p>
+<h5 id="系统全局角度看启动优化"><a href="#系统全局角度看启动优化" class="headerlink" title="##### 系统全局角度看启动优化"></a>##### 系统全局角度看启动优化</h5><p>对于系统工程师而言，需要关注从驱动上报input事件到首页第一帧画面合成的整个过程。</p>
+<p>主要会涉及input事件传递，一帧的渲染，CPU&amp;GPU的调度频率，Surfaceflinger的合成等等。</p>
+<h4 id="CPU提频"><a href="#CPU提频" class="headerlink" title="CPU提频"></a>CPU提频</h4><p>下图是启动过程中主线程的CPU频率</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess2.png" alt=""></p>
+<p>mtk默认已有实现在进程创建后boost持续10s，从上面Systrace可以看到主线程绘制running的片段是跑在大核上且频率已是最高。</p>
+<p>但是在对比竞品机Systrace时，笔者发现竞品机surfaceflinger很多时候会跑在大核上，而我们的机器没有跑在大核的时候，其单次onMessageReceived耗时很多时候只有我们的一半。</p>
+<p>这里先解释下onMessageReceived的作用，主要是处理两个Message</p>
+<ol>
+<li><p>MessageQueue::INVALIDATE — 主要是执行 handleMessageTransaction&amp;handleMessageInvalidate</p>
+</li>
+<li><p>MessageQueue::REFRESH — 主要是执行 handleMessageRefresh 方法</p>
+</li>
+</ol>
+<p>可以简单的理解为这块的消息处理越快，合成的速度也会越快，画面能够提早显示出来，降低掉帧的概率。</p>
+<p>这个时候，你可能会有疑问了，竞品机是做了绑大核处理了吗？</p>
+<p>下面我们看下两者cpuset的差异</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess3.png" alt=""></p>
+<p>可以看到竞品机器对于surfaceflinger设置的是前台进程组，我们的机器遵循的是原生System-background，这也意味着我们机器上surfaceflinger只能跑在0-5核上。</p>
+<p>那么谷歌设计限制在System-background上基于什么考虑呢？猜测是因为绝大部分时候，这个设计都可以满足需求，占用大核的话可能会导致某些情况下加剧大核队列的负载。</p>
+<h4 id="Dex2oat策略优化"><a href="#Dex2oat策略优化" class="headerlink" title="Dex2oat策略优化"></a>Dex2oat策略优化</h4><p>我们知道dex2oat在优化时，会根据需要优化一定量的method。也就是说并不是优化的method都会被翻译成oat模式。根据优化的method的量的多少，可以分为几种常见的模式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify、quicken、space-profile、space、speed-profile、speed、everything</span><br></pre></td></tr></table></figure>
+<p>字面上比较好理解， 越后面的类型编译时间越长，占用的空间也越大，运行时打开速度也越快，典型空间换时间思路的体现。</p>
+<p>下面是我们的机器和对比机上参数的对比</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess4.png" alt=""></p>
+<p>参数是一致的，其实这也是平台默认的配置</p>
+<p>这些参数中有一项是install时的选择的模式: speed-profile</p>
+<p>这里说下speed和speed-profile的区别，speed-profile是对profile中的热点函数进行编译，可以简单理解为是局部编译，而speed是全编。</p>
+<p>对于dex2oat的调优，其实策略比较常规，根据不同的场景和负载，选择不同的模式。</p>
+<h4 id="降低GC的频率"><a href="#降低GC的频率" class="headerlink" title="降低GC的频率"></a>降低GC的频率</h4><p>过往性能案例里，有过较多的GC引起的性能问题。</p>
+<p>对这块内容感兴趣的话，可以阅读较早之前发表过的<android s="" art="" gc基础篇="">一文</android></p>
+<p>对GC的优化我们做了这样的修改：</p>
+<p>大意是在进程状态变化触发的GC转换中，如果当前堆增长(自上次GC以来)大小未达到可增长的1/4，则跳过本次GC，这样可以降低启动过程中GC的频率。</p>
+<p>另外，谷歌在Android R上的一笔GC优化修改，也是降低启动过程中的GC频率</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess5.png" alt=""></p>
+<p>大意就是应用启动过程中等进程fork结束之后，将堆上限阈值调整到最大，因为我们知道GC的触发时机主要取决于堆实际增长是否触及上限值，这样一来的话，进程启动过程中GC的概率就会降低，等两秒钟过后，再将堆上限阈值恢复回来。</p>
+<p>这些修改的目的都是为了降低GC对启动速度的影响，其实GC的影响不光光在启动上，对于整机的流畅度都起到了很重要影响。</p>
+<p>对于虚拟机的调优会是我们后面的一项重要课题，这块的内容较多且复杂，在梳理的过程中，如果遇到不明其意的代码，强烈建议查看其提交修改的过程，这样才能明白其修改的思路历程。</p>
+<h4 id="IO优化"><a href="#IO优化" class="headerlink" title="IO优化"></a>IO优化</h4><p>当内核发起一个读请求时（例如进程发起 read() 请求），首先会检查请求的数据是否缓存到了 pagecache 中。如果有，那么直接从内存中读取，不需要访问磁盘，这被称为 cache命中（cache hit）。如果 cache 中没有请求的数据，即 cache 未命中（cache miss），就必须从磁盘中读取数据。</p>
+<p>然后内核将读取的数据缓存到 cache 中，这样后续的读请求就可以命中 cache 了。Page 可以只缓存一个文件部分的内容，不需要把整个文件都缓存进来。对磁盘的数据进行缓存从而提高性能主要是基于两个因素：</p>
+<ul>
+<li><p>第一，磁盘访问的速度比内存慢好几个数量级（毫秒和纳秒的差距）。</p>
+</li>
+<li><p>第二是被访问过的数据，有很大概率会被再次访问。</p>
+</li>
+</ul>
+<p>对于一些头部App比如支付宝就对Apk中的文件进行了重排优化，大意就是:</p>
+<p>通过文件重布局，将启动阶段需要用到的文件在 APK 文件中排布在一起，尽可能的利用 pagecache 机制，用最少的磁盘 IO 次数，读取尽可能多的启动阶段需要的文件，减少 IO 开销，从而达到提升启动性能的目的</p>
+<p>上面是App中的IO优化策略，从系统角度的优化策略比较复杂，需要对文件系统比较熟悉。</p>
+<p>文件系统这块笔者自身只是停留粗浅的理论上，还需要不少的时间梳理学习，后续会单独成文记录IO这块的内容</p>
+<h4 id="最终优化效果"><a href="#最终优化效果" class="headerlink" title="最终优化效果"></a>最终优化效果</h4><p>当前采用了如下三种方式对启动性能进行了优化</p>
+<ol>
+<li><p>对SurfaceFlinger占据的CPU资源调整</p>
+</li>
+<li><p>针对不同场景下的dex2oat进行了编译模式调优</p>
+</li>
+<li><p>启动过程中降低GC次数</p>
+</li>
+</ol>
+<p>在优化后的版本上，我们再次使用高速相机对支付宝进行测试</p>
+<p><img src="http://blog.lihaizhou.top/startProcess/startProcess6.png" alt=""></p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p><a href="https://developer.android.google.cn/topic/performance/vitals/launch-time" target="_blank" rel="noopener">https://developer.android.google.cn/topic/performance/vitals/launch-time</a><br><a href="https://source.android.com/devices/tech/dalvik/configure" target="_blank" rel="noopener">https://source.android.com/devices/tech/dalvik/configure</a></p>
 
       
     </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
 
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/" title="优化实践:从系统层面优化应用启动速度">http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/" rel="next" title="Systrace角度: 拆解分析应用的启动流程">
+                <i class="fa fa-chevron-left"></i> Systrace角度: 拆解分析应用的启动流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/categories/Android/page/2/">2</a><a class="extend next" rel="next" href="/categories/Android/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -584,6 +613,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -604,8 +640,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -667,6 +712,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#故事背景"><span class="nav-number">1.</span> <span class="nav-text">故事背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写在前面"><span class="nav-number">2.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#大纲"><span class="nav-number">3.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#App-amp-系统角度看启动速度优化"><span class="nav-number">4.</span> <span class="nav-text">App&amp;系统角度看启动速度优化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#应用角度看启动优化"><span class="nav-number">4.1.</span> <span class="nav-text">##### 应用角度看启动优化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#系统全局角度看启动优化"><span class="nav-number">4.2.</span> <span class="nav-text">##### 系统全局角度看启动优化</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU提频"><span class="nav-number">5.</span> <span class="nav-text">CPU提频</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dex2oat策略优化"><span class="nav-number">6.</span> <span class="nav-text">Dex2oat策略优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#降低GC的频率"><span class="nav-number">7.</span> <span class="nav-text">降低GC的频率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IO优化"><span class="nav-number">8.</span> <span class="nav-text">IO优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最终优化效果"><span class="nav-number">9.</span> <span class="nav-text">最终优化效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料"><span class="nav-number">10.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -820,6 +881,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

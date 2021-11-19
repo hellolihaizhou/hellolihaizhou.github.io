@@ -101,7 +101,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess4.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess5.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess6.png">
-<meta property="og:updated_time" content="2021-11-19T02:27:29.156Z">
+<meta property="og:updated_time" content="2021-11-19T06:26:58.357Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="优化实践:从系统层面优化应用启动速度">
 <meta name="twitter:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点) 从高速相机均值数据上，我们的机器上冷启支付宝比竞">
@@ -428,7 +428,7 @@
         <blockquote>
 <p>应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点</p>
 </blockquote>
-<h4 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h4><p>最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单<br>以其中的支付宝为例, 如下是测试提供的支付宝冷启数据<br>(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)<br><img src="http://blog.lihaizhou.top/startProcess/startProcess1.png" alt=""></p>
+<h4 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h4><p>最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单<br>以其中的支付宝为例, 如下是测试提供的支付宝冷启数据<br>(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)<br><img style="margin: left;" src="http://blog.lihaizhou.top/startProcess/startProcess1.png"></p>
 <p>从高速相机均值数据上，我们的机器上冷启支付宝比竞品机慢了29%，另外通过实测同时打开，直观感受上发现绝大部分时候确实慢于竞品机。<br>顺便说一句:<br><code>测试冷启速度最佳方式是通过高速相机，这种方式最贴近用户实际感受，其次便是通过Systrace，但是Systrace的结束帧的确定是个技术活(没有源码情况下)。</code></p>
 <h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>本文将以支付宝为例进行讨论，对于支付宝这种体积的App，在启动过程中会起来上百个业务操作，但是其冷启耗时却能够控制在几百毫秒，我觉得已经是非常之优秀了。<br>其实这种头部App会有专门的性能团队进行优化，相信支付宝已经做了很多的优化工作。</p>
 <p>本文将致力于回答如下两个问题</p>

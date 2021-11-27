@@ -88,24 +88,24 @@
 
 
 
-<meta name="description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试下来的主">
+<meta name="description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。打算实际对比体验下，在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。实际对比测试下来的主观感受是: 在我们的测">
 <meta property="og:type" content="article">
 <meta property="og:title" content="优化实践: 高刷下列表滑动出现卡顿掉帧">
 <meta property="og:url" content="http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试下来的主">
+<meta property="og:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。打算实际对比体验下，在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。实际对比测试下来的主观感受是: 在我们的测">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png#pic_left">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png#pic_left">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png#pic_left">
 <meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun4.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun5.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun6.png">
-<meta property="og:updated_time" content="2021-11-27T04:34:13.921Z">
+<meta property="og:updated_time" content="2021-11-27T04:40:14.635Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="优化实践: 高刷下列表滑动出现卡顿掉帧">
-<meta name="twitter:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试下来的主">
-<meta name="twitter:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png">
+<meta name="twitter:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。以微信为例，如下是测试提供的测试报告这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。打算实际对比体验下，在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。实际对比测试下来的主观感受是: 在我们的测">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png#pic_left">
 
 
 
@@ -388,7 +388,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,639
+                  1,628
                 </span>
               
 
@@ -425,24 +425,19 @@
       
 
       
-        <h4 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h4><p>近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。<br>以微信为例，如下是测试提供的测试报告<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png" alt="图片"><br>这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。<br>抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。</p>
-<p>实际对比测试下来的主观感受是:<br><code>在我们的测试机上，滑动松开手指后会概率性出现顿挫感，荣耀机器上滑动的fling阶段比较平滑，虽然偶尔也会有顿挫，对比体验上确实优于我们的测试机。</code></p>
-<p>基于数据报告以及主观测试感受，说明我们的机器在部分场景操作上可能确实存在性能问题，于是笔者开始着手调查这个问题背后的原因。</p>
+        <h4 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h4><p>近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。<br>以微信为例，如下是测试提供的测试报告<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png#pic_left" alt="图片"><br>这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。<br>打算实际对比体验下，在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。<br>实际对比测试下来的主观感受是: 在我们的测试机上，滑动松开手指后会概率性出现顿挫感，荣耀机器上滑动的fling阶段比较平滑，虽然偶尔也会有顿挫，对比体验上确实优于我们的测试机</p>
+<p>基于数据报告以及主观测试感受，说明我们的机器在部分场景操作上可能确实存在性能问题，于是开始着手调查这个问题背后的原因。</p>
 <h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>我们的测试机和对比机均支持120hz高刷，实测在滑动场景下，两者屏幕的刷新率均为120hz，意味着都是8.3ms刷新一次屏幕，滑动松开手指后的fling阶段，两者软件上均为120fps。<br>需要注意一点的是: </p>
 <blockquote>
 <p>120hz指的是屏幕这个硬件刷新画面的频率，是一个硬件的概念。而软件的120fps则是一个软件的概念，表示1秒内生产120帧。<br>一般而言，屏幕刷新率和软件的fps是对应的，比如60hz对应60fps，120hz对应120fps，只有这样用户体验才是最佳的，两者是通过Vsync 机制做到同步，如果屏的刷新率和软件不匹配的话，效果上势必会打折扣，还可能造成无端的功耗开销。<br>比如屏幕刷新率是 60 hz，软件是 120 fps，那么软件每秒绘制的120次有一半是没有显示就被抛弃了的。</p>
 </blockquote>
-<p>以我们这个案例来说，滑动微信列表松开手指后，此时屏的刷新率是120hz，系统为了适配这个120hz，会将Vsync的周期设置为8.3ms，意味着每隔 8.3 ms，Vsync-app 信号就会到来唤醒 Choreographer 来做 App 的绘制渲染操作。</p>
-<p>App绘制渲染完成后，会将buffer给SurfaceFlinger对应的App所在的bufferQueue队列中，SurfaceFlinger同样需要等Vsync-sf信号，等到信号后SurfaceFlinger开始合成工作并最终送给屏显示，这个过程中如果有一个步骤耗时长了都有可能导致最终一帧花费时间超出8.3ms。</p>
-<h4 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h4><p>有了这些基础知识铺垫后，下面从系统全局来分析<br>先看下手指松开fling阶段的应用绘制片段<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png" alt="图片"></p>
-<p>可以看到，在fling阶段，我们的测试机有很多黄帧，对比机上只有少数的几帧是黄色的<br>这里先解释下黄色帧的含义</p>
+<p>以我们这个案例来说，滑动微信列表松开手指后，此时屏的刷新率是120hz，系统为了适配这个120hz，会将Vsync的周期设置为8.3ms，意味着每隔 8.3 ms，Vsync-app 信号就会到来唤醒 Choreographer 来做 App 的绘制渲染操作。<br>App绘制渲染完成后，会将buffer给SurfaceFlinger对应的App所在的bufferQueue队列中，SurfaceFlinger同样需要等Vsync-sf信号，等到信号后SurfaceFlinger开始合成工作并最终送给屏显示，这个过程中如果有一个步骤耗时长了都有可能导致最终一帧花费时间超出8.3ms。</p>
+<h4 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h4><p>有了这些基础知识铺垫后，下面从系统全局来分析<br>先看下手指松开fling阶段的应用绘制片段<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png#pic_left" alt="图片"><br>可以看到，在fling阶段，我们的测试机有很多黄帧，对比机上只有少数的几帧是黄色的<br>这里先解释下黄色帧的含义</p>
 <blockquote>
 <p>黄帧表示这一帧的耗时超过了1个 Vsync 周期，但是小于 2 个 Vsync 周期。<br>黄帧的出现表示这一帧可能存在性能问题，可能掉帧了，注意这里用了可能这个词，因为TripleBuffer机制，即便主线程这一帧超过一个Vsync周期，由于多buffer缓冲，这一帧不一定会掉帧，我们后面会单独成文介绍这块。<br>绿帧表示这一帧在规定时间内及时完成了，耗时不超过1个 Vsync 周期</p>
 </blockquote>
-<p>再看下Sf区域的情况<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png" alt="图片"></p>
-<p>两者Vsync间隔都是8.3ms，对比机的Sf主线程在大部分时候，都能在Vsync-sf到来后的8.3ms内及时完成，画面上看有条不紊。</p>
-<p>再看下我们的测试机情况，很容易发现由于单次处理比较耗时，出现了堆积延后的情况，这也导致了在屏幕上看到的画面不是很流畅的缘故。<br>通过对比应用fling阶段主线程区域，绘制区域，Sf区域，很快便发现了我们的测试机输在了CPU频率上<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun4.png" alt="图片"></p>
-<p>从上图可以看出，我们的测试机在应用主线程处理过程中，很多时候CPU频率会掉的很低。<br>比如图中圈出的红色位置，我们测试机在这一帧的应用主线程处理上耗时12ms，虽然是落在大核CPU6上，但是频率只有650Mkhz。<br>再看下竞品机的应用主线程处理阶段CPU情况，在手指触摸后，其频率迅速提升，并且在手指松开后的fling阶段，对比机仍然能够维持一两秒的CPU高频。</p>
+<p>再看下Sf区域的情况<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png#pic_left" alt="图片"><br>两者Vsync间隔都是8.3ms，对比机的Sf主线程在大部分时候，都能在Vsync-sf到来后的8.3ms内及时完成，画面上看有条不紊。</p>
+<p>再看下我们的测试机情况，很容易发现由于单次处理比较耗时，出现了堆积延后的情况，这也导致了在屏幕上看到的画面不是很流畅的缘故。<br>通过对比应用fling阶段主线程区域，绘制区域，Sf区域，很快便发现了我们的测试机输在了CPU频率上<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun4.png" alt="图片"><br>从上图可以看出，我们的测试机在应用主线程处理过程中，很多时候CPU频率会掉的很低。<br>比如图中圈出的红色位置，我们测试机在这一帧的应用主线程处理上耗时12ms，虽然是落在大核CPU6上，但是频率只有650Mkhz。<br>再看下竞品机的应用主线程处理阶段CPU情况，在手指触摸后，其频率迅速提升，并且在手指松开后的fling阶段，对比机仍然能够维持一两秒的CPU高频。</p>
 <p>到这里，我们明白了差距在哪里，我们的测试机在手指松开后的fling阶段CPU落下来，而对比机能够在fling阶段维持高频。</p>
 <h4 id="修改方案"><a href="#修改方案" class="headerlink" title="修改方案"></a>修改方案</h4><p>修改方案是当用户触摸屏幕后，即监测到有touch事件后，将大核和小核的CPU频率分别限制为不低于1.75Ghz和2.2Ghz(天花板分别为2G和2.4G)<br>并且boost持续时间限定为2s，这样的话可以避免一直处于高频带来的功耗问题<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun5.png" alt="图片"><br>再次测试微信滑动列表的场景，可以看到修改后，处理堆积延后的现象消失</p>
 <p>再看下应用区域的fling阶段<br><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun6.png" alt="图片"><br>从图中可以看到修改后，fling阶段黄色帧大幅减少，基本达到了竞品机的表现</p>

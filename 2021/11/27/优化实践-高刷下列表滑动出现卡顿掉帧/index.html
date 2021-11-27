@@ -88,16 +88,24 @@
 
 
 
-<meta name="description" content="恍恍惚惚">
-<meta property="og:type" content="website">
-<meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/archives/2019/04/index.html">
+<meta name="description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。 以微信为例，如下是测试提供的测试报告  这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。 抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优化实践: 高刷下列表滑动出现卡顿掉帧">
+<meta property="og:url" content="http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="恍恍惚惚">
+<meta property="og:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。 以微信为例，如下是测试提供的测试报告  这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。 抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun4.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun5.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun6.png">
+<meta property="og:updated_time" content="2021-11-27T04:27:12.249Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李海洲">
-<meta name="twitter:description" content="恍恍惚惚">
+<meta name="twitter:title" content="优化实践: 高刷下列表滑动出现卡顿掉帧">
+<meta name="twitter:description" content="问题背景近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。 以微信为例，如下是测试提供的测试报告  这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。 抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。 实际对比测试">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png">
 
 
 
@@ -127,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://lihaizhou.top/archives/2019/04/"/>
+  <link rel="canonical" href="http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/"/>
 
 
 
 
 
-  <title>归档 | 李海洲</title>
+  <title>优化实践: 高刷下列表滑动出现卡顿掉帧 | 李海洲</title>
   
 
 
@@ -152,7 +160,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 	
 	<!--<a href="https://github.com/hellolihaizhou" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>-->
@@ -272,73 +280,282 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
-
-      <span class="archive-page-counter">
-        
-        
-         
-        
-        OK! 目前共计 41 篇日志。 继续努力。
-      </span>
-
-      
-
-        
-        
-        
-
-        
-          
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
-
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Steven Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://blog.lihaizhou.top/%E4%B8%AA%E4%BA%BA/background.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李海洲">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/04/12/Launcher应用的重构之路/" itemprop="url">
-              
-                <span itemprop="name">Launcher应用的重构之路</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">优化实践: 高刷下列表滑动出现卡顿掉帧</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2019-04-12T20:19:11+08:00"
-              content="2019-04-12" >
-          04-12
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-27T12:08:46+08:00">
+                2021-11-27
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+  	    
+          </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/性能/" itemprop="url" rel="index">
+                    <span itemprop="name">性能</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,635
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
+      
 
+      
+        <h4 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h4><p>近期我们的测试同事，上报了一些操作掉帧的问题，对比机选取的是同配置的荣耀x20。</p>
+<p>以微信为例，如下是测试提供的测试报告</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun1.png" alt="图片"></p>
+<p>这份perfdog报告的操作步骤对应的是上下滑动微信列表，数据上看，测试机表现似乎比对比机逊色一些。</p>
+<p>抱着怀疑的态度，打算实际对比体验下，于是在两台机器上安装同版本的微信，清理后台任务，并确保两台机器上的微信均已完成dex2oat且dex2oat模式一样。</p>
+<p>实际对比测试下来的主观感受是: </p>
+<p>在我们的测试机上，滑动松开手指后会概率性出现顿挫感，荣耀机器上滑动的fling阶段比较平滑，虽然偶尔也会有顿挫，对比体验上确实优于我们的测试机。</p>
+<p>基于数据报告以及主观测试感受，说明我们的机器在部分场景操作上可能确实存在性能问题，于是笔者开始着手调查这个问题背后的原因。</p>
+<h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>我们的测试机和对比机均支持120hz高刷，实测在滑动场景下，两者屏幕的刷新率均为120hz，意味着都是8.3ms刷新一次屏幕，滑动松开手指后的fling阶段，两者软件上均为120fps。</p>
+<p>需要注意一点的是: </p>
+<blockquote>
+<p>120hz指的是屏幕这个硬件刷新画面的频率，是一个硬件的概念。而软件的120fps则是一个软件的概念，表示1秒内生产120帧。</p>
+<p>一般而言，屏幕刷新率和软件的fps是对应的，比如60hz对应60fps，120hz对应120fps，只有这样用户体验才是最佳的，两者是通过Vsync 机制做到同步，如果屏的刷新率和软件不匹配的话，效果上势必会打折扣，还可能造成无端的功耗开销。</p>
+<p>比如屏幕刷新率是 60 hz，软件是 120 fps，那么软件每秒绘制的120次有一半是没有显示就被抛弃了的。</p>
+</blockquote>
+<p>以我们这个案例来说，滑动微信列表松开手指后，此时屏的刷新率是120hz，系统为了适配这个120hz，会将Vsync的周期设置为8.3ms，意味着每隔 8.3 ms，Vsync-app 信号就会到来唤醒 Choreographer 来做 App 的绘制渲染操作。</p>
+<p>App绘制渲染完成后，会将buffer给SurfaceFlinger对应的App所在的bufferQueue队列中，SurfaceFlinger同样需要等Vsync-sf信号，等到信号后SurfaceFlinger开始合成工作并最终送给屏显示，这个过程中如果有一个步骤耗时长了都有可能导致最终一帧花费时间超出8.3ms。</p>
+<p>有了这些基础知识铺垫后，下面从系统全局来分析</p>
+<p>先看下手指松开fling阶段的应用绘制片段</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun2.png" alt="图片"></p>
+<p>可以看到，在fling阶段，我们的测试机有很多黄帧，对比机上只有少数的几帧是黄色的</p>
+<p>这里先解释下黄色帧的含义</p>
+<blockquote>
+<p>黄帧表示这一帧的耗时超过了1个 Vsync 周期，但是小于 2 个 Vsync 周期。</p>
+<p>黄帧的出现表示这一帧可能存在性能问题，可能掉帧了，注意这里用了可能这个词，因为TripleBuffer机制，即便主线程这一帧超过一个Vsync周期，由于多buffer缓冲，这一帧不一定会掉帧，我们后面会单独成文介绍这块。</p>
+<p>绿帧表示这一帧在规定时间内及时完成了，耗时不超过1个 Vsync 周期</p>
+</blockquote>
+<p>再看下Sf区域的情况</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun3.png" alt="图片"></p>
+<p>两者Vsync间隔都是8.3ms，对比机的Sf主线程在大部分时候，都能在Vsync-sf到来后的8.3ms内及时完成，画面上看有条不紊。</p>
+<p>再看下我们的测试机情况，很容易发现由于单次处理比较耗时，出现了堆积延后的情况，这也导致了在屏幕上看到的画面不是很流畅的缘故。</p>
+<p>通过对比应用fling阶段主线程区域，绘制区域，Sf区域，很快便发现了我们的测试机输在了CPU频率上</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun4.png" alt="图片"></p>
+<p>从上图可以看出，我们的测试机在应用主线程处理过程中，很多时候CPU频率会掉的很低。</p>
+<p>比如图中圈出的红色位置，我们测试机在这一帧的应用主线程处理上耗时12ms，虽然是落在大核CPU6上，但是频率只有650Mkhz。</p>
+<p>再看下竞品机的应用主线程处理阶段CPU情况，在手指触摸后，其频率迅速提升，并且在手指松开后的fling阶段，对比机仍然能够维持一两秒的CPU高频。</p>
+<p>到这里，我们明白了差距在哪里，我们的测试机在手指松开后的fling阶段CPU落下来，而对比机能够在fling阶段维持高频。</p>
+<h4 id="修改方案"><a href="#修改方案" class="headerlink" title="修改方案"></a>修改方案</h4><p>修改方案是当用户触摸屏幕后，即监测到有touch事件后，将大核和小核的CPU频率分别限制为不低于1.75Ghz和2.2Ghz(天花板分别为2G和2.4G)</p>
+<p>并且boost持续时间限定为2s，这样的话可以避免一直处于高频带来的功耗问题</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun5.png" alt="图片"></p>
+<p>再次测试微信滑动列表的场景，可以看到修改后，处理堆积延后的现象消失</p>
+<p>再看下应用区域的fling阶段</p>
+<p><img src="http://blog.lihaizhou.top/%E9%AB%98%E5%88%B7%E4%B8%8B%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF/gaoshua_kadun6.png" alt="图片"></p>
+<p>从图中可以看到修改后，fling阶段黄色帧大幅减少，基本达到了竞品机的表现</p>
+<h4 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h4><p>120fps最大的挑战在于一帧的完成必须在8.3ms内完成，细化一点就是App 和 SurfaceFlinger 及其相关的进程端 (加上 crtc 和 hw service)花费的时间总和必须在 8.3ms 之内, 这就需要App侧和Sf侧都不能出现较长耗时，才可以保证不掉帧. </p>
+<p>高刷下的掉帧原因可能有很多，就笔者遇到的场景有低内存下kswapd跑大核、同步GC、温升限频、IO、Vsync不均、GPU&amp;CPU性能不足等场景，当然最常见的场景还是应用自身绘制超时导致。</p>
+<p>这个案例根因在于高刷场景下没有提供足够的CPU性能。</p>
+<hr>
+<p>2021.11.27 周六  午后  今天真的应该带个野餐垫去公园，而不是呆在公司</p>
+
+      
     </div>
+    
+    
+    
+	
+	<div>
+	  
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>请多多指教-------------</div>
+    
+</div>
+
+      
+    </div>
+	
+    
+	
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Steven Lee
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/" title="优化实践: 高刷下列表滑动出现卡顿掉帧">http://lihaizhou.top/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/11/19/优化实践-从系统层面优化应用启动速度/" rel="next" title="优化实践:从系统层面优化应用启动速度">
+                <i class="fa fa-chevron-left"></i> 优化实践:从系统层面优化应用启动速度
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -346,6 +563,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -366,8 +590,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -429,6 +662,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题背景"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写在前面"><span class="nav-number">2.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改方案"><span class="nav-number">3.</span> <span class="nav-text">修改方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写在最后"><span class="nav-number">4.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -582,6 +831,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

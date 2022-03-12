@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Steven Li">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Steven Li">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="愿历尽千帆,归来仍少年">
+    <meta name="description" content="前言从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章的铺垫，阅读本文将会比较轻松。笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。 故事的缘起笔者在梳理GC这块的代码时，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第三视角: 一个ART GC的优化故事">
+<meta property="og:url" content="http://lihaizhou.top/2021/11/01/第三视角-一个ART-GC的优化故事/index.html">
+<meta property="og:site_name" content="李海洲">
+<meta property="og:description" content="前言从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章的铺垫，阅读本文将会比较轻松。笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。 故事的缘起笔者在梳理GC这块的代码时，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.lihaizhou.top/ART_story/GC_story1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/ART_story/GC_story2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/ART_story/GC_story3.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/ART_story/GC_story4.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/ART_story/GC_story5.png">
+<meta property="og:updated_time" content="2021-11-01T10:06:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第三视角: 一个ART GC的优化故事">
+<meta name="twitter:description" content="前言从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章的铺垫，阅读本文将会比较轻松。笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。 故事的缘起笔者在梳理GC这块的代码时，">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/ART_story/GC_story1.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+        <link rel="alternate" href="/atom.xml" title="愿历尽千帆,归来仍少年" type="application/atom+xml">
+    
+    <title>第三视角: 一个ART GC的优化故事 · 李海洲</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20210823" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20210823" as="style">
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/mobile.css?v=20210823" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20210823" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20210823" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin="">
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin="">
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>愿历尽千帆,归来仍少年</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">愿历尽千帆,归来仍少年</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">第三视角: 一个ART GC的优化故事</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                第三视角: 一个ART GC的优化故事
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3,575</span>阅读时长: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2021/11/01</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章<android s="" art="" gc基础="">的铺垫，阅读本文将会比较轻松。<br>笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。<br>通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。</android></p>
+<h4 id="故事的缘起"><a href="#故事的缘起" class="headerlink" title="故事的缘起"></a>故事的缘起</h4><p>笔者在梳理GC这块的代码时，偶然看到一处友商的提交，不禁有点好奇。为了探究其修改的缘由，仔细阅读了这笔修改的提交更新以及所有的comment之后，觉得其中一些思路对我们有启发作用，故而决定将这个思路过程尽可能的还原出来。<br>为了提升可读性，将通过故事叙事的方式展开，以第三视角来讲述。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">主角: 卢卡斯(谷歌员工)，大壮(友商员工)    </span><br><span class="line">配角: 汉斯(谷歌员工)   </span><br><span class="line">旁白: 笔者</span><br></pre></td></tr></table></figure></p>
+<h4 id="故事开始"><a href="#故事开始" class="headerlink" title="故事开始"></a>故事开始</h4><p>大壮在国内一家手机厂商搬砖，负责整机性能方面的研究。最近大壮有点闷闷不乐，项目上一些GC相关的性能问题困扰了他许久，具体是什么GC问题呢？<br>大壮通过不限于Systrace等手段，发现在一些场景下比如后台运行较多应用时，GC会消耗较多CPU资源，加剧系统负担，表现出的现象就是更加卡顿了。<br>于是，自信上进的大壮开始着手调研该如何解决这个问题，最终有了一个方案：<br>既然GC会在后台运行较多应用时争抢CPU，那么在CPU负载高的时候降低GC的触发，CPU负载低的时候再恢复，这不就可以了吗？</p>
+<ol>
+<li>怎么降低GC频率呢？Multiplier机制。</li>
+<li>怎么统计CPU负载呢？大壮看了下代码中原本就有GC期间占据的CPU数据。</li>
+</ol>
+<p>看起来小菜一碟嘛，熟悉GC流程代码的大壮很快就做出了第一笔修改。</p>
+<h5 id="修改Multiplier"><a href="#修改Multiplier" class="headerlink" title="修改Multiplier"></a>修改Multiplier</h5><p>考虑到HeapGrowthMultiplier这个接口是谷歌原有的，存在多处会调用，为了不影响其他调用,贴心的大壮加了一个单独的接口HeapGrowthMultiplierExt,  这个接口最终会调用HeapGrowthMultiplier，只是在此之前会有一些判断条件。比如是否处于亮屏，不同的radio下返回不同的Multiplier值。<br>通过前一篇文章的分析，我们知道Multiplier的改变会引起下次GC水位的提升，总的而言，值越高GC的触发频率就会更低。<br>runtime/gc/collector/garbage_collector.cc<br><img src="http://blog.lihaizhou.top/ART_story/GC_story1.png" alt="图片"><br>runtime/gc/heap.cc</p>
+<p><img src="http://blog.lihaizhou.top/ART_story/GC_story2.png" alt="图片"></p>
+<h5 id="降低GC转换的次数"><a href="#降低GC转换的次数" class="headerlink" title="降低GC转换的次数"></a>降低GC转换的次数</h5><p><img src="http://blog.lihaizhou.top/ART_story/GC_story3.png" alt="图片"><br>前后台切换会导致GC转换，大壮心想有一些本身占据堆内存就比较小的进程，他们很多时候的GC转换带来的收益并不明显。<br>特别是内存比较充足的项目这种GC转换似乎有点多余，那么通过判断堆使用大小，去掉一些”不必要”的GC转换，这样就可以降低系统负担。</p>
+<p>旁白:<br>为了可拓展性，尽可能的不要引入硬编码，即便你是通过大量数据实测出来的最优值，除非是一些约定俗成的值。提到硬编码这种情况，在实际项目上经常出现，很多时候这种代码的引入，是由于Reviewer的疏忽没有发现或者说默许了。</p>
+<h4 id="谷歌Review"><a href="#谷歌Review" class="headerlink" title="谷歌Review"></a>谷歌Review</h4><p>很快，大壮的提交修改引起了卢卡斯的注意，看完了大壮的修改后，卢卡斯脑袋上顶着大大的问号。<br>对于如下大壮添加的计算gc期间CPU负载的做法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uint64_t gc_cpu_time = thread_cpu_end_time - thread_cpu_start_time;  </span><br><span class="line">float ratio = static_cast&lt;float&gt;(gc_cpu_time) / duration_ns;</span><br></pre></td></tr></table></figure></p>
+<p>卢卡斯认为这只是本次GC周期内的CPU负载情况，且这个值在绝大部分时候都应该是接近1的，并不能说明未来一段时间的CPU情况。<br>另外，GC等待checkpoint或者其他原因都可能会导致GC等待，但是这些等待的时间不会计入gc_cpu_time中，所以这种计算方式只能说一定程度上可能暗示了当前的负载情况，但是远远达不到可靠的地步。</p>
+<p>旁白：<br>注意这里谷歌提到了未来的CPU使用情况，是因为这个比例值是本次GC周期计算的，你可以理解为是一个瞬时值，但是抑制GC的情况是需要等到<br>下次GC触发才会发生的，是一个未来发生的事情，那么等到下次GC的时候，本次GC算出的负载可能就不适用了。</p>
+<p>大壮：<br>大壮看完大G的回复之后，虎躯一震，这修改。。怕是要凉啊！于是大壮赶紧回复到：<br>在一些性能较差设备上，如果后台开启很多应用，很多时候这个比例值会低于0.5甚至触及0.2。<br>另外，我们做过功耗测试，这修改后的效果杠杠的，改善很明显(使用时间增加了18分钟)。</p>
+<p>卢卡斯：<br>看完大壮理直气壮的回复后，卢卡斯回复到：这里亮屏的判断，并根据不同的radio返回不同的Multiplier，这个修改同样会作用到所有系统进程(如system_server、systemui等)，作用于<br>系统进程是一种错误的行为。还有根据不同的radio即你认为的代表负载情况，返回不同的Multiplier值。这些Multiplier值你是怎么得出来的？<br>比如你上面写的当ratio &lt; 0.3时，返回Multiplier 6，这个值6怎么来的？为何不是返回8？为啥不是9？为啥不是一个10000000000？(谷歌没说这句话)。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (screenOn) &#123;</span><br><span class="line">    <span class="keyword">float</span> ratio = current_gc_iteration_.GetRunningRatio();</span><br><span class="line">    <span class="keyword">if</span> (!CareAboutPauseTimes()) &#123;</span><br><span class="line">      <span class="keyword">if</span> (ratio &lt; <span class="number">0.3</span>) <span class="keyword">return</span> <span class="number">6.0</span>;</span><br><span class="line">      <span class="keyword">if</span> (ratio &lt; <span class="number">0.5</span>) <span class="keyword">return</span> <span class="number">4.0</span>;</span><br><span class="line">      <span class="keyword">if</span> (ratio &lt; <span class="number">0.7</span>) <span class="keyword">return</span> <span class="number">2.0</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (ratio &lt; <span class="number">0.3</span>) <span class="keyword">return</span> <span class="number">7.0</span>;</span><br><span class="line">      <span class="keyword">if</span> (ratio &lt; <span class="number">0.6</span>) <span class="keyword">return</span> <span class="number">5.0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//....</span></span><br></pre></td></tr></table></figure>
+<p>旁白：给谷歌提代码一定要避免提交这种硬编码</p>
+<p>大壮：<br>此时的大壮，刚从食堂吃完午饭回来的路上，一路上大壮都在和同事吐槽食堂的饭菜又贵又难吃。<br>坐到座位上，看到卢卡斯的连环追问，大壮有点发蒙。这些数据我经过一些性能和功耗测试，是有帮助的，既然你们提出来这样的修改不合理，那么请告诉我,还有没有其它办法可以降低高负载情况下GC的频率。</p>
+<p>卢卡斯:<br>此时的卢卡斯正喝着咖啡，窗外阳光正明媚，卢卡斯回过头和旁边的汉斯说到，这天气不去钓鱼真是浪费生命啊，汉斯点头如蒜捣，没错没错。<br>这个时候，卢卡斯看了下时间快4点了，准备收拾下班，这个时候看到了大壮的comment，回复到:<br>在堆使用较少的情况下不进行GC我觉得有意义，这种情况下我认为是可以直接跳过GC转换的，而不是引入进程状态切换次数这个变量。</p>
+<p>旁白：谷歌的这句话，在一些场景下跳过GC更有意义，正是这句话改变了修改的方向</p>
+<p>卢卡斯旁边的汉斯看到了大壮的这段回复，心里OS: 上一次这么无语还是在上一次, 忍不住回复到：<br>卢卡斯，大壮的这种改法让我感觉也很不舒服，也许我们在一些场景下GC的次数有点多了，但是能不能用更合理的方式来解决这个问题呢？比如依据自上次GC以来分配的字节数作为依据, 对于某些应用程序来说，转换可能会频繁发生，并且每次执行GC并不总是可取的。<br>用比例值或许更合理？例如:“如果我们已经消耗了超过30%的free heap，我们将在转换时GC”。</p>
+<p>旁白：汉斯的这句话奠定了这个修改的基本方向，依据自上次GC以来的分配数值作为依据，采用比例的方式，不用管这个进程的大小。</p>
+<p>大壮：<br>此时的大壮正在工位上，跟旁边的测试妹纸炫耀自己昨天一口气钓了十几斤的鲫鱼，妹纸看大壮的眼神满是崇拜。大壮说的有点渴了，坐下来喝口水时，看到了卢卡斯的回复，思考片刻后，觉得谷歌提出的修改建议确实更加合理。<br>于是讲起了之前遇到的案例:<br>最早是我们遇到的一个Launcher的卡顿例子，同一uid下的5个进程同时在后台执行collectorTransionGc，导致系统负载过高。四个子进程的堆大小都小于5MB，不信我给你们看Systrace。对于这种内存消耗很小的进程，真的大可不必每次都GC，所以我们希望能够限制这种类型的collectortransiongc。因为从实际用户的GC数据中可以发现，这种类型的CollectorTransitionGC的总量非常大。</p>
+<p>卢卡斯:<br>卢卡斯觉得不应该仅限于小内存进程，应该一视同仁，所以卢卡斯觉得基于堆的大小进行限制不是太好。卢卡斯想起了汉斯提出的建议: 根据自上次GC以来分配的大小作为跳过GC转换的条件。<br>汉斯的这个建议确实更加合理一些，这样的话，所有的应用都有机会跳过一些”不必要”的GC。卢卡斯想了下，与其跳过一些转换GC，不如让它更简单，比如: 如果自上次GC以来的分配小于3MB，GC转换时跳过GC。</p>
+<p>旁白:<br>卢卡斯认同汉斯的通过自上次GC以来分配的大小作为依据，但是忽略了汉斯提出另一个意见，那就是通过堆空闲内存的使用率来作为触发条件，这里卢卡斯提出的小于3M就不进行GC，也正是这句话给了大壮一些误导。</p>
+<p>大壮:<br>听完卢卡斯说的堆使用小于3M就不进行GC转换后，大壮进行了一次修改，加了一个阈值<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">size_t</span> kDefaultTransitionThreshold = <span class="number">5</span> * MB;</span><br></pre></td></tr></table></figure></p>
+<p>并且在GC转换的地方加了一个判断，如果低于这个阈值，就跳过本次的GC转换<br><img src="http://blog.lihaizhou.top/ART_story/GC_story4.png" alt="图片"></p>
+<p>卢卡斯:<br>看完大壮的修改后，卢卡斯后悔了，这里搞个固定的阈值看起来并不合适。因为如果这个进程是一个占用内存比较小的进程，那么5M对于这个进程来说并不容易达到，这会导致GC的触发频率被大幅降低，导致这个进程的堆大小”不合适”的增大。<br>这个时候卢卡斯想起了汉斯的通过比例的建议，没错，通过比例更合理一些，于是卢卡斯提出了: 上次GC后新增大小如果小于<br>UnignedDifference(target_footprint_.load(std::memory_order_relaxed)- num_bytes_alive_after_gc_)/4 话，则跳过本次GC转换，并且对于LowMemoryMode设备避免跳过GC</p>
+<p>旁白：卢卡斯的这番话基本成形了这个修改，即消耗没有达到堆空闲的1/4，此时有GC转换请求的话，则直接丢弃。</p>
+<p>大壮：<br>看完卢卡斯的建议后，大壮开始着手进行了修改，关于如何计算GC后新分配的值。<br>大壮想到了在GC后算出已分配的减去GC前计算出的已分配大小，修改完之后再次更新了patch，很快卢卡斯在大壮的修改下加了comment<br><img src="http://blog.lihaizhou.top/ART_story/GC_story5.png" alt="图片"></p>
+<p>旁白：这是并发GC的特色所在，分配的同时可能伴随着GC，所以需要考虑GC期间释放的空间大小。</p>
+<h4 id="最终修改思想"><a href="#最终修改思想" class="headerlink" title="最终修改思想"></a>最终修改思想</h4><ol>
+<li>进程状态变化触发GC转换</li>
+<li>计算出自上次GC后新分配字节大小，由于并发缘故，需考虑GC期间释放字节数。</li>
+<li>堆可增长上限减去自上次GC后已分配数值，得出的值即可增长空间，取其四分之一作为分界线</li>
+<li>上次GC后新分配字节数值如果小于第三步算出的可增长空间的1/4，则跳过本次GC转换请求。</li>
+</ol>
+<h4 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h4><p>谈到设计思想，笔者想起一句话：Talk is cheap. Show me the code!<br>每次看到这句话，都感觉被无端斥责了一番。<br>笔者曾经特地查询了下Linus说这句话的语境背景，最后得出结论Linus说这句话时，其实是在一个讨论回复中，结合当时的上下文语境，Linus说出这句时明显是带有情绪的，但是奇怪的是这句特定语境下的话，在国内却被大肆宣传甚至被一些人奉为经典。<br>笔者在实际项目上见到过太多shit一样的代码，盲目的追求代码数量，粗制滥造毫无设计可言，更不要说代码规范这些基础原则了，阅读起来你都恨不得砸了键盘。<br>如果你很崇尚“show me the code”，给你这样一堆dog shit代码，你能从中看出什么呢？<br>并不是盲目崇拜谷歌，笔者在阅读谷歌代码的提交记录过程中，能够感受到其思维之严谨，考虑之周到，修改之谨慎。所以推荐大家空闲的时候，可以多阅读谷歌的修改记录。<br>最后多说一句，笔者粗浅的认为，相比于最终的成品代码，当然前提是优秀的代码。笔者认为其思路旅程也很重要，因为是人的思想最终孕育出这块美丽的代码。</p>
+<hr>
+<p>只要不给社会添麻烦，做一个废柴并不丢人</p>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2021/11/01/第三视角-一个ART-GC的优化故事/">http://lihaizhou.top/2021/11/01/第三视角-一个ART-GC的优化故事/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2021/11/01/第三视角-一个ART-GC的优化故事/">November 1st 2021, 4:54:55 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2021/11/01/第三视角-一个ART-GC的优化故事/">November 1st 2021, 6:06:11 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/" title="案例分析:打开应用后操作界面无响应(Systrace)">
+                    <div class="nextTitle">案例分析:打开应用后操作界面无响应(Systrace)</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2021/10/27/对Android-S-ART-GC的源码梳理/" title="对Android S ART GC的源码梳理">
+                    <div class="prevTitle">对Android S ART GC的源码梳理</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#故事的缘起"><span class="toc-number">2.</span> <span class="toc-text">故事的缘起</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#故事开始"><span class="toc-number">3.</span> <span class="toc-text">故事开始</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#修改Multiplier"><span class="toc-number">3.1.</span> <span class="toc-text">修改Multiplier</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#降低GC转换的次数"><span class="toc-number">3.2.</span> <span class="toc-text">降低GC转换的次数</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#谷歌Review"><span class="toc-number">4.</span> <span class="toc-text">谷歌Review</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最终修改思想"><span class="toc-number">5.</span> <span class="toc-text">最终修改思想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#写在最后"><span class="toc-number">6.</span> <span class="toc-text">写在最后</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 41
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span>
+            <a class="archive-post-title" href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">优化实践: 高刷下列表滑动出现卡顿掉帧</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span>
+            <a class="archive-post-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">优化实践:从系统层面优化应用启动速度</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span>
+            <a class="archive-post-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">Systrace角度: 拆解分析应用的启动流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span>
+            <a class="archive-post-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">案例分析:打开应用后操作界面无响应(Systrace)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span>
+            <a class="archive-post-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">第三视角: 一个ART GC的优化故事</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span>
+            <a class="archive-post-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">对Android S ART GC的源码梳理</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">对进程压缩消费Zram速度的优化</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span>
+            <a class="archive-post-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">AMS锁严重竞争导致的整机卡顿</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">GC超时导致的后台应用崩溃问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span>
+            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span>
+            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span>
+            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2020 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span>
+            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span>
+            <a class="archive-post-title" href="/2020/11/30/从tcpdump看miracast的play流程/">从tcpdump看miracast的play流程(工具篇)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/25</span>
+            <a class="archive-post-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">一次SystemServer OOM导致的系统重启分析之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/09</span>
+            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/20</span>
+            <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span>
+            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span>
+            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span>
+            <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/26</span>
+            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span>
+            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/23</span>
+            <a class="archive-post-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">一个SharedPreferences写操作导致的ANR问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2019/04/12/Launcher应用的重构之路/">Launcher应用的重构之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span>
+            <a class="archive-post-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span>
+            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span>
+            <a class="archive-post-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">一个滑动冲突问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span>
+            <a class="archive-post-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">一个底层内存分配异常导致无法进入launcher问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/29</span>
+            <a class="archive-post-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">一个屏幕滑动无响应问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span>
+            <a class="archive-post-title" href="/2018/05/17/一个无法开机问题的分析流程/">一个无法开机问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span>
+            <a class="archive-post-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">基于开源框架SlidingUpPanel二次开发</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMeta = {
+        url: "http://lihaizhou.top",
+        root: "/",
+        author: "Steven Li"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20210823"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20210823"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20210823" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Steven Li">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Steven Li">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="愿历尽千帆,归来仍少年">
+    <meta name="description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于开源框架SlidingUpPanel二次开发">
+<meta property="og:url" content="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/index.html">
+<meta property="og:site_name" content="李海洲">
+<meta property="og:description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E5%8E%BB%E6%8E%89%E5%BA%95%E9%83%A8%E9%BB%98%E8%AE%A4%E9%AB%98%E5%BA%A6.jpg?raw=true">
+<meta property="og:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%87%E4%BB%B6.png?raw=true">
+<meta property="og:updated_time" content="2019-12-28T07:00:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于开源框架SlidingUpPanel二次开发">
+<meta name="twitter:description" content="项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕 初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码">
+<meta name="twitter:image" content="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+        <link rel="alternate" href="/atom.xml" title="愿历尽千帆,归来仍少年" type="application/atom+xml">
+    
+    <title>基于开源框架SlidingUpPanel二次开发 · 李海洲</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20210823" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20210823" as="style">
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/mobile.css?v=20210823" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20210823" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20210823" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin="">
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin="">
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>愿历尽千帆,归来仍少年</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">愿历尽千帆,归来仍少年</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">基于开源框架SlidingUpPanel二次开发</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                基于开源框架SlidingUpPanel二次开发
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1,736</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2018/05/14</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <p><strong>项目需求</strong><br>写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕</p>
+<p><strong>初步分析</strong><br>最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。</p>
+<p><strong>设计框架</strong><br>下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂<br>github兜一圈，看看有没有类似的框架，茫茫大海中找到了一个<code>SlidingUpPanel</code>的开源框架<br>github主页地址: <a href="https://github.com/umano/AndroidSlidingUpPanel" target="_blank" rel="noopener">https://github.com/umano/AndroidSlidingUpPanel</a><br>确认过眼神，是需要找的框架，看了下介绍是一个能够向上滑动的时候往上飞出一个显示区域的控件，star较多且仍在维护，是个靠谱青年，so，就在此基础上进行修改吧，就这么愉快的决定了。</p>
+<p><strong>源码效果图</strong></p>
+<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%95%88%E6%9E%9C%E5%9B%BE.jpg?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br>最开始下面有一个栏目布局，随着手指拖动高度不断变化直到往上完全铺满屏幕</p>
+<p><strong>Step1：研究框架源码</strong><br>源码中有三支主要文件，如下</p>
+<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E6%BA%90%E7%A0%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br>其中核心文件是<code>SlidingUpPanelLayout.java</code>，对应的是面板的UI界面，继承自ViewGroup，整支文件有1490行之多，好在代码结构清晰明了，阅读起来比较顺利，后面的修改主要针对<code>SlidingUpPanelLayout</code>这支文件以及布局文件</p>
+<p><strong>Step2：实做部分</strong><br>在阅读了源码流程之后，开始撸起袖子干活，主要的修改有下面一些点</p>
+<p><strong>面板默认状态修改</strong><br>PanelState提供的面板五种不同状态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> PanelState &#123;</span><br><span class="line">     EXPANDED, <span class="comment">//全部展开状态</span></span><br><span class="line">     COLLAPSED, <span class="comment">//默认状态</span></span><br><span class="line">     ANCHORED, <span class="comment">//锚点</span></span><br><span class="line">     HIDDEN, <span class="comment">//隐藏状态</span></span><br><span class="line">     DRAGGING <span class="comment">//拖动状态</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>我们的systemUI样式只需要其中的<code>EXPANDED</code>，<code>HIDDEN</code>，<code>DRAGGING</code>这三种状态，其他两种状态相关牵扯到的代码都可以移除<br>源码默认的状态是<code>COLLAPSED</code>    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Default initial state for the component</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> PanelState DEFAULT_SLIDE_STATE = PanelState.COLLAPSED;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> PanelState mSlideState = DEFAULT_SLIDE_STATE;</span><br></pre></td></tr></table></figure>
+<p>构造函数中从配置值获取了默认状态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];</span><br></pre></td></tr></table></figure>
+<p>后面<code>onMeasure</code>,<code>onLayout</code>将根据<code>mSlideState</code>得值来绘制初始化界面</p>
+<p>我们systemUI初始化界面默认需要是<code>HIDDEN</code>状态，故后面更改xml中的配置值调整为hidden即可</p>
+<p><strong>去掉一栏布局部分(红色部分)</strong></p>
+<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E5%8E%BB%E6%8E%89%E5%BA%95%E9%83%A8%E9%BB%98%E8%AE%A4%E9%AB%98%E5%BA%A6.jpg?raw=true" align="left" style=" width:200px;height:200 px"><br><br><br><br><br><br><br><br><br><br><br></p>
+<p>对应<code>PanelHeight</code>这个的值，这个值在构造函数中会去xml中获取<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mPanelHeight = ta.getDimensionPixelSize(R.styleable.SystemUiPanel_umanoPanelHeight, -<span class="number">1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>将布局文件中SlidingUpPanelLayout节点下的umanoPanelHeight样式值改为0dp即可  </p>
+<p><strong>默认划出面板方向</strong><br>github上给的demo例子里，是将<code>SlidingUpPanelLayout</code>设置<code>android:gravity=&quot;bottom&quot;</code>，改为<code>top</code>即可</p>
+<p><strong>添加手势事件</strong><br>源码中面板默认不是隐藏，有一定高度，根据点击事件响应展开还是隐藏，我们的systemUI中面板默认是完全隐藏状态，所以就没有了可见的view来响应事件，需要依据手指在顶部滑动的方向以及滑动距离来判断是否打开面板<br><code>SlidingUpPanelLayout</code>这支文件中添加手势滑动事件判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onLauncherTouchEvent</span><span class="params">(MotionEvent ev, <span class="keyword">boolean</span> result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (ev.getAction()) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">                pointDownY1 = ev.getY();</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">                pointDownY2 = ev.getY();</span><br><span class="line">                <span class="keyword">if</span> (pointDownY2 - pointDownY1 &gt; FLIP_DISTANCE &amp;&amp; pointDownY1 &lt; FLIP_DISTANCE) &#123;</span><br><span class="line">                    setPanelState(PanelState.EXPANDED);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>隐藏状态下无法划出面板</strong><br>源码设计中对于隐藏状态是无法划出面板的  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;</span><br><span class="line">       <span class="comment">//省略部分代码</span></span><br><span class="line">        <span class="keyword">switch</span> (action) &#123;</span><br><span class="line">            <span class="keyword">case</span> MotionEvent.ACTION_DOWN: &#123;</span><br><span class="line">                mIsUnableToDrag = <span class="keyword">false</span>;</span><br><span class="line">                mInitialMotionX = x;</span><br><span class="line">                mInitialMotionY = y;</span><br><span class="line">                <span class="keyword">if</span> (!isViewUnder(mDragView, (<span class="keyword">int</span>) x, (<span class="keyword">int</span>) y)) &#123;</span><br><span class="line">                    mDragHelper.cancel();</span><br><span class="line">                    mIsUnableToDrag = <span class="keyword">true</span>;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;  </span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//省略部分代码</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>将上面代码中if代码块全部注释掉<br>并将如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isTouchEnabled</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> mIsTouchEnabled &amp;&amp; mSlideableView != <span class="keyword">null</span> &amp;&amp; mSlideState != PanelState.HIDDEN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>去掉<code>mSlideState != PanelState.HIDDEN</code>判断条件<br>因为源码设计是当面板状态为hidden时，isTouchEnabled返回false，而setDragView中滑动面板前会先判断isTouchEnabled值，如果为false，直接return  </p>
+<p><strong>存在概率性卡在半拉状态</strong><br>项目上线后测试反馈过一个问题，测试步骤比较风骚，手指按住不放下拉到一半左右位置快速转过一个弧度上滑并松开，概率性出现面板卡在一个点上  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewDragStateChanged</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (mDragHelper != <span class="keyword">null</span> &amp;&amp; mDragHelper.getViewDragState() == ViewDragHelper.STATE_IDLE) &#123;</span><br><span class="line">         mSlideOffset = computeSlideOffset(mSlideableView.getTop());</span><br><span class="line">         <span class="comment">//applyParallaxForCurrentSlideOffset();</span></span><br><span class="line">         <span class="keyword">if</span> (mSlideOffset == <span class="number">1</span>) &#123;</span><br><span class="line">             updateObscuredViewVisibility();</span><br><span class="line">             setPanelStateInternal(PanelState.EXPANDED);</span><br><span class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mSlideOffset &lt; <span class="number">0</span>) &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.HIDDEN);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mSlideOffset == <span class="number">0</span>) &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.HIDDEN);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             setPanelStateInternal(PanelState.ANCHORED);</span><br><span class="line">             mSlideableView.setVisibility(View.INVISIBLE);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>问题复现时，<code>mSlideOffset</code>大于0且小于1，此时会走到setPanelStateInternal(PanelState.ANCHORED);即将面板抛锚到固定点上，界面上表现为卡在一个半拉的状态，这显然不是我们的systemUI需要的，将此处更改为setPanelStateInternal(PanelState.HIDDEN);</p>
+<p><strong>核心API</strong><br>addPanelSlideListener(面板状态的监测)其中复写两个方法:onPanelSlide(获取到偏移量)和onPanelStateChanged(获取面板状态)<br>界面层主要用到了这个方法</p>
+<p><strong>移除无关代码</strong><br>如下修改均针对SlidingUpPanelLayout这支文件<br>1.将setDragView中将对mDragView的点击事件相关逻辑全部移除<br>2.构造函数中将setgravity相关代码移除<br>3.移除shadow所有的相关的代码<br>4.移除ANCHORED相关的代码逻辑，因为我们的systemUI并不要在下拉过程中卡在某一高度<br>5.移除drawChild以及draw(Canvas c)代码</p>
+<p><strong>布局文件</strong><br>如下是针对我们的项目定制修改后的布局(项目名相关打了马赛克，我也不知道为啥这么做，反正就是这么做了) </p>
+<p><img src="https://github.com/hellolihaizhou/hellolihaizhou.github.io/blob/master/2018/05/14/%E5%9F%BA%E4%BA%8E%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6SlidingUpPanel%E4%BA%8C%E6%AC%A1%E5%BC%80%E5%8F%91/%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E5%B8%83%E5%B1%80%E6%96%87%E4%BB%B6.png?raw=true" align="left" style=" width:500px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>  </p>
+<p>id为dragView的内容代表滑动的内容，id为viewpager代表的是面板隐藏后的界面内容即不随手指滑动的内容  </p>
+<p>注:<br>SlidingUpPanelLayout为布局根元素，请确保它有且只有两个子view，第一个是主要布局，即固定不随手指滑动的区域，第二个滑动面板布局<br>如果子VIew不为2，则会抛出异常  </p>
+<pre><code class="java"><span class="meta">@Override</span>
+ <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>{
+    <span class="comment">//省略部分代码</span>
+     <span class="keyword">final</span> <span class="keyword">int</span> childCount = getChildCount();
+     <span class="keyword">if</span> (childCount != <span class="number">2</span>) {
+         <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Sliding up panel layout must have exactly 2 children!"</span>);
+     }
+    <span class="comment">//省略部分代码</span>
+ }
+</code></pre>
+<p>起初遇到这个异常，看了源码才知道有这个限制，不过可以修改源码突破这个这个限制，有源码了不起嘛？嗨呀嗨呀，十分了不起，有源码真的可以为所欲为，哈哈哈</p>
+<hr>
+<font color="#000000" size="2" face="楷体">住所，晚上，汗衫，电脑前，听着歌，胖橘在门外叫</font>
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/">http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/">May 14th 2018, 9:52:57 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2018/05/14/基于开源框架SlidingUpPanel二次开发/">December 28th 2019, 3:00:40 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/05/17/一个无法开机问题的分析流程/" title="一个无法开机问题的分析流程">
+                    <div class="nextTitle">一个无法开机问题的分析流程</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 41
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span>
+            <a class="archive-post-title" href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">优化实践: 高刷下列表滑动出现卡顿掉帧</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span>
+            <a class="archive-post-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">优化实践:从系统层面优化应用启动速度</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span>
+            <a class="archive-post-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">Systrace角度: 拆解分析应用的启动流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span>
+            <a class="archive-post-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">案例分析:打开应用后操作界面无响应(Systrace)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span>
+            <a class="archive-post-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">第三视角: 一个ART GC的优化故事</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span>
+            <a class="archive-post-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">对Android S ART GC的源码梳理</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">对进程压缩消费Zram速度的优化</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span>
+            <a class="archive-post-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">AMS锁严重竞争导致的整机卡顿</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">GC超时导致的后台应用崩溃问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span>
+            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span>
+            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span>
+            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2020 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span>
+            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span>
+            <a class="archive-post-title" href="/2020/11/30/从tcpdump看miracast的play流程/">从tcpdump看miracast的play流程(工具篇)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/25</span>
+            <a class="archive-post-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">一次SystemServer OOM导致的系统重启分析之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/09</span>
+            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/20</span>
+            <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span>
+            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span>
+            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span>
+            <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/26</span>
+            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span>
+            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/23</span>
+            <a class="archive-post-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">一个SharedPreferences写操作导致的ANR问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2019/04/12/Launcher应用的重构之路/">Launcher应用的重构之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span>
+            <a class="archive-post-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span>
+            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span>
+            <a class="archive-post-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">一个滑动冲突问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span>
+            <a class="archive-post-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">一个底层内存分配异常导致无法进入launcher问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/29</span>
+            <a class="archive-post-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">一个屏幕滑动无响应问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span>
+            <a class="archive-post-title" href="/2018/05/17/一个无法开机问题的分析流程/">一个无法开机问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span>
+            <a class="archive-post-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">基于开源框架SlidingUpPanel二次开发</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMeta = {
+        url: "http://lihaizhou.top",
+        root: "/",
+        author: "Steven Li"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20210823"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20210823"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20210823" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

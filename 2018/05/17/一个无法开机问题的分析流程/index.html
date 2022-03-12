@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Steven Li">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Steven Li">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="愿历尽千帆,归来仍少年">
+    <meta name="description" content="问题平台Android7.1.1  MT6739 问题现象走完一部分开机动画后停留在recovery界面，无法进入系统 初步分析:开机后进入recovery ，以往经验来看猜测是重要进程启动异常，可能被连续被kill Step1 日志分析需要的日志：eng版本uart log+main log(如果已经进入Android的话)+data/aee_exp下的db文件(如果有db生成的话) Step1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个无法开机问题的分析流程">
+<meta property="og:url" content="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/index.html">
+<meta property="og:site_name" content="李海洲">
+<meta property="og:description" content="问题平台Android7.1.1  MT6739 问题现象走完一部分开机动画后停留在recovery界面，无法进入系统 初步分析:开机后进入recovery ，以往经验来看猜测是重要进程启动异常，可能被连续被kill Step1 日志分析需要的日志：eng版本uart log+main log(如果已经进入Android的话)+data/aee_exp下的db文件(如果有db生成的话) Step1">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-09-08T12:29:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个无法开机问题的分析流程">
+<meta name="twitter:description" content="问题平台Android7.1.1  MT6739 问题现象走完一部分开机动画后停留在recovery界面，无法进入系统 初步分析:开机后进入recovery ，以往经验来看猜测是重要进程启动异常，可能被连续被kill Step1 日志分析需要的日志：eng版本uart log+main log(如果已经进入Android的话)+data/aee_exp下的db文件(如果有db生成的话) Step1">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+        <link rel="alternate" href="/atom.xml" title="愿历尽千帆,归来仍少年" type="application/atom+xml">
+    
+    <title>一个无法开机问题的分析流程 · 李海洲</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20210823" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20210823" as="style">
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/mobile.css?v=20210823" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20210823" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20210823" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin="">
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin="">
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>愿历尽千帆,归来仍少年</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">愿历尽千帆,归来仍少年</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">一个无法开机问题的分析流程</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                一个无法开机问题的分析流程
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1,836</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2018/05/17</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <p>问题平台<br><code>Android7.1.1</code>  <code>MT6739</code></p>
+<p>问题现象<br><code>走完一部分开机动画后停留在recovery界面，无法进入系统</code></p>
+<p>初步分析:<br>开机后进入<code>recovery</code> ，以往经验来看猜测是重要进程启动异常，可能被连续被kill</p>
+<p><strong>Step1 日志分析</strong><br>需要的日志：eng版本<code>uart log</code>+<code>main log</code>(如果已经进入Android的话)+<code>data/aee_exp</code>下的db文件(如果有db生成的话)</p>
+<p><strong>Step1.1  抓取串口日志</strong><br>首先说下串口日志的获取方式:<br>串口线中的白色接<code>TX</code>，黑色线接地，我这里是在windows下抓取，使用了一个<code>SSCOM</code>的工具，<code>MTK</code>平台上波特率需要选择<code>921600</code>, 这个工具使用之前需要安装<code>usb to serial</code>驱动，不然会出现识别不了设备的情况<br>这里需要说明的是需要使用eng版本获取日志，如果是user版本的话，需要做一些额外工作</p>
+<p><strong>Step1.2 分析串口日志</strong><br>首先先看下系统走到了哪一步，关键步骤都是会有对应的日志输出，从过往的项目以及分析经验，已形成了一套既定的分析流程<br>这里说下分析串口日志中的一些关键字如下  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、<span class="string">"Preparing for EL3 exit to normal world, LK"</span></span><br><span class="line">   如果串口log里面没有走到这里，说明在PL就卡住了，这句表示进入LK</span><br><span class="line"><span class="number">2</span>、<span class="string">"lk finished --&gt; jump to linux kernel"</span></span><br><span class="line">   如果串口log里面没有走到这里，但是上面走到了，说明在lk卡住了，这句表示进入kernel</span><br><span class="line"><span class="number">3</span>、<span class="string">"Kernel_init_done"</span></span><br><span class="line">   这句表示kernel初始化完成了，正准备启动init进程，如果这就没有走到：请搜索关键字initcall，</span><br><span class="line">   initcall是顺序执行例如module_init注册的init函数，看看卡在哪个call back上</span><br><span class="line"><span class="number">4</span>、<span class="string">"BOOTPROF"</span></span><br><span class="line">   这是开机过程中，每走过一个重要阶段都会打印的标志，例如上面Kernel_init_done这一句就会打上这个标志</span><br><span class="line"><span class="number">5</span>、<span class="string">"init: init first stage started"</span></span><br><span class="line">   这句表示init进程正常起来执行</span><br><span class="line"><span class="number">6</span>、<span class="string">"fs_mgr"</span> 和<span class="string">"e2fsck"</span></span><br><span class="line">   这里标志是在检查和mount 文件系统，如果失败会有如下log：fs_mgr_mount_all returned an error fs_mgr_mount_all returned unexpected error <span class="number">255</span></span><br><span class="line"><span class="number">7</span>、<span class="string">"zygote"</span></span><br><span class="line">   Starting service <span class="string">'zygote'</span>：这里表示要启动zygote,如果没有这一句表示zygote还没启动，则要检查之前的initrc执行情况，文件系统mount情况</span><br><span class="line"><span class="number">8</span>、<span class="string">"SysServerInit_START"</span></span><br><span class="line">   启动system_server</span><br><span class="line"><span class="number">9</span>、<span class="string">"system_server"</span></span><br><span class="line">   这里表示system_server有起来</span><br><span class="line"><span class="number">10</span>、<span class="string">"BOOT_Animation:END"</span></span><br><span class="line">   表示开机动画正常结束，进入安卓</span><br></pre></td></tr></table></figure>
+<p>我们的这份日志中1-9均有打印，说明已经进入了Android部分，在init进程起来后，如下片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[  <span class="number">29.560029</span>] &lt;<span class="number">1</span>&gt;.(<span class="number">1</span>)[<span class="number">1</span>:init]init: Service <span class="string">'healthd'</span> (pid <span class="number">310</span>) killed by signal <span class="number">11</span></span><br></pre></td></tr></table></figure>
+<p>后面紧跟着很多关键进程均打出sig 9即被kill掉<br>关于linux signal信号表对应关系如下(只列出部分)  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SIGHUP      <span class="number">1</span>           Term    终端的挂断或进程死亡</span><br><span class="line">SIGINT      <span class="number">2</span>           Term    来自键盘的中断信号</span><br><span class="line">SIGQUIT     <span class="number">3</span>           Core    来自键盘的离开信号</span><br><span class="line">SIGILL      <span class="number">4</span>           Core    非法指令</span><br><span class="line">SIGABRT     <span class="number">6</span>           Core    来自abort的异常信号</span><br><span class="line">SIGFPE      <span class="number">8</span>           Core    浮点例外</span><br><span class="line">SIGKILL     <span class="number">9</span>           Term    杀死</span><br><span class="line">SIGSEGV     <span class="number">11</span>          Core    段非法错误(内存引用无效)</span><br></pre></td></tr></table></figure>
+<p>这里大概明白问题出在了<code>healthd</code>上，这是与电量相关的进程，在user space中</p>
+<p>对于是否需要抓取logcat日志，可以看看串口日志中是否有如下片段  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Starting service <span class="string">'zygote'</span></span><br></pre></td></tr></table></figure>
+<p>这一步代表<code>zygote</code>起来了，这时候就必须要抓取logcat进一步分析，我们这笔问题中该日志片段有打印出来，所以需要抓取logcat进一步分析</p>
+<p><strong>Step1.3 分析logcat日志</strong><br>找到如下片段，说明<code>data/aee_exp</code>下面也有<code>db</code>文件生成了  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): Revision: <span class="string">'0'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): ABI: <span class="string">'arm'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.579</span> I/AEE_AED (  <span class="number">350</span>): pid: <span class="number">310</span>, <span class="attr">tid</span>: <span class="number">310</span>, <span class="attr">name</span>: healthd  &gt;&gt;&gt; <span class="regexp">/sbin/</span>healthd &lt;&lt;&lt;</span><br><span class="line">05-02 04:52:48.580 I/AEE_AED (  350): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r0 00000002  r1 00000002  r2 0000089c  r3 00000006</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r4 ffffffff  r5 00000001  r6 00000000  r7 00000002</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r8 becc68bc  r9 0008819e  sl ffffffff  fp becc6680</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    ip 00000002  sp becc6678  lr 0005d494  pc 0005e16c  cpsr 20070030</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): </span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): backtrace:</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #00 pc 0005e16c  /sbin/healthd</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #01 pc 0005d490  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #02 pc 00056c04  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #03 pc 00064ef4  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #04 pc 00027e00  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #05 pc 0000b291  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #06 pc 0000b10d  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #07 pc 000088c9  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #08 pc 00008d73  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #09 pc 00008c3f  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #10 pc 00008afb  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #11 pc 0005e055  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #12 pc 000086c8  /sbin/healthd</span><br></pre></td></tr></table></figure>
+<p>这里出现了段错误，这个时候需要拿出看家小工具<code>addr2line</code>来定位到代码出错的位置，这里顺便说下<code>Addr2line</code>的作用  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Addr2line （它是标准的 GNU Binutils 中的一部分）是一个可以将指令的地址和可执行映像转换成文件名、函数名和源代码行数的工具。这种功能对于将跟踪地址转换成更有意义的内容来说简直是太棒了</span><br></pre></td></tr></table></figure>
+<p>我这里的addr2line使用的是代码工程中的，代码工程下有很多addr2line，这里就随便用了一个目录下的addr2line，另外分析还需要<code>out/target/product/XXX/symbols/sbin/healthd</code>文件，注意这里的<code>healthd</code>文件必须和日志中是同一套代码，否则可能分析出来的代码位置会有偏差</p>
+<p>使用命令如下:  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lihaizhou@ubuntu:~<span class="regexp">/Code/</span>sw710/<span class="number">6739</span>$ <span class="string">'/home/lihaizhou/Code/sw710/6739/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.8/bin/x86_64-linux-addr2line'</span> -e <span class="string">'/home/lihaizhou/Code/sw710/6739/out/target/product/lcsh6739_35_sw730/symbols/sbin/healthd'</span> <span class="number">0000</span>b291</span><br></pre></td></tr></table></figure>
+<p>得到如下结果  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/proc/self/cwd/system/core/healthd/BatteryMonitor.cpp:<span class="number">861</span></span><br></pre></td></tr></table></figure>
+<p>进到<code>BatteryMonitor.cpp</code>第861行，是一句最近添加的日志  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KLOG_INFO(LOG_TAG, <span class="string">"BatteryMonitor cmd_send props.batteryStatus '%s'\n"</span>, props.batteryStatus);</span><br></pre></td></tr></table></figure>
+<p><strong>Step2 问题解决</strong><br>仔细查看了这行日志, 发现是类型写错了，<code>props.batteryStatus</code>是整型，这里使用了字串类型打印，当然会报错了<br>ok，将类型修改为整型，重新编译烧录img到机器中，开机正常了</p>
+<p><strong>小结</strong><br>对系统启动流程以及<code>addr2line</code>的使用比较熟悉的话，这笔问题分析还是比较容易的，ok，这笔问题分析到此为止</p>
+<p>Have a good day！</p>
+<font color="#000000" size="3" face="楷体"><br>另:<br>关于串口日志MTK online有相关FAQ可以参考<br>FAQ15320 不同模式下如何保持uart log一直打开<br><a href="http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ15320" target="_blank" rel="noopener">http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ15320</a><br>FAQ03891如何在User版本开启串口(Uart),抓取上层Log,开启输入控制台<br><a href="http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ03891" target="_blank" rel="noopener">http://online.mediatek.com/Pages/FAQ.aspx?List=SW&amp;FAQID=FAQ03891</a></font>
+
+
+<hr>
+<font color="#000000" size="2" face="楷体">公司午休时间，电脑前，黑眼圈，脑袋一片空白，肚子有点饿，等外卖</font>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/">http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/">May 17th 2018, 10:42:27 am</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2018/05/17/一个无法开机问题的分析流程/">September 8th 2021, 8:29:40 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/" title="一个屏幕滑动无响应问题的分析流程">
+                    <div class="nextTitle">一个屏幕滑动无响应问题的分析流程</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/" title="基于开源框架SlidingUpPanel二次开发">
+                    <div class="prevTitle">基于开源框架SlidingUpPanel二次开发</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 41
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span>
+            <a class="archive-post-title" href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">优化实践: 高刷下列表滑动出现卡顿掉帧</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span>
+            <a class="archive-post-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">优化实践:从系统层面优化应用启动速度</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span>
+            <a class="archive-post-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">Systrace角度: 拆解分析应用的启动流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span>
+            <a class="archive-post-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">案例分析:打开应用后操作界面无响应(Systrace)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span>
+            <a class="archive-post-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">第三视角: 一个ART GC的优化故事</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span>
+            <a class="archive-post-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">对Android S ART GC的源码梳理</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">对进程压缩消费Zram速度的优化</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span>
+            <a class="archive-post-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">AMS锁严重竞争导致的整机卡顿</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">GC超时导致的后台应用崩溃问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span>
+            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span>
+            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span>
+            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2020 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span>
+            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span>
+            <a class="archive-post-title" href="/2020/11/30/从tcpdump看miracast的play流程/">从tcpdump看miracast的play流程(工具篇)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/25</span>
+            <a class="archive-post-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">一次SystemServer OOM导致的系统重启分析之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/09</span>
+            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/20</span>
+            <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span>
+            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span>
+            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span>
+            <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/26</span>
+            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span>
+            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/23</span>
+            <a class="archive-post-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">一个SharedPreferences写操作导致的ANR问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2019/04/12/Launcher应用的重构之路/">Launcher应用的重构之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span>
+            <a class="archive-post-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span>
+            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span>
+            <a class="archive-post-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">一个滑动冲突问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span>
+            <a class="archive-post-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">一个底层内存分配异常导致无法进入launcher问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/29</span>
+            <a class="archive-post-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">一个屏幕滑动无响应问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span>
+            <a class="archive-post-title" href="/2018/05/17/一个无法开机问题的分析流程/">一个无法开机问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span>
+            <a class="archive-post-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">基于开源框架SlidingUpPanel二次开发</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMeta = {
+        url: "http://lihaizhou.top",
+        root: "/",
+        author: "Steven Li"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20210823"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20210823"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20210823" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

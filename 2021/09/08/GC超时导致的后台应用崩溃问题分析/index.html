@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Steven Li">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Steven Li">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="愿历尽千帆,归来仍少年">
+    <meta name="description" content="写在前面这个问题之所以会拿出来仔细分析，一方面是因为这个问题不是简单的应用崩溃而是框架层的报错，另一方面是因为希望通过这个问题梳理下后台GC的超时检测机制怎样的，这样我们后面在应用层如果重写finalize方法回收时会考虑的更加全面点。 问题背景复现概率: 偶现问题版本: Android R问题现象: 处于微信界面，突然弹出王者荣耀停止运行 初步分析拿到问题日志后，先看下报错的堆栈12345670">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GC超时导致的后台应用崩溃问题分析">
+<meta property="og:url" content="http://lihaizhou.top/2021/09/08/GC超时导致的后台应用崩溃问题分析/index.html">
+<meta property="og:site_name" content="李海洲">
+<meta property="og:description" content="写在前面这个问题之所以会拿出来仔细分析，一方面是因为这个问题不是简单的应用崩溃而是框架层的报错，另一方面是因为希望通过这个问题梳理下后台GC的超时检测机制怎样的，这样我们后面在应用层如果重写finalize方法回收时会考虑的更加全面点。 问题背景复现概率: 偶现问题版本: Android R问题现象: 处于微信界面，突然弹出王者荣耀停止运行 初步分析拿到问题日志后，先看下报错的堆栈12345670">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.lihaizhou.top/GC_crash/GC1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/GC_crash/GC2.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/GC_crash/GC3.png">
+<meta property="og:updated_time" content="2021-10-16T05:21:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GC超时导致的后台应用崩溃问题分析">
+<meta name="twitter:description" content="写在前面这个问题之所以会拿出来仔细分析，一方面是因为这个问题不是简单的应用崩溃而是框架层的报错，另一方面是因为希望通过这个问题梳理下后台GC的超时检测机制怎样的，这样我们后面在应用层如果重写finalize方法回收时会考虑的更加全面点。 问题背景复现概率: 偶现问题版本: Android R问题现象: 处于微信界面，突然弹出王者荣耀停止运行 初步分析拿到问题日志后，先看下报错的堆栈12345670">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/GC_crash/GC1.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+        <link rel="alternate" href="/atom.xml" title="愿历尽千帆,归来仍少年" type="application/atom+xml">
+    
+    <title>GC超时导致的后台应用崩溃问题分析 · 李海洲</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20210823" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20210823" as="style">
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/mobile.css?v=20210823" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20210823" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20210823" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin="">
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin="">
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>愿历尽千帆,归来仍少年</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">愿历尽千帆,归来仍少年</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">GC超时导致的后台应用崩溃问题分析</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                GC超时导致的后台应用崩溃问题分析
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2,732</span>阅读时长: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2021/09/08</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>这个问题之所以会拿出来仔细分析，一方面是因为这个问题不是简单的应用崩溃而是框架层的报错，另一方面是因为希望通过这个问题梳理下后台GC的超时检测机制怎样的，这样我们后面在应用层如果重写<code>finalize</code>方法回收时会考虑的更加全面点。</p>
+<h3 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h3><p>复现概率: 偶现<br>问题版本: <code>Android R</code><br>问题现象: 处于微信界面，突然弹出王者荣耀停止运行</p>
+<h3 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h3><p>拿到问题日志后，先看下报错的堆栈<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime: FATAL EXCEPTION: FinalizerWatchdogDaemon</span><br><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime: Process: com.tencent.tmgp.sgame:xg_vip_service, PID: <span class="number">2073</span></span><br><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime: java.util.concurrent.TimeoutException: android.database.BulkCursorToCursorAdaptor.finalize() timed out after <span class="number">10</span> seconds</span><br><span class="line"><span class="comment">//省略部分堆栈</span></span><br><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime:at android.database.AbstractCursor.finalize(AbstractCursor.java:<span class="number">524</span>)</span><br><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime:at java.lang.Daemons$FinalizerDaemon.doFinalize(Daemons.java:<span class="number">291</span>)</span><br><span class="line"><span class="number">09</span>-<span class="number">02</span> <span class="number">20</span>:<span class="number">53</span>:<span class="number">26.679</span>  <span class="number">2073</span>  <span class="number">2089</span> E AndroidRuntime:at java.lang.Daemons$FinalizerDaemon.runInternal(Daemons.java:<span class="number">278</span>)</span><br></pre></td></tr></table></figure></p>
+<p>单单从这段堆栈看的话，<code>BulkCursorToCursorAdaptor</code>执行<code>finalize</code>超过了10s，导致<code>FinalizerWatchdogDaemon</code>报错，<code>FinalizerWatchdogDaemon</code>字面上看像是监测回收超时的守护线程。<br>看下<code>FinalizerWatchdogDaemon</code>代码中的作用解释<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The watchdog exits the VM if the finalizer ever gets stuck. We consider</span></span><br><span class="line"><span class="comment"> * the finalizer to be stuck if it spends more than MAX_FINALIZATION_MILLIS</span></span><br><span class="line"><span class="comment"> * on one instance.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalizerWatchdogDaemon</span> <span class="keyword">extends</span> <span class="title">Daemon</span> </span>&#123;</span><br><span class="line">    <span class="meta">@UnsupportedAppUsage</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FinalizerWatchdogDaemon INSTANCE = <span class="keyword">new</span> FinalizerWatchdogDaemon();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> needToWork = <span class="keyword">true</span>;  <span class="comment">// Only accessed in synchronized methods.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> finalizerTimeoutNs = <span class="number">0</span>;  <span class="comment">// Lazily initialized.</span></span><br><span class="line"></span><br><span class="line">    FinalizerWatchdogDaemon() &#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="string">"FinalizerWatchdogDaemon"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>简单解释下就是：如果对象的<code>finalize</code>出现阻塞超时了会导致进程退出</p>
+<p>这个问题中对应的是数据库的关闭，当然也可以发生在其它场景下，只要重写了成员函数<code>finalize</code>的对象都有可能会遇到这个问题，所以如果再遇到GC超时的报错，报错堆栈<code>AndroidRuntime:at java.lang.Daemons$</code>上面的内容可能会不一样。<br><strong>那么对于重写了成员函数<code>finalize</code>的对象，当它们被GC决定要被回收时，会立刻回收吗？</strong><br>其实不会马上被回收，而是被放入到一个队列中，等待<code>FinalizerDaemon</code>守护线程去调用它们的成员函数<code>finalize</code>后再被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * This heap management thread moves elements from the garbage collector's</span></span><br><span class="line"><span class="comment"> * pending list to the managed reference queue.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceQueueDaemon</span> <span class="keyword">extends</span> <span class="title">Daemon</span> </span>&#123;</span><br><span class="line">    <span class="meta">@UnsupportedAppUsage</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ReferenceQueueDaemon INSTANCE = <span class="keyword">new</span> ReferenceQueueDaemon();</span><br><span class="line"></span><br><span class="line">    ReferenceQueueDaemon() &#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="string">"ReferenceQueueDaemon"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runInternal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (isRunning()) &#123;</span><br><span class="line">            Reference&lt;?&gt; list;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (ReferenceQueue.class) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (ReferenceQueue.unenqueued == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        ReferenceQueue.class.wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    list = ReferenceQueue.unenqueued;</span><br><span class="line">                    ReferenceQueue.unenqueued = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (OutOfMemoryError e) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            ReferenceQueue.enqueuePending(list);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="超时阈值"><a href="#超时阈值" class="headerlink" title="超时阈值"></a>超时阈值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This used to be final. IT IS NOW ONLY WRITTEN. We now update it when we look at the command</span></span><br><span class="line"><span class="comment">// line argument, for the benefit of mis-behaved apps that might read it.  SLATED FOR REMOVAL.</span></span><br><span class="line"><span class="comment">// There is no reason to use this: Finalizers should not rely on the value. If a finalizer takes</span></span><br><span class="line"><span class="comment">// appreciable time, the work should be done elsewhere.  Based on disassembly of Daemons.class,</span></span><br><span class="line"><span class="comment">// the value is effectively inlined, so changing the field never did have an effect.</span></span><br><span class="line"><span class="comment">// DO NOT USE. FOR ANYTHING. THIS WILL BE REMOVED SHORTLY.</span></span><br><span class="line"><span class="meta">@UnsupportedAppUsage</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> MAX_FINALIZE_NANOS = <span class="number">10L</span> * <span class="number">1000</span> * NANOS_PER_MILLI;</span><br></pre></td></tr></table></figure>
+<p>注释中对于该值的说明是它很快将被移除，实际这个值在代码中并没有起到真正的作用了，更新它的值是为了方便在外边读取到。<br>真正的超时阈值是通过<code>VMRuntime.getFinalizerTimeoutMs</code>获取，默认值是10s.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">finalizer_timeout_ms_ = runtime_options.GetOrDefault(Opt::FinalizerTimeoutMs);</span><br><span class="line">RUNTIME_OPTIONS_KEY (unsigned <span class="keyword">int</span>, FinalizerTimeoutMs, <span class="number">10000</span>u)</span><br></pre></td></tr></table></figure></p>
+<h3 id="超时检测"><a href="#超时检测" class="headerlink" title="超时检测"></a>超时检测</h3><p>通过watchdog机制检测<code>finalizer</code>在超时时间内有没有成功析构回收对象<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"> * The watchdog exits the VM <span class="keyword">if</span> the finalizer ever gets stuck. We consider</span><br><span class="line"> * the finalizer to be stuck <span class="keyword">if</span> it spends more than MAX_FINALIZATION_MILLIS</span><br><span class="line"> * on one instance.</span><br><span class="line"> */</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalizerWatchdogDaemon</span> <span class="keyword">extends</span> <span class="title">Daemon</span> </span>&#123;</span><br><span class="line">    <span class="meta">@UnsupportedAppUsage</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FinalizerWatchdogDaemon INSTANCE = <span class="keyword">new</span> FinalizerWatchdogDaemon();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> needToWork = <span class="keyword">true</span>;  <span class="comment">// Only accessed in synchronized methods.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> finalizerTimeoutNs = <span class="number">0</span>;  <span class="comment">// Lazily initialized.</span></span><br><span class="line"></span><br><span class="line">    FinalizerWatchdogDaemon() &#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="string">"FinalizerWatchdogDaemon"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runInternal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (isRunning()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!sleepUntilNeeded()) &#123; (<span class="number">1</span>)</span><br><span class="line">                <span class="comment">// We have been interrupted, need to see if this daemon has been stopped.</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">final</span> Object finalizing = waitForFinalization();(<span class="number">2</span>)</span><br><span class="line">            <span class="keyword">if</span> (finalizing != <span class="keyword">null</span> &amp;&amp; !VMDebug.isDebuggerConnected()) &#123;</span><br><span class="line">                finalizerTimedOut(finalizing);(<span class="number">3</span>)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Step1-GC前的检查"><a href="#Step1-GC前的检查" class="headerlink" title="Step1 GC前的检查"></a>Step1 GC前的检查</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Notify daemon that it's OK to sleep until notified that something is ready to be</span></span><br><span class="line"><span class="comment">        * finalized.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">goToSleep</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           needToWork = <span class="keyword">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Notify daemon that there is something ready to be finalized.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">wakeUp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           needToWork = <span class="keyword">true</span>;</span><br><span class="line">           notify();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>开启回收之前，<code>needToWork</code>会被置为true，此时<code>sleepUntilNeeded</code>返回的是true，所以线程不会<code>wait</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runInternal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="comment">// This loop may be performance critical, since we need to keep up with mutator</span></span><br><span class="line">           <span class="comment">// generation of finalizable objects.</span></span><br><span class="line">           <span class="comment">// We minimize the amount of work we do per finalizable object. For example, we avoid</span></span><br><span class="line">           <span class="comment">// reading the current time here, since that involves a kernel call per object.  We</span></span><br><span class="line">           <span class="comment">// limit fast path communication with FinalizerWatchDogDaemon to what's unavoidable: A</span></span><br><span class="line">           <span class="comment">// non-volatile store to communicate the current finalizable object, e.g. for</span></span><br><span class="line">           <span class="comment">// reporting, and a release store (lazySet) to a counter.</span></span><br><span class="line">           <span class="comment">// We do stop the  FinalizerWatchDogDaemon if we have nothing to do for a</span></span><br><span class="line">           <span class="comment">// potentially extended period.  This prevents the device from waking up regularly</span></span><br><span class="line">           <span class="comment">// during idle times.</span></span><br><span class="line"></span><br><span class="line">           <span class="comment">// Local copy of progressCounter; saves a fence per increment on ARM and MIPS.</span></span><br><span class="line">           <span class="keyword">int</span> localProgressCounter = progressCounter.get();</span><br><span class="line"></span><br><span class="line">           <span class="keyword">while</span> (isRunning()) &#123;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   <span class="comment">// Use non-blocking poll to avoid FinalizerWatchdogDaemon communication</span></span><br><span class="line">                   <span class="comment">// when busy.</span></span><br><span class="line">                   FinalizerReference&lt;?&gt; finalizingReference = (FinalizerReference&lt;?&gt;)queue.poll();</span><br><span class="line">                   <span class="keyword">if</span> (finalizingReference != <span class="keyword">null</span>) &#123;</span><br><span class="line">                       finalizingObject = finalizingReference.get();</span><br><span class="line">                       progressCounter.lazySet(++localProgressCounter);</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       finalizingObject = <span class="keyword">null</span>;</span><br><span class="line">                       progressCounter.lazySet(++localProgressCounter);</span><br><span class="line">                       <span class="comment">// Slow path; block.</span></span><br><span class="line">                       FinalizerWatchdogDaemon.INSTANCE.goToSleep();</span><br><span class="line">                       finalizingReference = (FinalizerReference&lt;?&gt;)queue.remove();</span><br><span class="line">                       finalizingObject = finalizingReference.get();</span><br><span class="line">                       progressCounter.set(++localProgressCounter);</span><br><span class="line">                       <span class="comment">//回收之前先唤醒看门狗线程</span></span><br><span class="line">                       FinalizerWatchdogDaemon.INSTANCE.wakeUp();</span><br><span class="line">                   &#125;</span><br><span class="line">                   <span class="comment">//开始回收的流程</span></span><br><span class="line">                   doFinalize(finalizingReference);</span><br><span class="line">               &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">               &#125; <span class="keyword">catch</span> (OutOfMemoryError ignored) &#123;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果此时线程处于<code>wait</code>，被中断了或者有<code>OOME</code>发生时，这个时候回到开头判断下<code>isRunning()</code>，也就是看下回收对象这个线程是否为空，如果该线程为空的话，这个循环体就没有必要再继续执行下去了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Wait until something is ready to be finalized.</span></span><br><span class="line"><span class="comment">        * Return false if we have been interrupted</span></span><br><span class="line"><span class="comment">        * See also http://code.google.com/p/android/issues/detail?id=22778.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">sleepUntilNeeded</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">while</span> (!needToWork) &#123;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   wait();</span><br><span class="line">               &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                   <span class="comment">// Daemon.stop may have interrupted us.</span></span><br><span class="line">                   <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">               &#125; <span class="keyword">catch</span> (OutOfMemoryError e) &#123;</span><br><span class="line">                   <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Step2-等待GC完成"><a href="#Step2-等待GC完成" class="headerlink" title="Step2 等待GC完成"></a>Step2 等待GC完成</h4><p>这一步是等待回收结束的过程，这个睡眠过程中如果被中断，说明在这个周期内完成了析构，直接返回null<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Return an object that took too long to finalize or return null.</span></span><br><span class="line"><span class="comment">        * Wait VMRuntime.getFinalizerTimeoutMs.  If the FinalizerDaemon took essentially the</span></span><br><span class="line"><span class="comment">        * whole time processing a single reference, return that reference.  Otherwise return</span></span><br><span class="line"><span class="comment">        * null.  Only called from a single thread.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">private</span> Object <span class="title">waitForFinalization</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (finalizerTimeoutNs == <span class="number">0</span>) &#123;</span><br><span class="line">               finalizerTimeoutNs =</span><br><span class="line">                       NANOS_PER_MILLI * VMRuntime.getRuntime().getFinalizerTimeoutMs();</span><br><span class="line">               <span class="comment">// Temporary app backward compatibility. Remove eventually.</span></span><br><span class="line">               MAX_FINALIZE_NANOS = finalizerTimeoutNs;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">long</span> startCount = FinalizerDaemon.INSTANCE.progressCounter.get();</span><br><span class="line">           <span class="comment">// Avoid remembering object being finalized, so as not to keep it alive.</span></span><br><span class="line">           <span class="comment">//如果回收对象没有超时的话，这里会返回null</span></span><br><span class="line">           <span class="keyword">if</span> (!sleepForNanos(finalizerTimeoutNs)) &#123;</span><br><span class="line">               <span class="comment">// Don't report possibly spurious timeout if we are interrupted.</span></span><br><span class="line">               <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span> (getNeedToWork() &amp;&amp; FinalizerDaemon.INSTANCE.progressCounter.get() == startCount) &#123;</span><br><span class="line">               <span class="comment">// We assume that only remove() and doFinalize() may take time comparable to</span></span><br><span class="line">               <span class="comment">// the finalizer timeout.</span></span><br><span class="line">               <span class="comment">// We observed neither the effect of the gotoSleep() nor the increment preceding a</span></span><br><span class="line">               <span class="comment">// later wakeUp. Any remove() call by the FinalizerDaemon during our sleep</span></span><br><span class="line">               <span class="comment">// interval must have been followed by a wakeUp call before we checked needToWork.</span></span><br><span class="line">               <span class="comment">// But then we would have seen the counter increment.  Thus there cannot have</span></span><br><span class="line">               <span class="comment">// been such a remove() call.</span></span><br><span class="line">               <span class="comment">// The FinalizerDaemon must not have progressed (from either the beginning or the</span></span><br><span class="line">               <span class="comment">// last progressCounter increment) to either the next increment or gotoSleep()</span></span><br><span class="line">               <span class="comment">// call.  Thus we must have taken essentially the whole finalizerTimeoutMs in a</span></span><br><span class="line">               <span class="comment">// single doFinalize() call.  Thus it's OK to time out.  finalizingObject was set</span></span><br><span class="line">               <span class="comment">// just before the counter increment, which preceded the doFinalize call.  Thus we</span></span><br><span class="line">               <span class="comment">// are guaranteed to get the correct finalizing value below, unless doFinalize()</span></span><br><span class="line">               <span class="comment">// just finished as we were timing out, in which case we may get null or a later</span></span><br><span class="line">               <span class="comment">// one.  In this last case, we are very likely to discard it below.</span></span><br><span class="line">               Object finalizing = FinalizerDaemon.INSTANCE.finalizingObject;</span><br><span class="line">               sleepForNanos(<span class="number">500</span> * NANOS_PER_MILLI);</span><br><span class="line">               <span class="comment">// Recheck to make it even less likely we report the wrong finalizing object in</span></span><br><span class="line">               <span class="comment">// the case which a very slow finalization just finished as we were timing out.</span></span><br><span class="line">               <span class="keyword">if</span> (getNeedToWork()</span><br><span class="line">                       &amp;&amp; FinalizerDaemon.INSTANCE.progressCounter.get() == startCount) &#123;</span><br><span class="line">                   <span class="keyword">return</span> finalizing;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>sleepForNanos</code>对应的函数很简单，如果在超时时间内完成GC，就会计算传进来的超时阈值减去当前已经睡眠的时间，如果这个差值小于0，说明睡眠的时间超过了阈值<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Sleep for the given number of nanoseconds, or slightly longer.</span></span><br><span class="line"><span class="comment">        * <span class="doctag">@return</span> false if we were interrupted.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">sleepForNanos</span><span class="params">(<span class="keyword">long</span> durationNanos)</span> </span>&#123;</span><br><span class="line">           <span class="comment">// It's important to base this on nanoTime(), not currentTimeMillis(), since</span></span><br><span class="line">           <span class="comment">// the former stops counting when the processor isn't running.</span></span><br><span class="line">           <span class="keyword">long</span> startNanos = System.nanoTime();</span><br><span class="line">           <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">               <span class="keyword">long</span> elapsedNanos = System.nanoTime() - startNanos;</span><br><span class="line">               <span class="keyword">long</span> sleepNanos = durationNanos - elapsedNanos;</span><br><span class="line">               <span class="keyword">if</span> (sleepNanos &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                   <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="comment">// Ensure the nano time is always rounded up to the next whole millisecond,</span></span><br><span class="line">               <span class="comment">// ensuring the delay is &gt;= the requested delay.</span></span><br><span class="line">               <span class="keyword">long</span> sleepMillis = (sleepNanos + NANOS_PER_MILLI - <span class="number">1</span>) / NANOS_PER_MILLI;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   Thread.sleep(sleepMillis);</span><br><span class="line">               &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (!isRunning()) &#123;</span><br><span class="line">                       <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125; <span class="keyword">catch</span> (OutOfMemoryError ignored) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (!isRunning()) &#123;</span><br><span class="line">                       <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Step3-GC处理超时"><a href="#Step3-GC处理超时" class="headerlink" title="Step3 GC处理超时"></a>Step3 GC处理超时</h4><p>如果第二步中的超时时间内析构没有完成，则返回析构的对象，触发<code>finalizerTimedOut</code>。<br>到了这一步是最不希望看到的结局，此时系统会弹出应用停止运行的报错框。</p>
+<p>注意这个时候并没有立刻杀死进程，杀死进程的选择权交给了用户，即通过弹窗展示给用户，但对于用户来说会一头雾水</p>
+<p><img src="http://blog.lihaizhou.top/GC_crash/GC1.png" alt=""></p>
+<h3 id="分析结论"><a href="#分析结论" class="headerlink" title="分析结论"></a>分析结论</h3><p>这种问题其实还是比较常见的，特别是低内存的机器上。<code>RootCasue</code>就是对象回收超时了，一般是由于队列中等待<code>FinalizerDaemon</code>线程回收的对象太多导致，或者此时系统资源异常紧张比如CPU负载过高或者低内存环境下。</p>
+<h3 id="场景实测"><a href="#场景实测" class="headerlink" title="场景实测"></a>场景实测</h3><h4 id="模拟还原现场"><a href="#模拟还原现场" class="headerlink" title="模拟还原现场"></a>模拟还原现场</h4><p>通过模拟<code>GC</code>时耗时操作，应用退到后台后10s会弹出报错框，堆栈如下</p>
+<p><img src="http://blog.lihaizhou.top/GC_crash/GC2.png" alt=""></p>
+<p>验证了超时时间的确是10s，同时也验证了GC时耗时的操作确实会可能触发这个现象</p>
+<h4 id="对比机情况"><a href="#对比机情况" class="headerlink" title="对比机情况"></a>对比机情况</h4><p>在手头的小米<code>note9 pro</code>上进行场景模拟测试，模拟GC耗时100s的情况<br><img src="http://blog.lihaizhou.top/GC_crash/GC3.png" alt=""></p>
+<p>在小米的机器上，到了默认的10s后并不会有弹窗，说明小米肯定修改了超时时间，第一次是等待了全部的100s后竟然正常回收，说明超时时间设置的比较大。紧接着下一次在达到了近80s时，进程收到<code>signal 9</code>直接被kill了，此时再点击应用是冷启动。</p>
+<p><strong>小米修改了超时阈值(超过100s)，通过直接sig 9杀掉了进程，没有报错弹窗，所以用户无感知</strong></p>
+<h4 id="测试机情况"><a href="#测试机情况" class="headerlink" title="测试机情况"></a>测试机情况</h4><p>同样的在我们的CP03上模拟GC耗时100s的情况<br><strong>退出应用到后台，此时系统触发GC回收，达到十秒钟时，界面上直接弹出停止运行的报错框，此时只有点击了关闭应用，才会去kill进程</strong></p>
+<h4 id="修改策略"><a href="#修改策略" class="headerlink" title="修改策略"></a>修改策略</h4><p>在GC规定的超时时间内如果没有完成析构，直接<code>sig 9</code>给对应进程</p>
+<hr>
+<p>每日一问: 如果我一拳把自己打晕了，说明我是很强呢还是很虚呢？</p>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2021/09/08/GC超时导致的后台应用崩溃问题分析/">http://lihaizhou.top/2021/09/08/GC超时导致的后台应用崩溃问题分析/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2021/09/08/GC超时导致的后台应用崩溃问题分析/">September 8th 2021, 7:55:06 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2021/09/08/GC超时导致的后台应用崩溃问题分析/">October 16th 2021, 1:21:11 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/" title="AMS锁严重竞争导致的整机卡顿">
+                    <div class="nextTitle">AMS锁严重竞争导致的整机卡顿</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2021/01/24/关于网络-wifi一些基础内容/" title="关于网络&wifi一些基础内容">
+                    <div class="prevTitle">关于网络&wifi一些基础内容</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#写在前面"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题背景"><span class="toc-number">2.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初步分析"><span class="toc-number">3.</span> <span class="toc-text">初步分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时阈值"><span class="toc-number">4.</span> <span class="toc-text">超时阈值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时检测"><span class="toc-number">5.</span> <span class="toc-text">超时检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Step1-GC前的检查"><span class="toc-number">5.1.</span> <span class="toc-text">Step1 GC前的检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step2-等待GC完成"><span class="toc-number">5.2.</span> <span class="toc-text">Step2 等待GC完成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Step3-GC处理超时"><span class="toc-number">5.3.</span> <span class="toc-text">Step3 GC处理超时</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分析结论"><span class="toc-number">6.</span> <span class="toc-text">分析结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景实测"><span class="toc-number">7.</span> <span class="toc-text">场景实测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#模拟还原现场"><span class="toc-number">7.1.</span> <span class="toc-text">模拟还原现场</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对比机情况"><span class="toc-number">7.2.</span> <span class="toc-text">对比机情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试机情况"><span class="toc-number">7.3.</span> <span class="toc-text">测试机情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改策略"><span class="toc-number">7.4.</span> <span class="toc-text">修改策略</span></a></li></ol></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 41
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span>
+            <a class="archive-post-title" href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">优化实践: 高刷下列表滑动出现卡顿掉帧</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span>
+            <a class="archive-post-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">优化实践:从系统层面优化应用启动速度</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span>
+            <a class="archive-post-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">Systrace角度: 拆解分析应用的启动流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span>
+            <a class="archive-post-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">案例分析:打开应用后操作界面无响应(Systrace)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span>
+            <a class="archive-post-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">第三视角: 一个ART GC的优化故事</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span>
+            <a class="archive-post-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">对Android S ART GC的源码梳理</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">对进程压缩消费Zram速度的优化</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span>
+            <a class="archive-post-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">AMS锁严重竞争导致的整机卡顿</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">GC超时导致的后台应用崩溃问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span>
+            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span>
+            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span>
+            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2020 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span>
+            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span>
+            <a class="archive-post-title" href="/2020/11/30/从tcpdump看miracast的play流程/">从tcpdump看miracast的play流程(工具篇)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/25</span>
+            <a class="archive-post-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">一次SystemServer OOM导致的系统重启分析之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/09</span>
+            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/20</span>
+            <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span>
+            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span>
+            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span>
+            <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/26</span>
+            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span>
+            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/23</span>
+            <a class="archive-post-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">一个SharedPreferences写操作导致的ANR问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2019/04/12/Launcher应用的重构之路/">Launcher应用的重构之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span>
+            <a class="archive-post-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span>
+            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span>
+            <a class="archive-post-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">一个滑动冲突问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span>
+            <a class="archive-post-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">一个底层内存分配异常导致无法进入launcher问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/29</span>
+            <a class="archive-post-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">一个屏幕滑动无响应问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span>
+            <a class="archive-post-title" href="/2018/05/17/一个无法开机问题的分析流程/">一个无法开机问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span>
+            <a class="archive-post-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">基于开源框架SlidingUpPanel二次开发</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMeta = {
+        url: "http://lihaizhou.top",
+        root: "/",
+        author: "Steven Li"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20210823"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20210823"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20210823" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

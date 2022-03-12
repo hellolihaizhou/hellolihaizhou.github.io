@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Steven Li">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Steven Li">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="愿历尽千帆,归来仍少年">
+    <meta name="description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WFD的学习记录笔记">
+<meta property="og:url" content="http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/index.html">
+<meta property="og:site_name" content="李海洲">
+<meta property="og:description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-09-08T12:34:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WFD的学习记录笔记">
+<meta name="twitter:description" content="本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内 WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager; mDisplayMana">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+        <link rel="alternate" href="/atom.xml" title="愿历尽千帆,归来仍少年" type="application/atom+xml">
+    
+    <title>WFD的学习记录笔记 · 李海洲</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20210823" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20210823" as="style">
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/mobile.css?v=20210823" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20210823" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20210823" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin="">
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin="">
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>愿历尽千帆,归来仍少年</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">愿历尽千帆,归来仍少年</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">WFD的学习记录笔记</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                WFD的学习记录笔记
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2,284</span>阅读时长: <span class="post-count reading-time">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2019/09/15</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <p>本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内</p>
+<h1 id="WFD扫盲"><a href="#WFD扫盲" class="headerlink" title="WFD扫盲"></a>WFD扫盲</h1><h2 id="miracast简介"><a href="#miracast简介" class="headerlink" title="miracast简介"></a>miracast简介</h2><h2 id="应用层如何操作WFD？"><a href="#应用层如何操作WFD？" class="headerlink" title="应用层如何操作WFD？"></a>应用层如何操作WFD？</h2><p>连接Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.connectWifiDisplay(String deviceMacAddress);</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用。<br>权限<br>android.permission.CONFIGURE_WIFI_DISPLAY</p>
+<p>断开Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.disconnectWifiDisplay();</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用<br>扫描Miracast设备<br>API<br>import android.hardware.display.DisplayManager;</p>
+<p>mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);</p>
+<p>mDisplayManager.startWifiDisplayScan();</p>
+<p>备注<br>（1）隐藏接口，可以通过反射调用。<br>权限<br>android.permission.CONFIGURE_WIFI_DISPLAY<br>举个milink中的使用例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * scan wifi display while we can connect</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">startWifiDisplayScan</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> == mDisplayManager) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ReflectUtil.callObjectMethod(mDisplayManager, <span class="string">"startWifiDisplayScan"</span>) == <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里用的是反射调用</p>
+<h2 id="芯片商在谷歌基础上的定制化"><a href="#芯片商在谷歌基础上的定制化" class="headerlink" title="芯片商在谷歌基础上的定制化"></a>芯片商在谷歌基础上的定制化</h2><h2 id="高通WFD"><a href="#高通WFD" class="headerlink" title="高通WFD"></a>高通WFD</h2><p>With Android JB MR1, Google released a WFD solution called Remote Display.<br> Google WFD supports AVC, LPCM, and AAC codecs along with HDCP encryption, but lacks support for content protection. </p>
+<p> It is available to applications as an external WFD using Presentation, MediaRouter, and DisplayManager APIs. </p>
+<p> When compared to the QTI-based Miracast solution, it lacks content protection support and has low performance and higher power consumption numbers. </p>
+<p> QTI created a wrapper to launch the QTI-based Miracast solution using Android APIs; this provides an enhanced Miracast solution to third-party vendors and OEMs who would like to use the Presentation API for Miracast</p>
+<h2 id="WFD的应用场景"><a href="#WFD的应用场景" class="headerlink" title="WFD的应用场景"></a>WFD的应用场景</h2><h1 id="高通WFD代码结构"><a href="#高通WFD代码结构" class="headerlink" title="高通WFD代码结构"></a>高通WFD代码结构</h1><p>SessionManagerService<br>vendor/qcom/proprietary/commonsys/wfd/wdsm/service/src/com/qualcomm/wfd/service/<br>提供了很多的接口，诸如：</p>
+<h1 id="RTSP协议"><a href="#RTSP协议" class="headerlink" title="RTSP协议"></a>RTSP协议</h1><h1 id="WFD代码连接流程"><a href="#WFD代码连接流程" class="headerlink" title="WFD代码连接流程"></a>WFD代码连接流程</h1><h1 id="M-Message消息"><a href="#M-Message消息" class="headerlink" title="M-Message消息"></a>M-Message消息</h1><h1 id="P2P以及RTSP的的建立"><a href="#P2P以及RTSP的的建立" class="headerlink" title="P2P以及RTSP的的建立"></a>P2P以及RTSP的的建立</h1><h2 id="p2p的建立"><a href="#p2p的建立" class="headerlink" title="p2p的建立"></a>p2p的建立</h2><h2 id="RTSP的建立"><a href="#RTSP的建立" class="headerlink" title="RTSP的建立"></a>RTSP的建立</h2><h1 id="WFD整体架构-source"><a href="#WFD整体架构-source" class="headerlink" title="WFD整体架构(source)"></a>WFD整体架构(source)</h1><h1 id="WFD常见问题的debug策略"><a href="#WFD常见问题的debug策略" class="headerlink" title="WFD常见问题的debug策略"></a>WFD常见问题的debug策略</h1><h2 id="Wifi-Display-Miracast分析一般需要的日志"><a href="#Wifi-Display-Miracast分析一般需要的日志" class="headerlink" title="Wifi-Display/Miracast分析一般需要的日志"></a>Wifi-Display/Miracast分析一般需要的日志</h2><p>前提条件：root版本，因为有些命令如关selinux这些命令需要root权限</p>
+<h3 id="高通平台"><a href="#高通平台" class="headerlink" title="高通平台"></a>高通平台</h3><p>使能所有WFD日志的开关</p>
+<ol>
+<li>Android N 以及更早的版本<br>创建一个文件名为mmosal_logmask.cfg，内容如下<br><start><br>LOGMASK = 6013:63<br>LOGMASK = 6015:63<end>
+
+</end></start></li>
+</ol>
+<p>这个文件建议保存在本地，后续方便提供给测试或者自己调试</p>
+<p> push mmosal_logmask.cfg这个文件到 /data/ folder 或者 /data/misc/media/ 目录下, 执行如下命令<br> adb root<br> adb remount<br> adb push mmosal_logmask.cfg /data/<br> adb push mmosal_logmask.cfg /data/misc/media/<br> adb shell setenforce 0</p>
+<ol start="2">
+<li><p>Android O 版本<br>adb shell setprop mmosal.debug.config 6015:63:6013:63</p>
+</li>
+<li><p>Android P 版本<br>adb shell setprop vendor.debug.mmosal.config 6015:63:6013:63</p>
+</li>
+<li><p>Android Q 版本<br>push  mmosal_logmask.cfg这个文件到 /data/ 目录 或者 /data/misc/media/ folder 或者 /data/vendor/，索性都push了<br>adb root<br>adb remount<br>adb push mmosal_logmask.cfg /data/<br>adb push mmosal_logmask.cfg data/misc/media/<br>adb push mmosal_logmask.cfg  /data/vendor/<br>adb shell setenforce 0</p>
+</li>
+</ol>
+<p>打开延迟分析属性来判断延迟值<br>对于 WFD performance 问题, 需要打开延迟分析属性来判断延迟值<br>Android O<br>adb shell setprop persist.debug.wfd.profile 1</p>
+<p>Android P/Q<br>adb shell setprop persist.vendor.debug.wfd.profile 1</p>
+<p>获取 TCP dump，这一步主要用来分析丢包率以及建立RTSP过程中的问题<br>1.adb shell</p>
+<ol start="2">
+<li>tcpdump -i wlan0 -s 0 -w /data/tcpdump.pcap</li>
+</ol>
+<h3 id="联发科平台"><a href="#联发科平台" class="headerlink" title="联发科平台"></a>联发科平台</h3><p>WFD卡顿延迟问题<br> 1.当发现有延迟或者卡顿，可以看是否有如下LOG：<br>212887 07-05 11:13:53.018936 582 24850 I MtkNetworkSession: [WFD_P][video][dummy=0]ts=7663475,in 7663545,out 7664846,LatencyF 91,send 1300,LatencyT 1392<br>212888 07-05 11:13:53.019069 582 24850 I MtkNetworkSession: [WFD_P][audo][dummy=0]ts=7663476,in 7663546,out 7664846,LatencyF 7,send 1300,LatencyT 1307</p>
+<p>//如下的时间单位都是毫秒<br>LatencyF 91 //编码打包的延迟时间<br>send 1300 //发送的延迟时间<br>LatencyT 1392 //总的延迟</p>
+<p>2.假如send 时间比较长（一般需要平均1000/25FPS = 40毫秒以内才能保证不会卡顿）那么卡顿是正常现象，一般没办法提升，比如网络原因，如下LOG（ link_score小于70），说明是网络信号不好卡顿延迟：<br>39313 07-05 11:13:50.521 <6>[ 7662.347991] (1)[1261:tx_thread][wlan]nicCmdEventQueryStaStatistics:(P2P INFO) link_score=11, rssi=78, rate=81, threshold_cnt=2780,。</6></p>
+<p>3.假如是LatencyF 太长，请帮忙设置如下property并抓LOG复现（需要提供mtklog和netlog）。<br>  adb root<br>  adb shell setenforce 0<br>  //Android O版本以及之前的版本<br>  adb shell setprop mtk.omx.enable.venc.log 1<br>  //Android P版本<br>  adb shell setprop vendor.mtk.omx.enable.venc.log 2</p>
+<h2 id="如何分析丢包率"><a href="#如何分析丢包率" class="headerlink" title="如何分析丢包率"></a>如何分析丢包率</h2><h2 id="miracast连接超时问题分析"><a href="#miracast连接超时问题分析" class="headerlink" title="miracast连接超时问题分析"></a>miracast连接超时问题分析</h2><h2 id="sink端显示问题一般处理策略"><a href="#sink端显示问题一般处理策略" class="headerlink" title="sink端显示问题一般处理策略"></a>sink端显示问题一般处理策略</h2><h3 id="播放卡顿的厘清方向-source"><a href="#播放卡顿的厘清方向-source" class="headerlink" title="播放卡顿的厘清方向(source)"></a>播放卡顿的厘清方向(source)</h3><h3 id="播放卡顿的厘清方向-sink"><a href="#播放卡顿的厘清方向-sink" class="headerlink" title="播放卡顿的厘清方向(sink)"></a>播放卡顿的厘清方向(sink)</h3><p>1 在测试之前，需要先在屏蔽室中测试手机的吞吐量，看看是否正常。</p>
+<p>2  在测试之前也要先确保硬件没有问题，比如接收灵敏度，EVM，天线效能等硬件因素要是ok的。</p>
+<p>3  测试时首先选择一个比较干净的环境进行测试。</p>
+<p>4  使用sniffer 设备在全信道上扫描，看看周围AP在各信道上的分布</p>
+<p>5  在测试时，最好是选择比较空闲的信道进行测试，可以这样设置：先设置AP的信道为空闲信道，然后手机连接AP，手机再连接dongle，断开AP，此时WFD的连接就处于空闲信道了。</p>
+<p>6  如果一定要在比较繁忙的信道上测试，首先要在这个信道上使用iperf打吞吐量，如果数据可以稳定在15Mbps以上，就可以进行测试。</p>
+<p>7  测试时，请同时拿对比机进行测试，如果遇到卡顿现象，请换一只手机进行测试，也可以再测试一次此时的吞吐量，看看是否有变。</p>
+<p>8  测试时，可以在空闲的时段进行测试，比如下班后，或者周末的时间等</p>
+<p>若只是SINK端卡顿，通常的原因有：<br>1.mdp做resize和rotate慢<br>2.encoder做视频编码慢<br>3.ANetworksession调用socket接口将已打好包的rtp a\v data发送有延迟<br>4.network wifi环境问题<br>5.SINK端本身拆包解码慢</p>
+<p>逆向分析比较容易快速厘清问题，贵司可以先通过mainlog和netlog快速厘清是否是网络或者SINK端本身问题。<br>首先请通过mtklogger apk，勾选moblie log和net log，然后开始复现问题，抓取分析资料.<br>再通过netlog导出SOURCE发送给SINK端的rtp数据，并通过wireshark将rtp包生成ts文件,直接在PC上查看播放视频（可以用vlc视频播放器直接打开），查看视频播放是否有卡顿现象。<br>若视频本身在PC上播放卡顿，请提交eservice，并附带mtklog（mobile log&amp; net log）等文件；<br>若视频本身在PC上播放不卡顿，则surface-&gt;mdp-&gt;encoder-&gt;ANetworksession\socket这一路正常，推荐贵司做下面测试：<br>1）用对比机测试看是否也有同样问题；<br>2）可以把附件视频ts文件直接通过usb的方式，在TV上播放，若播放卡顿，则是5.SINK端本身拆包解码慢；<br>3）测试当前wifi网络环境，在纯净wifi网络环境下再进行测试。<br>若还没有找到原因，请提交eservice，说明贵司分析现状以及测试实验结果，并附带mtklog（mobile log&amp; net log）等文件。</p>
+<p>通常网络不稳定导致的sink端卡顿会有下面log<br>1)link_score不稳定等于100<br>05-31 14:01:09.326144 1238 2086 D WifiP2pService: link_score=10<br>05-31 14:01:11.329835 1238 2086 D WifiP2pService: link_score=8<br>05-31 14:01:13.331112 1238 2086 D WifiP2pService: link_score=10<br>05-31 14:01:15.332513 1238 2086 D WifiP2pService: link_score=10<br>~<br>05-31 14:02:31.387187 1238 2086 D WifiP2pService: link_score=71<br>05-31 14:02:33.391052 1238 2086 D WifiP2pService: link_score=58<br>05-31 14:02:35.390564 1238 2086 D WifiP2pService: link_score=73<br>05-31 14:02:37.393885 1238 2086 D WifiP2pService: link_score=54</p>
+<p>2)Netowrksession打印出来send cost时间较长<br>05-31 14:01:35.820162 413 10936 I NetworkSession: [WFD_P][audo][dummy=0]ts=13041028 ms,in 13041053 ms,out 13044779 ms, mLatencyF 24 ms,send cost 3725 ms,LatencyT 3750 ms<br>05-31 14:01:35.820302 413 10936 I NetworkSession: [WFD_P][audo][dummy=0]ts=13041049 ms,in 13041054 ms,out 13044779 ms, mLatencyF 4 ms,send cost 3725 ms,LatencyT 3729 ms</p>
+<h3 id="高通平台的花屏问题一般分析方向"><a href="#高通平台的花屏问题一般分析方向" class="headerlink" title="高通平台的花屏问题一般分析方向"></a>高通平台的花屏问题一般分析方向</h3><h3 id="MTK平台的花屏问题一般分析方向"><a href="#MTK平台的花屏问题一般分析方向" class="headerlink" title="MTK平台的花屏问题一般分析方向"></a>MTK平台的花屏问题一般分析方向</h3><p>参见：[FAQ21608] WFD图像花屏问题</p>
+<p>step1: 用wireshark打开netlog，并过滤出RTP包，分析丢包率</p>
+<p>step2: 发现了丢包，那么说明花屏是正常的，假如仍然要分析问题，可以去搜索kernel_log里面的link_score关键字。如果出现如下LOG（ link_score小于70），说明是网络信号不好导致丢帧：<br>39313 07-05 11:13:50.521 <6>[ 7662.347991] (1)[1261:tx_thread][wlan]nicCmdEventQueryStaStatistics:(P2P INFO) link_score=11, rssi=78, rate=81, threshold_cnt=2780,</6></p>
+<p>step3:如果发现没有丢包，但是出现了花屏。可以在如下界面把ts数据dump出来，然后拿PC端的播放器播放</p>
+<p>step4:如果发现播放器播放是OK的，那么说明是TV或者其他显示设备的问题，跟平台无关，亲自行去找TV厂商沟通</p>
+<p>step5:如果发现播放有问题，请帮忙提供mtklog，且需要打开netlog</p>
+<h1 id="WFD几个典型案例"><a href="#WFD几个典型案例" class="headerlink" title="WFD几个典型案例"></a>WFD几个典型案例</h1><p>参考了：</p>
+<p><a href="https://online.mediatek.com/FAQ#/SW/FAQ21609" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21609</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ21608" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21608</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ08527" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ08527</a><br><a href="https://online.mediatek.com/FAQ#/SW/FAQ21602" target="_blank" rel="noopener">https://online.mediatek.com/FAQ#/SW/FAQ21602</a></p>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/">http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/">September 15th 2019, 5:18:25 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2019/09/15/WFD的学习记录笔记/">September 8th 2021, 8:34:56 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2019/12/15/Android input系统/" title="Android input系统">
+                    <div class="nextTitle">Android input系统</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/" title="一个SharedPreferences写操作导致的ANR问题分析">
+                    <div class="prevTitle">一个SharedPreferences写操作导致的ANR问题分析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WFD扫盲"><span class="toc-number">1.</span> <span class="toc-text">WFD扫盲</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#miracast简介"><span class="toc-number">1.1.</span> <span class="toc-text">miracast简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用层如何操作WFD？"><span class="toc-number">1.2.</span> <span class="toc-text">应用层如何操作WFD？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#芯片商在谷歌基础上的定制化"><span class="toc-number">1.3.</span> <span class="toc-text">芯片商在谷歌基础上的定制化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高通WFD"><span class="toc-number">1.4.</span> <span class="toc-text">高通WFD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WFD的应用场景"><span class="toc-number">1.5.</span> <span class="toc-text">WFD的应用场景</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高通WFD代码结构"><span class="toc-number">2.</span> <span class="toc-text">高通WFD代码结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RTSP协议"><span class="toc-number">3.</span> <span class="toc-text">RTSP协议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WFD代码连接流程"><span class="toc-number">4.</span> <span class="toc-text">WFD代码连接流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#M-Message消息"><span class="toc-number">5.</span> <span class="toc-text">M-Message消息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#P2P以及RTSP的的建立"><span class="toc-number">6.</span> <span class="toc-text">P2P以及RTSP的的建立</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#p2p的建立"><span class="toc-number">6.1.</span> <span class="toc-text">p2p的建立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RTSP的建立"><span class="toc-number">6.2.</span> <span class="toc-text">RTSP的建立</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WFD整体架构-source"><span class="toc-number">7.</span> <span class="toc-text">WFD整体架构(source)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WFD常见问题的debug策略"><span class="toc-number">8.</span> <span class="toc-text">WFD常见问题的debug策略</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Wifi-Display-Miracast分析一般需要的日志"><span class="toc-number">8.1.</span> <span class="toc-text">Wifi-Display/Miracast分析一般需要的日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#高通平台"><span class="toc-number">8.1.1.</span> <span class="toc-text">高通平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#联发科平台"><span class="toc-number">8.1.2.</span> <span class="toc-text">联发科平台</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何分析丢包率"><span class="toc-number">8.2.</span> <span class="toc-text">如何分析丢包率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#miracast连接超时问题分析"><span class="toc-number">8.3.</span> <span class="toc-text">miracast连接超时问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sink端显示问题一般处理策略"><span class="toc-number">8.4.</span> <span class="toc-text">sink端显示问题一般处理策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#播放卡顿的厘清方向-source"><span class="toc-number">8.4.1.</span> <span class="toc-text">播放卡顿的厘清方向(source)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#播放卡顿的厘清方向-sink"><span class="toc-number">8.4.2.</span> <span class="toc-text">播放卡顿的厘清方向(sink)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高通平台的花屏问题一般分析方向"><span class="toc-number">8.4.3.</span> <span class="toc-text">高通平台的花屏问题一般分析方向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MTK平台的花屏问题一般分析方向"><span class="toc-number">8.4.4.</span> <span class="toc-text">MTK平台的花屏问题一般分析方向</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WFD几个典型案例"><span class="toc-number">9.</span> <span class="toc-text">WFD几个典型案例</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 41
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2021 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span>
+            <a class="archive-post-title" href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/">优化实践: 高刷下列表滑动出现卡顿掉帧</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span>
+            <a class="archive-post-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">优化实践:从系统层面优化应用启动速度</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/11</span>
+            <a class="archive-post-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">Systrace角度: 拆解分析应用的启动流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span>
+            <a class="archive-post-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">案例分析:打开应用后操作界面无响应(Systrace)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span>
+            <a class="archive-post-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">第三视角: 一个ART GC的优化故事</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span>
+            <a class="archive-post-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">对Android S ART GC的源码梳理</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span>
+            <a class="archive-post-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">对进程压缩消费Zram速度的优化</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span>
+            <a class="archive-post-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">AMS锁严重竞争导致的整机卡顿</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">GC超时导致的后台应用崩溃问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span>
+            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/03</span>
+            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span>
+            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2020 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span>
+            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span>
+            <a class="archive-post-title" href="/2020/11/30/从tcpdump看miracast的play流程/">从tcpdump看miracast的play流程(工具篇)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/25</span>
+            <a class="archive-post-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">一次SystemServer OOM导致的系统重启分析之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span>
+            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/09</span>
+            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/20</span>
+            <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span>
+            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span>
+            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/04</span>
+            <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/26</span>
+            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span>
+            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span>
+            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/23</span>
+            <a class="archive-post-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">一个SharedPreferences写操作导致的ANR问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2019/04/12/Launcher应用的重构之路/">Launcher应用的重构之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span>
+            <a class="archive-post-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span>
+            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span>
+            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span>
+            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/06</span>
+            <a class="archive-post-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">一个滑动冲突问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/31</span>
+            <a class="archive-post-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">一个底层内存分配异常导致无法进入launcher问题分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/29</span>
+            <a class="archive-post-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">一个屏幕滑动无响应问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span>
+            <a class="archive-post-title" href="/2018/05/17/一个无法开机问题的分析流程/">一个无法开机问题的分析流程</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/14</span>
+            <a class="archive-post-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">基于开源框架SlidingUpPanel二次开发</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMeta = {
+        url: "http://lihaizhou.top",
+        root: "/",
+        author: "Steven Li"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20210823"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20210823"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20210823" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

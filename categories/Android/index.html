@@ -433,106 +433,6 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android-Vsync/">
-                
-                <span class="abstract-title-text">Android-Vsync</span>
-            </a>
-            <div class="abstract-content">
-                本文目的在于通过了解Vsync工作原理加深对systrace的理解
-在 Systrace 中我们可以看到，Android 系统在 Vsync 信号的指引下，有条不紊地进行者每一帧的渲染、合成操作，使我们可以享受稳定帧率的画面。
-Vsync作用-Drawing without SyncStep1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个V...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android input系统/">
-                
-                <span class="abstract-title-text">Android input系统</span>
-            </a>
-            <div class="abstract-content">
-                一次input的耗时时间分布
-
-T1 表示 硬件中断的时间
-T2 表示 InputReader 从 /dev/input/xxx 读出事件的时间
-T3 表示 InputDispatcher 向 app 进程发送事件的时间
-T4 表示 app 主线程开始处理输入事件的时间
-T5 表示 app 主线程完成处理输入事件的时间一次用户输入事件的传递过程可以简化为: 硬件 -&gt; kernel -&gt; system_server -&gt; app
-
-system_server 耗时: T3 - T2frameworks/native/libs/input/InputTransport.c...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
                 
                 <span class="abstract-title-text">Launcher应用的重构之路</span>
@@ -596,196 +496,6 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2019/12/28">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">
-                
-                <span class="abstract-title-text">Android输入系统系列(4)----分发输入消息</span>
-            </a>
-            <div class="abstract-content">
-                前面讲过C++中起来的线程循环函数是threadLoop，下面看看InputDispatcherThread这一分发消息的线程的循环体
-1234bool InputDispatcherThread::threadLoop() &#123;    mDispatcher-&gt;dispatchOnce();    return true;&#125;
-这里只是简单的调用了InputDispatcher的dispatchOnce()接着看这个函数
-12345678910111213void InputDispatcher::dispatchOnce() &#123;    nsecs_t ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/03</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">
-                
-                <span class="abstract-title-text">Android输入系统系列(3)----读取RawEvent</span>
-            </a>
-            <div class="abstract-content">
-                之前系列文章(1)中提到InputManager中的start方法里调用了ReaderThread-&gt;run，可是我们在InputReader中没有看到run方法这一点和java中的线程运行方式有点区别，C下的线程运行是threadLoop这个方法，这是个虚函数，追溯到父类线程中是有run这个方法层层往下跟就会跟到threadLoop方法，如果threadLoop返回false则会退出循环
-下面看下InputReader的threadLoop方法，可见这里返回true，说明是反复循环
-12345frameworks\native\services\inputflinger\Inpu...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/03</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">
-                
-                <span class="abstract-title-text">Android输入系统系列(2)----EventHub</span>
-            </a>
-            <div class="abstract-content">
-                上篇文章中说到eventhub是在NativeInputManager的构造函数new出来
-一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理
-12345678910111213141516171819202122232425262728293031323334353637EventHub::EventHub(void) :        mBuiltInKeyboardId(NO_BUILT_IN_KEYBOARD), mNextDeviceId(1), mControllerNumber...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">
-                
-                <span class="abstract-title-text">Android输入系统系列(1)----InputManagerService</span>
-            </a>
-            <div class="abstract-content">
-                最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析
-以下讨论基于Android 7.1.1代码
-InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中创建frameworks\base\services\java\com\android\server\SystemServer.java  
-123456789101112131415...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/07</span>
                 </div>
                 <!-- tags -->
                 
@@ -907,11 +617,102 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
         </article>
         <div class="index-post-divider"></div>
     
-    <!-- paginator  -->
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">
+                
+                <span class="abstract-title-text">一个屏幕滑动无响应问题的分析流程</span>
+            </a>
+            <div class="abstract-content">
+                问题现象在应用中出现屏幕右滑无响应
+复现概率:once
+问题平台:Android N  MT6739
+Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中. 搜索&quot;am_anr&quot;关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生ANR。那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/29</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
     
-        <nav class="page-nav">
-            <span class="page-number current">1</span><a class="page-number" href="/categories/Android/page/2/">2</a><a class="extend next" rel="next" href="/categories/Android/page/2/">NEXT ></a>
-        </nav>
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
+                
+                <span class="abstract-title-text">基于开源框架SlidingUpPanel二次开发</span>
+            </a>
+            <div class="abstract-content">
+                项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕
+初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。
+设计框架下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂github兜一圈，看看有没有类似的框架，茫茫大海中找到了一...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/14</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+    <!-- paginator  -->
     
 </main>
 
@@ -1168,142 +969,7 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1532,7 +1198,7 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1689,18 +1355,6 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1714,24 +1368,6 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1765,30 +1401,6 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1836,14 +1448,14 @@ InputManagerService作为系统服务，启动过程和其他服务流程差不�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

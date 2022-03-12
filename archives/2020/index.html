@@ -865,32 +865,23 @@ CPU 将通...
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2020/05/25/mmap机制初探/">
+            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
                 
-                <span class="abstract-title-text">mmap机制初探</span>
+                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
             </a>
             <div class="abstract-content">
-                在Unix/Linux系统下读写文件，一般有两种方式
-第一种方式：传统的read/write方式
-常规文件系统操作的调用过程：
+                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
+抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
+挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
 
-进程发起读文件请求
-
-内核通过查找进程文件符表，定位到内核已打开文件集上的文件信息，从而找到此文件的inode
-
-inode在address_space上查找要请求的文件页是否已经缓存在页缓存中。如果存在，则直接返回这片文件页的内容。
-
-如果不存在，则通过inode定位到文件磁盘地址，将数据从磁盘复制到页缓存。之后再次发起读页面过程，进而将页缓存中的数据发给用户进程。
-
-
-总结来说，常规文件操作为了提高读写效率和保护磁盘，使用了页缓存机制。这样造成读文件时需要...
+per...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2020/06/02">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/05/25</span>
+                <div class="abstract-date" title="Last updated: 2021/10/16">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
                 </div>
                 <!-- tags -->
                 
@@ -901,10 +892,10 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
             
         
         
-        <span class="post-category" data-categories="Linux"">
+        <span class="post-category" data-categories="性能"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                Linux
+                性能
             </span>
         </span>
     
@@ -917,10 +908,6 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
         <div class="index-post-divider"></div>
     
     <!-- paginator  -->
-    
-        <nav class="page-nav">
-            <span class="page-number current">1</span><a class="page-number" href="/archives/2020/page/2/">2</a><a class="extend next" rel="next" href="/archives/2020/page/2/">NEXT ></a>
-        </nav>
     
 </main>
 
@@ -1177,142 +1164,7 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1541,7 +1393,7 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1698,18 +1550,6 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1723,24 +1563,6 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1774,30 +1596,6 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1845,14 +1643,14 @@ inode在address_space上查找要请求的文件页是否已经缓存在页缓�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

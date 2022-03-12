@@ -540,110 +540,6 @@ BBR论文部分(1/6)12345678Measuring bottleneck bandwidth and round-trip propag
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2020/05/25/mmap机制初探/">
-                
-                <span class="abstract-title-text">mmap机制初探</span>
-            </a>
-            <div class="abstract-content">
-                在Unix/Linux系统下读写文件，一般有两种方式
-第一种方式：传统的read/write方式
-常规文件系统操作的调用过程：
-
-进程发起读文件请求
-
-内核通过查找进程文件符表，定位到内核已打开文件集上的文件信息，从而找到此文件的inode
-
-inode在address_space上查找要请求的文件页是否已经缓存在页缓存中。如果存在，则直接返回这片文件页的内容。
-
-如果不存在，则通过inode定位到文件磁盘地址，将数据从磁盘复制到页缓存。之后再次发起读页面过程，进而将页缓存中的数据发给用户进程。
-
-
-总结来说，常规文件操作为了提高读写效率和保护磁盘，使用了页缓存机制。这样造成读文件时需要...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2020/06/02">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/05/25</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Linux"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Linux
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">
-                
-                <span class="abstract-title-text">为何连接wifi后系统会卡顿一下?</span>
-            </a>
-            <div class="abstract-content">
-                问题描述数据流量使用过程中切换到wifi连接，系统全局会卡一下
-初步分析抓取systrace时手指在桌面不停的滑动，可以看到很明确的一段没有帧，但是这个时间段手指一直在滑动我们都知道vsync是APP最终通过框架层请求上来的，Choreographer收到回调后开始渲染帧。自然而然对应到sf中的vsync-sf也没有帧合成，所以界面上表现为卡顿，现象和jank类似，都是屏幕上没有及时更新画面其实这个时间段可以发现deliverInputEvent也没有，其实这一点也可以从Launcher的PendingInputEventQueue区域看出来PS: PendingInputEventQu...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/05</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
                 
                 <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
@@ -675,153 +571,6 @@ per...
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
                 性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/26/如何快速定位kernel错误/">
-                
-                <span class="abstract-title-text">如何快速定位kernel错误</span>
-            </a>
-            <div class="abstract-content">
-                比如在定位systrace卡顿问题时，最后跟到kernel中
-可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”}
-123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$ ./gdbGNU gdb (GDB) 7.11Copyright (C) 2016 Free Software Foundation, Inc.License GPLv3+: GNU GPL ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/26</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="稳定性"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                稳定性
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android-Vsync/">
-                
-                <span class="abstract-title-text">Android-Vsync</span>
-            </a>
-            <div class="abstract-content">
-                本文目的在于通过了解Vsync工作原理加深对systrace的理解
-在 Systrace 中我们可以看到，Android 系统在 Vsync 信号的指引下，有条不紊地进行者每一帧的渲染、合成操作，使我们可以享受稳定帧率的画面。
-Vsync作用-Drawing without SyncStep1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个V...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android input系统/">
-                
-                <span class="abstract-title-text">Android input系统</span>
-            </a>
-            <div class="abstract-content">
-                一次input的耗时时间分布
-
-T1 表示 硬件中断的时间
-T2 表示 InputReader 从 /dev/input/xxx 读出事件的时间
-T3 表示 InputDispatcher 向 app 进程发送事件的时间
-T4 表示 app 主线程开始处理输入事件的时间
-T5 表示 app 主线程完成处理输入事件的时间一次用户输入事件的传递过程可以简化为: 硬件 -&gt; kernel -&gt; system_server -&gt; app
-
-system_server 耗时: T3 - T2frameworks/native/libs/input/InputTransport.c...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
             </span>
         </span>
     
@@ -928,10 +677,249 @@ mDisplayManager.connectWifiDisp...
         </article>
         <div class="index-post-divider"></div>
     
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
+                
+                <span class="abstract-title-text">Launcher应用的重构之路</span>
+            </a>
+            <div class="abstract-content">
+                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
+为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/09/08">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
+                
+                <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
+            </a>
+            <div class="abstract-content">
+                项目痛点出现偶现崩溃或ANR，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时
+初步想法可不可以将所有ANR,Crash等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位
+以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善
+Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地址
+在钉...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">
+                
+                <span class="abstract-title-text">一个滑动冲突问题的分析流程</span>
+            </a>
+            <div class="abstract-content">
+                问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog
+初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间Android默认是400ms后会识别为长按事件，此时子View的长按事件被触发。那么问题来了，怎么才能在子view接收到触摸事件并能接管本次事件序列呢？这就要说到老生常谈的事件拦截了，正常拦截事件有...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/06</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">
+                
+                <span class="abstract-title-text">一个底层内存分配异常导致无法进入launcher问题分析</span>
+            </a>
+            <div class="abstract-content">
+                问题平台Android go
+复现概率always
+问题现象解锁后，Launcher图标未能加载出，按虚拟back,home键，下拉状态栏响应异常缓慢
+前言Android Go是一个简化版本的Android O（及以上），能够在超低端的Android手机上流畅运行，具体量化就是RAM仅为512MB至1GB的机型
+初步分析首次合入MTK提供的Android Go代码后开机，解锁后Launcher图标没有加载出，鉴于该平台代码是芯片商已经调试稳定后释放，Launcher本身应用出问题的概率比较小，操作发现下拉状态栏异常卡顿
+第一反应是会不会是内存很紧张呢? 有可能的哦，ok, 下面开始分析日...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/31</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">
+                
+                <span class="abstract-title-text">一个屏幕滑动无响应问题的分析流程</span>
+            </a>
+            <div class="abstract-content">
+                问题现象在应用中出现屏幕右滑无响应
+复现概率:once
+问题平台:Android N  MT6739
+Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中. 搜索&quot;am_anr&quot;关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生ANR。那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/29</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
     <!-- paginator  -->
     
         <nav class="page-nav">
-            <a class="extend prev" rel="prev" href="/page/2/">< PREV</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">NEXT ></a>
+            <a class="extend prev" rel="prev" href="/page/2/">< PREV</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">NEXT ></a>
         </nav>
     
 </main>
@@ -1264,142 +1252,7 @@ mDisplayManager.connectWifiDisp...
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1628,7 +1481,7 @@ mDisplayManager.connectWifiDisp...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1785,18 +1638,6 @@ mDisplayManager.connectWifiDisp...
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1810,24 +1651,6 @@ mDisplayManager.connectWifiDisp...
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1861,30 +1684,6 @@ mDisplayManager.connectWifiDisp...
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1932,14 +1731,14 @@ mDisplayManager.connectWifiDisp...
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

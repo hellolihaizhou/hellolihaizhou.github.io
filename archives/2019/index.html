@@ -433,153 +433,6 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2019/12/26/如何快速定位kernel错误/">
-                
-                <span class="abstract-title-text">如何快速定位kernel错误</span>
-            </a>
-            <div class="abstract-content">
-                比如在定位systrace卡顿问题时，最后跟到kernel中
-可以看到阻塞在{kernel callsite when blocked:: “teei_forward_call+0xac/0xfc”}
-123456789101112131415161718192021mi@mi-OptiPlex-7060:~/Code_mi/F7_code/prebuilts/gdb/linux-x86/bin$ ./gdbGNU gdb (GDB) 7.11Copyright (C) 2016 Free Software Foundation, Inc.License GPLv3+: GNU GPL ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/26</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="稳定性"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                稳定性
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android-Vsync/">
-                
-                <span class="abstract-title-text">Android-Vsync</span>
-            </a>
-            <div class="abstract-content">
-                本文目的在于通过了解Vsync工作原理加深对systrace的理解
-在 Systrace 中我们可以看到，Android 系统在 Vsync 信号的指引下，有条不紊地进行者每一帧的渲染、合成操作，使我们可以享受稳定帧率的画面。
-Vsync作用-Drawing without SyncStep1. Display显示第0帧数据，此时CPU和GPU渲染第1帧画面，而且赶在Display显示下一帧前完成Step2. 因为渲染及时，Display在第0帧显示完成后，也就是第1个VSync后，正常显示第1帧Step3. 由于某些原因，比如CPU资源被占用，系统没有及时地开始处理第2帧，直到第2个V...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/12/15/Android input系统/">
-                
-                <span class="abstract-title-text">Android input系统</span>
-            </a>
-            <div class="abstract-content">
-                一次input的耗时时间分布
-
-T1 表示 硬件中断的时间
-T2 表示 InputReader 从 /dev/input/xxx 读出事件的时间
-T3 表示 InputDispatcher 向 app 进程发送事件的时间
-T4 表示 app 主线程开始处理输入事件的时间
-T5 表示 app 主线程完成处理输入事件的时间一次用户输入事件的传递过程可以简化为: 硬件 -&gt; kernel -&gt; system_server -&gt; app
-
-system_server 耗时: T3 - T2frameworks/native/libs/input/InputTransport.c...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
                 
                 <span class="abstract-title-text">WFD的学习记录笔记</span>
@@ -1020,142 +873,7 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1384,7 +1102,7 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1541,18 +1259,6 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1566,24 +1272,6 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1617,30 +1305,6 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1688,14 +1352,14 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

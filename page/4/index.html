@@ -446,435 +446,6 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
-                
-                <span class="abstract-title-text">Launcher应用的重构之路</span>
-            </a>
-            <div class="abstract-content">
-                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
-为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
-                
-                <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
-            </a>
-            <div class="abstract-content">
-                项目痛点出现偶现崩溃或ANR，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时
-初步想法可不可以将所有ANR,Crash等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位
-以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善
-Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地址
-在钉...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">
-                
-                <span class="abstract-title-text">Android输入系统系列(4)----分发输入消息</span>
-            </a>
-            <div class="abstract-content">
-                前面讲过C++中起来的线程循环函数是threadLoop，下面看看InputDispatcherThread这一分发消息的线程的循环体
-1234bool InputDispatcherThread::threadLoop() &#123;    mDispatcher-&gt;dispatchOnce();    return true;&#125;
-这里只是简单的调用了InputDispatcher的dispatchOnce()接着看这个函数
-12345678910111213void InputDispatcher::dispatchOnce() &#123;    nsecs_t ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/03</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">
-                
-                <span class="abstract-title-text">Android输入系统系列(3)----读取RawEvent</span>
-            </a>
-            <div class="abstract-content">
-                之前系列文章(1)中提到InputManager中的start方法里调用了ReaderThread-&gt;run，可是我们在InputReader中没有看到run方法这一点和java中的线程运行方式有点区别，C下的线程运行是threadLoop这个方法，这是个虚函数，追溯到父类线程中是有run这个方法层层往下跟就会跟到threadLoop方法，如果threadLoop返回false则会退出循环
-下面看下InputReader的threadLoop方法，可见这里返回true，说明是反复循环
-12345frameworks\native\services\inputflinger\Inpu...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/03</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">
-                
-                <span class="abstract-title-text">Android输入系统系列(2)----EventHub</span>
-            </a>
-            <div class="abstract-content">
-                上篇文章中说到eventhub是在NativeInputManager的构造函数new出来
-一台移动设备能产生输入消息的部件很多，包括键盘，触摸屏，按键等。EventHub的作用就是把所有这些设备产生的消息统一成一种格式，再发往上层进行处理
-12345678910111213141516171819202122232425262728293031323334353637EventHub::EventHub(void) :        mBuiltInKeyboardId(NO_BUILT_IN_KEYBOARD), mNextDeviceId(1), mControllerNumber...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">
-                
-                <span class="abstract-title-text">Android输入系统系列(1)----InputManagerService</span>
-            </a>
-            <div class="abstract-content">
-                最近项目中遇到事件没有传到上层的问题，虽然问题最终得以解决，不过在问题处理中感知input系统有些东西遗忘了，觉得有必要再拿出完整的梳理一遍，后续将通过系列文章进行梳理，文章借鉴深入理解Android5.0一书，不过后续文章均会基于Android N分析
-以下讨论基于Android 7.1.1代码
-InputManagerService作为系统服务，启动过程和其他服务流程差不多，在SystemServer中创建frameworks\base\services\java\com\android\server\SystemServer.java  
-123456789101112131415...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/07</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">
-                
-                <span class="abstract-title-text">一个滑动冲突问题的分析流程</span>
-            </a>
-            <div class="abstract-content">
-                问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog
-初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间Android默认是400ms后会识别为长按事件，此时子View的长按事件被触发。那么问题来了，怎么才能在子view接收到触摸事件并能接管本次事件序列呢？这就要说到老生常谈的事件拦截了，正常拦截事件有...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/06</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">
-                
-                <span class="abstract-title-text">一个底层内存分配异常导致无法进入launcher问题分析</span>
-            </a>
-            <div class="abstract-content">
-                问题平台Android go
-复现概率always
-问题现象解锁后，Launcher图标未能加载出，按虚拟back,home键，下拉状态栏响应异常缓慢
-前言Android Go是一个简化版本的Android O（及以上），能够在超低端的Android手机上流畅运行，具体量化就是RAM仅为512MB至1GB的机型
-初步分析首次合入MTK提供的Android Go代码后开机，解锁后Launcher图标没有加载出，鉴于该平台代码是芯片商已经调试稳定后释放，Launcher本身应用出问题的概率比较小，操作发现下拉状态栏异常卡顿
-第一反应是会不会是内存很紧张呢? 有可能的哦，ok, 下面开始分析日...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/31</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">
-                
-                <span class="abstract-title-text">一个屏幕滑动无响应问题的分析流程</span>
-            </a>
-            <div class="abstract-content">
-                问题现象在应用中出现屏幕右滑无响应
-复现概率:once
-问题平台:Android N  MT6739
-Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中. 搜索&quot;am_anr&quot;关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生ANR。那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/29</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2018/05/17/一个无法开机问题的分析流程/">
                 
                 <span class="abstract-title-text">一个无法开机问题的分析流程</span>
@@ -917,10 +488,57 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         </article>
         <div class="index-post-divider"></div>
     
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
+                
+                <span class="abstract-title-text">基于开源框架SlidingUpPanel二次开发</span>
+            </a>
+            <div class="abstract-content">
+                项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕
+初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。
+设计框架下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂github兜一圈，看看有没有类似的框架，茫茫大海中找到了一...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/14</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
     <!-- paginator  -->
     
         <nav class="page-nav">
-            <a class="extend prev" rel="prev" href="/page/3/">< PREV</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">NEXT ></a>
+            <a class="extend prev" rel="prev" href="/page/3/">< PREV</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
         </nav>
     
 </main>
@@ -1253,142 +871,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1617,7 +1100,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1774,18 +1257,6 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1799,24 +1270,6 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1850,30 +1303,6 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1921,14 +1350,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

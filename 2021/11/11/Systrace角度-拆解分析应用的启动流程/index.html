@@ -19,12 +19,12 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆,归来仍少年">
-    <meta name="description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
+    <meta name="description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 本文深受androidperformance系列文章启发 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Systrace角度: 拆解分析应用的启动流程">
 <meta property="og:url" content="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
+<meta property="og:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 本文深受androidperformance系列文章启发 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart2.png">
@@ -47,10 +47,10 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart19.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart20.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart21.png">
-<meta property="og:updated_time" content="2021-11-11T11:49:33.000Z">
+<meta property="og:updated_time" content="2022-03-12T14:33:11.630Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Systrace角度: 拆解分析应用的启动流程">
-<meta name="twitter:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。 应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。 本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再fo">
+<meta name="twitter:description" content="上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。 本文深受androidperformance系列文章启发 测试步骤 使用user版本，开机后连接信号好的WIFI网络，清">
 <meta name="twitter:image" content="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -348,7 +348,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">2,036</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">2,047</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -509,23 +509,18 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <p>上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。</p>
-<p>应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。</p>
-<p>本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。</p>
+        <p>上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。<br>应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。<br>本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。</p>
+<p>本文深受<a href="https://www.androidperformance.com/" target="_blank" rel="noopener">androidperformance系列文章</a>启发</p>
 <h4 id="测试步骤"><a href="#测试步骤" class="headerlink" title="测试步骤"></a>测试步骤</h4><ol>
-<li><p>使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再forceStop</p>
-</li>
-<li><p>手机放置五分钟后，确保机器未发热，此时打开Systrace录制，通过高速相机拍摄，点击icon冷启，再forceStop下，再次冷启，循环做五组</p>
-</li>
+<li>使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再forceStop</li>
+<li>手机放置五分钟后，确保机器未发热，此时打开Systrace录制，通过高速相机拍摄，点击icon冷启，再forceStop下，再次冷启，循环做五组<br>取耗时最长一次925ms为例进行分析，时间范围起始点:   以手指落下接触到icon为起点，以支付宝首页内容完全加载出为结束点</li>
 </ol>
-<p>取耗时最长一次925ms为例进行分析，时间范围起始点:   以手指落下接触到icon为起点，以支付宝首页内容完全加载出为结束点</p>
 <h4 id="Input事件"><a href="#Input事件" class="headerlink" title="Input事件"></a>Input事件</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart1.png" alt="img"></p>
 <p>关键时间点</p>
 <ol>
 <li>AppLaunch_dispatchPtr:Up:  5s 617ms</li>
-<li>Launcher中接收到input事件:   5s 620ms</li>
+<li>Launcher中接收到input事件:   5s 620ms<br>从up事件到Launcher接收到最早的input事件耗时约3ms</li>
 </ol>
-<p>从up事件到Launcher接收到最早的input事件耗时约3ms</p>
 <p>这个过程大致就是：</p>
 <ol>
 <li>inputReader从Eventhub中获取到input事件后</li>
@@ -533,39 +528,25 @@
 <li>这个时候开始寻找处理这个input事件的目标窗口了，这个案例中对应的就是Launcher，找到后放在oq队列中，等着发送给Launcher</li>
 <li>事件发送出去后，将事件放到图中的wq队列中，等Launcher消费过这个事件后，会通知inputDisp已经消费完成，图中的wq凸起点会消失</li>
 </ol>
-<p>这里顺便说下，我们平时经常会遇到input类型的ANR，对应的正是wq的等待时长。</p>
-<p>简单理解就是事件发给应用窗口了，这个时候开始倒计时，如果5s内(我们项目上客制化为8s)应用窗口没有告知inputDispatcher这个事件消费完成，说明应用窗口无响应了，就会触发ANR。</p>
-<p>如果5s内应用窗口处理完成了并告知inputDispatcher后，inputDispatcher就会从 “wq” 队列中及时移除待处理事件避免ANR。</p>
+<p>这里顺便说下，我们平时经常会遇到input类型的ANR，对应的正是wq的等待时长。<br>简单理解就是事件发给应用窗口了，这个时候开始倒计时，如果5s内(我们项目上客制化为8s)应用窗口没有告知inputDispatcher这个事件消费完成，说明应用窗口无响应了，就会触发ANR。<br>如果5s内应用窗口处理完成了并告知inputDispatcher后，inputDispatcher就会从 “wq” 队列中及时移除待处理事件避免ANR。</p>
 <h4 id="创建进程"><a href="#创建进程" class="headerlink" title="创建进程"></a>创建进程</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart2.png" alt="img"></p>
 <p>时间关键点: </p>
-<p>\1. fork进程起点 5s 652ms，耗时6ms</p>
-<p>这里顺便介绍下关于fork进程花费时间的优化，Android R上新增了一个usap的机制，大意是会预先fork一些空进程放在池中，这样可以省去应用fork的时间。</p>
-<p>有些厂商会定制化这块内容，将这些预先fork出来的空进程指定包名，比如用户感知较强的微信支付宝等，这样的在支付宝冷启时，这里就不会有fork的片段，其实就是空间换时间的做法。</p>
-<p>但是这种做法不太适合小内存机器，相比内存的额外开销所带来的仅仅几毫秒的提速，似乎并不是特别划算。</p>
-<p>\2. Launcher将自身pause 5s 665ms</p>
-<p>大概过程就是检测到前台此时resume状态的Activity是Launcher界面，就会通知桌面应用的 Activity 进入 Paused 状态，有些厂商会定制化桌面icon按压的效果，我手头的小米手机上按压会有一个置灰缩小的动画。</p>
-<p>Launcher onpause执行完成之后，便会开始启动动画，对应的会是一连串的帧。</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart3.png" alt="img"></p>
-<p>前面的内容大致对应了</p>
-<p>点击icon-&gt;input事件的分发-&gt; fork进程 -&gt; Launcher onpause</p>
-<p>launcher启动动画的过程中，支付宝开始同步执行生命周期，如果支付宝生命周期执行结束，则启动动画也会结束并切换到应用窗口</p>
-<h4 id="应用初始化环节"><a href="#应用初始化环节" class="headerlink" title="应用初始化环节"></a>应用初始化环节</h4><p>这块大致的过程是:</p>
-<p>ZygoteInit-&gt;ActivityThreadMain-&gt;BindApplication-&gt;StartActivity-&gt;onresume-&gt;doFrame-&gt;display</p>
-<p>对于应用开发人员而言，关注点是从BindApplication开始，这个时间点是应用开发者最早能够控制的时间点。</p>
-<p>ZygoteInit-&gt;ActivityThreadMain</p>
+<ol>
+<li><p>fork进程起点 5s 652ms，耗时6ms<br>这里顺便介绍下关于fork进程花费时间的优化，Android R上新增了一个usap的机制，大意是会预先fork一些空进程放在池中，这样可以省去应用fork的时间。<br>有些厂商会定制化这块内容，将这些预先fork出来的空进程指定包名，比如用户感知较强的微信支付宝等，这样的在支付宝冷启时，这里就不会有fork的片段，其实就是空间换时间的做法。<br>但是这种做法不太适合小内存机器，相比内存的额外开销所带来的仅仅几毫秒的提速，似乎并不是特别划算。</p>
+</li>
+<li><p>Launcher将自身pause 5s 665ms<br>大概过程就是检测到前台此时resume状态的Activity是Launcher界面，就会通知桌面应用的 Activity 进入 Paused 状态，有些厂商会定制化桌面icon按压的效果，我手头的小米手机上按压会有一个置灰缩小的动画。</p>
+</li>
+</ol>
+<p>Launcher onpause执行完成之后，便会开始启动动画，对应的会是一连串的帧。<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart3.png" alt="img"></p>
+<p>前面的内容大致对应了<br>点击icon-&gt;input事件的分发-&gt; fork进程 -&gt; Launcher onpause<br>launcher启动动画的过程中，支付宝开始同步执行生命周期，如果支付宝生命周期执行结束，则启动动画也会结束并切换到应用窗口</p>
+<h4 id="应用初始化环节"><a href="#应用初始化环节" class="headerlink" title="应用初始化环节"></a>应用初始化环节</h4><p>这块大致的过程是:<br>ZygoteInit-&gt;ActivityThreadMain-&gt;BindApplication-&gt;StartActivity-&gt;onresume-&gt;doFrame-&gt;display</p>
+<p>对于应用开发人员而言，关注点是从BindApplication开始，这个时间点是应用开发者最早能够控制的时间点。<br>ZygoteInit-&gt;ActivityThreadMain</p>
 <ul>
-<li><p>ZygoteInit -&gt; 5s 669ms   标识支付宝进程初始化开始，创建binder线程池之类的事务</p>
-</li>
-<li><p>ActivityThreadMain  -&gt; 5s 670ms  创建并启动主线程的 loop 消息循环；通过 binder 调用 AMS 的 attachApplication 接口将自己 attach 注册到 AMS 中。</p>
-</li>
+<li>ZygoteInit -&gt; 5s 669ms   标识支付宝进程初始化开始，创建binder线程池之类的事务</li>
+<li>ActivityThreadMain  -&gt; 5s 670ms  创建并启动主线程的 loop 消息循环；通过 binder 调用 AMS 的 attachApplication 接口将自己 attach 注册到 AMS 中。</li>
 </ul>
-<h5 id="bindApplication"><a href="#bindApplication" class="headerlink" title="bindApplication"></a>bindApplication</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart4.png" alt="img"></p>
-<p>关键时间点</p>
-<p>bindApplication 起始点5s 676ms，耗时112ms</p>
-<p>bindApplication段CPU运行情况</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart5.png" alt="img"></p>
-<p>bindApplication耗时拆分</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart6.png" alt="img"></p>
+<h5 id="bindApplication"><a href="#bindApplication" class="headerlink" title="bindApplication"></a>bindApplication</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart4.png" alt="img"><br>关键时间点<br>bindApplication 起始点5s 676ms，耗时112ms<br>bindApplication段CPU运行情况<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart5.png" alt="img"></p>
+<p>bindApplication耗时拆分<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart6.png" alt="img"></p>
 <h5 id="activityStart"><a href="#activityStart" class="headerlink" title="activityStart"></a>activityStart</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart7.png" alt="img"></p>
 <p>这个过程简单概述下来就是</p>
 <ol>
@@ -574,10 +555,7 @@
 <li>执行 Activity 的 attach 动作，其中会创建应用窗口的 PhoneWindow 对象并设置 WindowManage；</li>
 <li>执行应用 Activity 的 onCreate 生命周期函数，并在 setContentView 中创建窗口的 DecorView 对象；</li>
 </ol>
-<p>activityStart时间段CPU执行情况</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart8.png" alt="img"></p>
-<p>activityStart拆分耗时</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart9.png" alt="img"></p>
+<p>activityStart时间段CPU执行情况<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart8.png" alt="img"><br>activityStart拆分耗时<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart9.png" alt="img"></p>
 <h5 id="activityResume"><a href="#activityResume" class="headerlink" title="activityResume"></a>activityResume</h5><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart10.png" alt="img"></p>
 <p>这个阶段主要对应的操作</p>
 <ol>
@@ -587,40 +565,24 @@
 <li>执行 ViewRootImpl 的 setView 函数开启 UI 界面绘制动作；</li>
 </ol>
 <p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart11.png" alt="img"></p>
-<h4 id="SplashActivity首帧"><a href="#SplashActivity首帧" class="headerlink" title="SplashActivity首帧"></a>SplashActivity首帧</h4><p>市面上有很多应用打开后会有一个启动界面，这个界面叫做SplashActivity，一般会在这个页面可以做一些App数据初始化的工作。</p>
-<p>如果应用没有SplashActivity的话，那这个环节可以直接跳过直接来到应用首页帧即可。</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart12.png" alt="img"></p>
-<p>关键时间点: 启动页首帧 5s 893ms ,耗时37ms</p>
-<p>首帧绘制结束时间点 5s931ms</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart13.png" alt="img"></p>
-<p>注意一点的是:</p>
-<p>这里的finish draw只有在mDrawsNeededToReport为0时才会打印</p>
-<p>mDrawsNeededToReport的含义是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A count of the number of calls to pendingDrawFinished we require to notify the WM drawing is complete.</span><br></pre></td></tr></table></figure>
+<h4 id="SplashActivity首帧"><a href="#SplashActivity首帧" class="headerlink" title="SplashActivity首帧"></a>SplashActivity首帧</h4><p>市面上有很多应用打开后会有一个启动界面，这个界面叫做SplashActivity，一般会在这个页面可以做一些App数据初始化的工作。<br>如果应用没有SplashActivity的话，那这个环节可以直接跳过直接来到应用首页帧即可。</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart12.png" alt="img"><br>关键时间点: 启动页首帧 5s 893ms ,耗时37ms</p>
+<p>首帧绘制结束时间点 5s931ms<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart13.png" alt="img"></p>
+<p>注意一点的是: 这里的finish draw只有在mDrawsNeededToReport为0时才会打印</p>
+<p>mDrawsNeededToReport的含义是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A count of the number of calls to pendingDrawFinished we require to notify the WM drawing is complete.</span><br></pre></td></tr></table></figure></p>
 <p>简单的理解这次的绘制序列结束后会打印，所以我们在首页帧后面找不到finish draw是因为首页会加载很多内容，对应的是会有很多帧才能完成，所以首页帧的结束点用finish draw并不适用。</p>
-<p>还有一点值得注意，因为我们这个案例中是以支付宝为例的，支付宝是有SplashActivity的 ，所以Systrace中你所看到的launching: com.eg.android.AlipayGphone耗时不能代表整个启动过程。</p>
-<p>只能粗略的代表启动到SplashActivity首帧的耗时， 但是可以在和竞品数据对比时作为一个参考指标</p>
-<p>可以看到launching: com.eg.android.AlipayGphone共计耗费了286.6ms</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart14.png" alt="img"></p>
+<p>还有一点值得注意，因为我们这个案例中是以支付宝为例的，支付宝是有SplashActivity的 ，所以Systrace中你所看到的launching: com.eg.android.AlipayGphone耗时不能代表整个启动过程。<br>只能粗略的代表启动到SplashActivity首帧的耗时， 但是可以在和竞品数据对比时作为一个参考指标</p>
+<p>可以看到launching: com.eg.android.AlipayGphone共计耗费了286.6ms<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart14.png" alt="img"></p>
 <p>到这里 , 从dispatchPtr:Up的5s 617ms到SplashActivity首帧绘制结束时间点5s931ms，共耗时314ms</p>
 <h4 id="首页帧"><a href="#首页帧" class="headerlink" title="首页帧"></a>首页帧</h4><p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart15.png" alt="img"></p>
-<p>这一帧的cpu运行情况</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart16.png" alt="img"></p>
-<p>cpu运行情况</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart17.png" alt="img"></p>
-<p>渲染结束后将buffer queue到SF的队列中</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart18.png" alt="img"></p>
-<h4 id="冷启动结束帧"><a href="#冷启动结束帧" class="headerlink" title="冷启动结束帧"></a>冷启动结束帧</h4><p>对于有源码的应用，定义结束帧会比较简单，加载哪个view或layout能够大致代表界面内容显示完全作为owner你是清楚的。</p>
-<p>但是对于三方应用比如我们这个案例，没有其源代码，可以通过高速相机先大致确认下时间范围，然后在范围区域内的几帧逐一看。</p>
-<p>可以先查看下支付宝首页的布局，比如这里home_advertisement.xml对应主界面上的中间广告页，这个布局的加载完成，其后面紧跟着的一帧我我们就认为是结束帧。</p>
-<p>所以我们在对比竞品的Systrace时也要以home_advertisement.xml加载后的一帧为结束点。</p>
+<p>这一帧的cpu运行情况<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart16.png" alt="img"></p>
+<p>cpu运行情况<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart17.png" alt="img"></p>
+<p>渲染结束后将buffer queue到SF的队列中<br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart18.png" alt="img"></p>
+<h4 id="冷启动结束帧"><a href="#冷启动结束帧" class="headerlink" title="冷启动结束帧"></a>冷启动结束帧</h4><p>对于有源码的应用，定义结束帧会比较简单，加载哪个view或layout能够大致代表界面内容显示完全作为owner你是清楚的。<br>但是对于三方应用比如我们这个案例，没有其源代码，可以通过高速相机先大致确认下时间范围，然后在范围区域内的几帧逐一看。<br>可以先查看下支付宝首页的布局，比如这里home_advertisement.xml对应主界面上的中间广告页，这个布局的加载完成，其后面紧跟着的一帧我我们就认为是结束帧。<br>所以我们在对比竞品的Systrace时也要以home_advertisement.xml加载后的一帧为结束点。</p>
 <p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart19.png" alt="img"></p>
 <p>SF侧以及渲染线程侧</p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart20.png" alt="img"></p>
-<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart21.png" alt="img"></p>
-<p>关键时间点: </p>
-<p>SF中bufferQueue对应的支付宝这一帧的buffer被消费后的时间点是 6s554ms</p>
-<p>这个时间点可以基本认为是冷启动最后的时间点</p>
+<p><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart20.png" alt="img"><br><img src="http://blog.lihaizhou.top/Systrace_process_start/processStart21.png" alt="img"></p>
+<p>关键时间点:<br>SF中bufferQueue对应的支付宝这一帧的buffer被消费后的时间点是 6s554ms<br>这个时间点可以基本认为是冷启动最后的时间点</p>
 <p>到这里我们计算下冷启的大概耗时</p>
 <ul>
 <li><p>inputReader中读取到up事件起始点 : 5s 617ms</p>
@@ -638,7 +600,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/">http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/">November 11th 2021, 7:40:26 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/">November 11th 2021, 7:49:33 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2021/11/11/Systrace角度-拆解分析应用的启动流程/">March 12th 2022, 10:33:11 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -962,142 +924,7 @@
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1326,7 +1153,7 @@
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1483,18 +1310,6 @@
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1508,24 +1323,6 @@
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1559,30 +1356,6 @@
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1630,14 +1403,14 @@
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

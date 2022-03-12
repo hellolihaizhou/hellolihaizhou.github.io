@@ -19,12 +19,12 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆,归来仍少年">
-    <meta name="description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART GC诞生背景 里程碑(引入CC) ART GC重要特性">
+    <meta name="description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。本文深受ART虚拟机 | GC的触发时机和条件一文的启发 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对Android S ART GC的源码梳理">
 <meta property="og:url" content="http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART GC诞生背景 里程碑(引入CC) ART GC重要特性">
+<meta property="og:description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。本文深受ART虚拟机 | GC的触发时机和条件一文的启发 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC1.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC2.png">
@@ -34,10 +34,10 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC6.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC7.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC8.png">
-<meta property="og:updated_time" content="2021-10-27T02:52:58.000Z">
+<meta property="og:updated_time" content="2022-03-12T14:19:48.350Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对Android S ART GC的源码梳理">
-<meta name="twitter:description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART GC诞生背景 里程碑(引入CC) ART GC重要特性">
+<meta name="twitter:description" content="前言本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。本文深受ART虚拟机 | GC的触发时机和条件一文的启发 文中涉及代码均摘自Android S。 大纲 研究ART GC目的 ART">
 <meta name="twitter:image" content="http://blog.lihaizhou.top/ART_GC/ART_GC1.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -335,7 +335,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">6,231</span>阅读时长: <span class="post-count reading-time">25 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">6,253</span>阅读时长: <span class="post-count reading-time">26 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -496,7 +496,7 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。<br>本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。</p>
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>本文是GC系列文章的首篇，主要为下一篇《第三视角: 一个ART GC优化的故事》文章做铺垫。<br>本文将根据下面的大纲，简单的介绍下GC相关的基础知识，GC这块的内容较多，也相对较为复杂。如果想要研究清楚细节，需要花费较多的时间，也需要有读者有足够的耐心和相关知识背景。<br>本文深受<a href="https://juejin.cn/post/6875678394332217357" target="_blank" rel="noopener">ART虚拟机 | GC的触发时机和条件</a>一文的启发</p>
 <p>文中涉及代码均摘自Android S。</p>
 <h4 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h4><ul>
 <li>研究ART GC目的</li>
@@ -631,7 +631,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/">http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/">October 27th 2021, 9:58:43 am</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/">October 27th 2021, 10:52:58 am</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2021/10/27/对Android-S-ART-GC的源码梳理/">March 12th 2022, 10:19:48 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -955,142 +955,7 @@
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1319,7 +1184,7 @@
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 41
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1476,18 +1341,6 @@
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">05/25</span>
-            <a class="archive-post-title" href="/2020/05/25/mmap机制初探/">mmap机制初探</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span>
-            <a class="archive-post-title" href="/2020/03/05/为何连接wifi后系统会卡顿一下/">为何连接wifi后系统会卡顿一下?</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/04</span>
             <a class="archive-post-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">谁拖慢了列表的滑动速度</a>
         </li>
@@ -1501,24 +1354,6 @@
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/26</span>
-            <a class="archive-post-title" href="/2019/12/26/如何快速定位kernel错误/">如何快速定位kernel错误</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android-Vsync/">Android-Vsync</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/15</span>
-            <a class="archive-post-title" href="/2019/12/15/Android input系统/">Android input系统</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">09/15</span>
@@ -1552,30 +1387,6 @@
             <div class="archive-year"> 2018 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-4-分发输入消息/">Android输入系统系列(4)----分发输入消息</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/03</span>
-            <a class="archive-post-title" href="/2018/07/03/Android输入系统系列-3-读取RawEvent/">Android输入系统系列(3)----读取RawEvent</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/12</span>
-            <a class="archive-post-title" href="/2018/06/12/Android输入系统系列-2-EventHub/">Android输入系统系列(2)----EventHub</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/07</span>
-            <a class="archive-post-title" href="/2018/06/07/Android输入系统系列-1-InputManagerService/">Android输入系统系列(1)----InputManagerService</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/06</span>
@@ -1623,14 +1434,14 @@
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

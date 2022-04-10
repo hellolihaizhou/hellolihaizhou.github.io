@@ -503,7 +503,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Starting service <span class="string">'zygote'</span></span><br></pre></td></tr></table></figure>
 <p>这一步代表<code>zygote</code>起来了，这时候就必须要抓取logcat进一步分析，我们这笔问题中该日志片段有打印出来，所以需要抓取logcat进一步分析</p>
 <p><strong>Step1.3 分析logcat日志</strong><br>找到如下片段，说明<code>data/aee_exp</code>下面也有<code>db</code>文件生成了  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): Revision: <span class="string">'0'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): ABI: <span class="string">'arm'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.579</span> I/AEE_AED (  <span class="number">350</span>): pid: <span class="number">310</span>, <span class="attr">tid</span>: <span class="number">310</span>, <span class="attr">name</span>: healthd  &gt;&gt;&gt; <span class="regexp">/sbin/</span>healthd &lt;&lt;&lt;</span><br><span class="line">05-02 04:52:48.580 I/AEE_AED (  350): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r0 00000002  r1 00000002  r2 0000089c  r3 00000006</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r4 ffffffff  r5 00000001  r6 00000000  r7 00000002</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    r8 becc68bc  r9 0008819e  sl ffffffff  fp becc6680</span><br><span class="line">05-02 04:52:48.616 I/AEE_AED (  350):    ip 00000002  sp becc6678  lr 0005d494  pc 0005e16c  cpsr 20070030</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): </span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350): backtrace:</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #00 pc 0005e16c  /sbin/healthd</span><br><span class="line">05-02 04:52:48.723 I/AEE_AED (  350):    #01 pc 0005d490  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #02 pc 00056c04  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #03 pc 00064ef4  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #04 pc 00027e00  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #05 pc 0000b291  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #06 pc 0000b10d  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #07 pc 000088c9  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #08 pc 00008d73  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #09 pc 00008c3f  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #10 pc 00008afb  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #11 pc 0005e055  /sbin/healthd</span><br><span class="line">05-02 04:52:48.724 I/AEE_AED (  350):    #12 pc 000086c8  /sbin/healthd</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): Revision: <span class="string">'0'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.578</span> I/AEE_AED (  <span class="number">350</span>): ABI: <span class="string">'arm'</span></span><br><span class="line"><span class="number">05</span><span class="number">-02</span> <span class="number">04</span>:<span class="number">52</span>:<span class="number">48.579</span> I/AEE_AED (  <span class="number">350</span>): pid: <span class="number">310</span>, <span class="attr">tid</span>: <span class="number">310</span>, <span class="attr">name</span>: healthd  &gt;&gt;&gt; <span class="regexp">/sbin/</span>healthd &lt;&lt;<span class="xml"><span class="tag">&lt;</span></span></span><br><span class="line"><span class="xml">05-02 04:52:48.580 I/AEE_AED (  350): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x2</span></span><br><span class="line"><span class="xml">05-02 04:52:48.616 I/AEE_AED (  350):    r0 00000002  r1 00000002  r2 0000089c  r3 00000006</span></span><br><span class="line"><span class="xml">05-02 04:52:48.616 I/AEE_AED (  350):    r4 ffffffff  r5 00000001  r6 00000000  r7 00000002</span></span><br><span class="line"><span class="xml">05-02 04:52:48.616 I/AEE_AED (  350):    r8 becc68bc  r9 0008819e  sl ffffffff  fp becc6680</span></span><br><span class="line"><span class="xml">05-02 04:52:48.616 I/AEE_AED (  350):    ip 00000002  sp becc6678  lr 0005d494  pc 0005e16c  cpsr 20070030</span></span><br><span class="line"><span class="xml">05-02 04:52:48.723 I/AEE_AED (  350): </span></span><br><span class="line"><span class="xml">05-02 04:52:48.723 I/AEE_AED (  350): backtrace:</span></span><br><span class="line"><span class="xml">05-02 04:52:48.723 I/AEE_AED (  350):    #00 pc 0005e16c  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.723 I/AEE_AED (  350):    #01 pc 0005d490  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #02 pc 00056c04  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #03 pc 00064ef4  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #04 pc 00027e00  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #05 pc 0000b291  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #06 pc 0000b10d  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #07 pc 000088c9  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #08 pc 00008d73  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #09 pc 00008c3f  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #10 pc 00008afb  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #11 pc 0005e055  /sbin/healthd</span></span><br><span class="line"><span class="xml">05-02 04:52:48.724 I/AEE_AED (  350):    #12 pc 000086c8  /sbin/healthd</span></span><br></pre></td></tr></table></figure>
 <p>这里出现了段错误，这个时候需要拿出看家小工具<code>addr2line</code>来定位到代码出错的位置，这里顺便说下<code>Addr2line</code>的作用  </p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Addr2line （它是标准的 GNU Binutils 中的一部分）是一个可以将指令的地址和可执行映像转换成文件名、函数名和源代码行数的工具。这种功能对于将跟踪地址转换成更有意义的内容来说简直是太棒了</span><br></pre></td></tr></table></figure>
 <p>我这里的addr2line使用的是代码工程中的，代码工程下有很多addr2line，这里就随便用了一个目录下的addr2line，另外分析还需要<code>out/target/product/XXX/symbols/sbin/healthd</code>文件，注意这里的<code>healthd</code>文件必须和日志中是同一套代码，否则可能分析出来的代码位置会有偏差</p>
@@ -833,7 +833,14 @@
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -894,7 +901,7 @@
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 28
+        Total : 29
         </div>
         <!-- search  -->
         
@@ -912,6 +919,12 @@
         <li class="archive-post-item">
             <span class="archive-post-date">04/10</span>
             <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/20</span>
+            <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
         </li>
     
         
@@ -1139,6 +1152,11 @@
             Android
         </span>
     
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
         <span class="sidebar-category-name" data-categories="稳定性">
             <span class="iconfont-archer">&#xe60a;</span>
             稳定性
@@ -1152,11 +1170,6 @@
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

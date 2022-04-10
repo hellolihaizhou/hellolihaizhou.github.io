@@ -22,7 +22,7 @@
     <meta name="description" content="愿历尽千帆 归来仍少年">
 <meta property="og:type" content="website">
 <meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/categories/Android/index.html">
+<meta property="og:url" content="http://lihaizhou.top/archives/2022/03/index.html">
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="愿历尽千帆 归来仍少年">
 <meta property="og:locale" content="zh-Hans">
@@ -433,21 +433,27 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2022/04/10/ANR原理分析及常见案例/">
+            <a class="abstract-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">
                 
-                <span class="abstract-title-text">ANR原理分析及常见案例</span>
+                <span class="abstract-title-text">ART 虚拟机｜Dex2oat 调优实践之路</span>
             </a>
             <div class="abstract-content">
-                最近看了下ANR代码，结合之前项目上的一些ANR案例，打算对ANR的原理以及常见案例做下小结，涉及的代码均基于Android S
-画了一张图，列举了可能导致ANR的一些影响因素
-原理机制我们平时遇到的ANR问题大部分都是input ANR类型，所以以input ANR为例进行梳理，这块机制并不复杂，只梳理埋计时和check超时的代码部分。正常输入事件的分发流程如下12345InputDispatcher::dispatchOnce() -&gt;InputDispatcher::dispatchOnceInnerLocked -&gt;InputDispatcher::dispatchK...
+                写在前面我们都知道Dex2oat对应用的启动速度、以及日常使用的流畅度起到了重要作用，不过Google现有的dex2oat机制存在着明显的局限性。
+
+开机/OTA等场景，容易整机卡顿及开机时间长。
+Idle下的触发条件苛刻，发挥空间有限。
+
+前段时间研究了下dex2oat的原理机制，并且对一些场景下的dex2oat行为做了客制化，打算做下小结，以便后续回顾完善。
+涉及代码均基于Android S
+基本概述一个App经过优化dex2oat的大致流程如下(图片来源：谷歌开发者网站)
+简单的理解就是优化是以dex文件中的method为单位，dex2oat在优化时，会根据需要优化一定量的meth...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2022/04/10">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/04/10</span>
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/03/20</span>
                 </div>
                 <!-- tags -->
                 
@@ -458,296 +464,10 @@
             
         
         
-        <span class="post-category" data-categories="Android"">
+        <span class="post-category" data-categories="ART"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
-                
-                <span class="abstract-title-text">Launcher应用的重构之路</span>
-            </a>
-            <div class="abstract-content">
-                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
-为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
-                
-                <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
-            </a>
-            <div class="abstract-content">
-                项目痛点出现偶现崩溃或ANR，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时
-初步想法可不可以将所有ANR,Crash等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位
-以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善
-Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地址
-在钉...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">
-                
-                <span class="abstract-title-text">一个滑动冲突问题的分析流程</span>
-            </a>
-            <div class="abstract-content">
-                问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog
-初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间Android默认是400ms后会识别为长按事件，此时子View的长按事件被触发。那么问题来了，怎么才能在子view接收到触摸事件并能接管本次事件序列呢？这就要说到老生常谈的事件拦截了，正常拦截事件有...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/06</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">
-                
-                <span class="abstract-title-text">一个底层内存分配异常导致无法进入launcher问题分析</span>
-            </a>
-            <div class="abstract-content">
-                问题平台Android go
-复现概率always
-问题现象解锁后，Launcher图标未能加载出，按虚拟back,home键，下拉状态栏响应异常缓慢
-前言Android Go是一个简化版本的Android O（及以上），能够在超低端的Android手机上流畅运行，具体量化就是RAM仅为512MB至1GB的机型
-初步分析首次合入MTK提供的Android Go代码后开机，解锁后Launcher图标没有加载出，鉴于该平台代码是芯片商已经调试稳定后释放，Launcher本身应用出问题的概率比较小，操作发现下拉状态栏异常卡顿
-第一反应是会不会是内存很紧张呢? 有可能的哦，ok, 下面开始分析日...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/31</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/05/29/一个屏幕滑动无响应问题的分析流程/">
-                
-                <span class="abstract-title-text">一个屏幕滑动无响应问题的分析流程</span>
-            </a>
-            <div class="abstract-content">
-                问题现象在应用中出现屏幕右滑无响应
-复现概率:once
-问题平台:Android N  MT6739
-Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中. 搜索&quot;am_anr&quot;关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生ANR。那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/29</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
-                
-                <span class="abstract-title-text">基于开源框架SlidingUpPanel二次开发</span>
-            </a>
-            <div class="abstract-content">
-                项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕
-初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。
-设计框架下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂github兜一圈，看看有没有类似的框架，茫茫大海中找到了一...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/14</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
+                ART
             </span>
         </span>
     

@@ -433,6 +433,59 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">
+                
+                <span class="abstract-title-text">ART 虚拟机｜Dex2oat 调优实践之路</span>
+            </a>
+            <div class="abstract-content">
+                写在前面我们都知道Dex2oat对应用的启动速度、以及日常使用的流畅度起到了重要作用，不过Google现有的dex2oat机制存在着明显的局限性。
+
+开机/OTA等场景，容易整机卡顿及开机时间长。
+Idle下的触发条件苛刻，发挥空间有限。
+
+前段时间研究了下dex2oat的原理机制，并且对一些场景下的dex2oat行为做了客制化，打算做下小结，以便后续回顾完善。
+涉及代码均基于Android S
+基本概述一个App经过优化dex2oat的大致流程如下(图片来源：谷歌开发者网站)
+简单的理解就是优化是以dex文件中的method为单位，dex2oat在优化时，会根据需要优化一定量的meth...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/04/10">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/03/20</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="ART"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                ART
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">
                 
                 <span class="abstract-title-text">第三视角: 一个ART GC的优化故事</span>
@@ -767,7 +820,14 @@ GC触发阈值的计算
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -828,7 +888,7 @@ GC触发阈值的计算
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 28
+        Total : 29
         </div>
         <!-- search  -->
         
@@ -846,6 +906,12 @@ GC触发阈值的计算
         <li class="archive-post-item">
             <span class="archive-post-date">04/10</span>
             <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/20</span>
+            <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
         </li>
     
         
@@ -1073,6 +1139,11 @@ GC触发阈值的计算
             Android
         </span>
     
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
         <span class="sidebar-category-name" data-categories="稳定性">
             <span class="iconfont-archer">&#xe60a;</span>
             稳定性
@@ -1086,11 +1157,6 @@ GC触发阈值的计算
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

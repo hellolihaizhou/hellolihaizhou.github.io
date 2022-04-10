@@ -446,6 +446,53 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">
+                
+                <span class="abstract-title-text">GC超时导致的后台应用崩溃问题分析</span>
+            </a>
+            <div class="abstract-content">
+                写在前面这个问题之所以会拿出来仔细分析，一方面是因为这个问题不是简单的应用崩溃而是框架层的报错，另一方面是因为希望通过这个问题梳理下后台GC的超时检测机制怎样的，这样我们后面在应用层如果重写finalize方法回收时会考虑的更加全面点。
+问题背景复现概率: 偶现问题版本: Android R问题现象: 处于微信界面，突然弹出王者荣耀停止运行
+初步分析拿到问题日志后，先看下报错的堆栈123456709-02 20:53:26.679  2073  2089 E AndroidRuntime: FATAL EXCEPTION: FinalizerWatchdogDaemon09-02 20:...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/03/12">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/09/08</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="稳定性"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                稳定性
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/01/24/关于网络-wifi一些基础内容/">
                 
                 <span class="abstract-title-text">关于网络&amp;wifi一些基础内容</span>
@@ -877,54 +924,6 @@ per...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
-                
-                <span class="abstract-title-text">WFD的学习记录笔记</span>
-            </a>
-            <div class="abstract-content">
-                本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内
-WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager;
-mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
-mDisplayManager.connectWifiDisp...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1241,7 +1240,14 @@ mDisplayManager.connectWifiDisp...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1302,7 +1308,7 @@ mDisplayManager.connectWifiDisp...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 28
+        Total : 29
         </div>
         <!-- search  -->
         
@@ -1320,6 +1326,12 @@ mDisplayManager.connectWifiDisp...
         <li class="archive-post-item">
             <span class="archive-post-date">04/10</span>
             <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/20</span>
+            <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
         </li>
     
         
@@ -1547,6 +1559,11 @@ mDisplayManager.connectWifiDisp...
             Android
         </span>
     
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
         <span class="sidebar-category-name" data-categories="稳定性">
             <span class="iconfont-archer">&#xe60a;</span>
             稳定性
@@ -1560,11 +1577,6 @@ mDisplayManager.connectWifiDisp...
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

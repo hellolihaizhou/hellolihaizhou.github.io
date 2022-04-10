@@ -433,6 +433,52 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">
+                
+                <span class="abstract-title-text">AMS锁严重竞争导致的整机卡顿</span>
+            </a>
+            <div class="abstract-content">
+                日志抓取在问题机器上抓了一份Systrace1.操作步骤: 进入设置界面滑动再退出2.问题现象: 进入设置出现较长时间白屏，退出时有拖影，下拉状态栏尤为卡顿，解锁亮屏很慢。
+问题分析从下图可以看到进入设置时，Resume耗时近400ms，主要耗费在等binder上来到对端1188_19线程所在区域，看下这个时间点1188_19在做什么操作？1188_19是SystemServer中的线程，从上图可以看出，它在等AMS锁到这里大致梳理如下1.进入设置应用走到onResume环节时，调用到AMS的registerReceiverWithFeature注册广播，这是应用启动过程中很常见的操作，...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/10/16">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/09/18</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="性能"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                性能
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/09/08/GC超时导致的后台应用崩溃问题分析/">
                 
                 <span class="abstract-title-text">GC超时导致的后台应用崩溃问题分析</span>
@@ -862,55 +908,6 @@ CPU 将通...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
-                
-                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
-            </a>
-            <div class="abstract-content">
-                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
-抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
-挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
-
-per...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1157,7 +1154,14 @@ per...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1220,7 +1224,7 @@ per...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 29
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -1244,6 +1248,12 @@ per...
         <li class="archive-post-item">
             <span class="archive-post-date">03/20</span>
             <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/10</span>
+            <a class="archive-post-title" href="/2022/02/10/网络-拥塞控制算法之BBR/">网络|拥塞控制算法之BBR</a>
         </li>
     
         

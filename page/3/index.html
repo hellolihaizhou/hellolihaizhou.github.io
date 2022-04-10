@@ -446,6 +446,55 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
+                
+                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
+            </a>
+            <div class="abstract-content">
+                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
+抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
+挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
+
+per...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/10/16">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="性能"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                性能
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
                 
                 <span class="abstract-title-text">WFD的学习记录笔记</span>
@@ -1190,7 +1239,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1253,7 +1309,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 29
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -1277,6 +1333,12 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <li class="archive-post-item">
             <span class="archive-post-date">03/20</span>
             <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/10</span>
+            <a class="archive-post-title" href="/2022/02/10/网络-拥塞控制算法之BBR/">网络|拥塞控制算法之BBR</a>
         </li>
     
         

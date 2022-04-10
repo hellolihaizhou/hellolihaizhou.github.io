@@ -433,203 +433,6 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">
-                
-                <span class="abstract-title-text">网络系列之三次握手</span>
-            </a>
-            <div class="abstract-content">
-                前言三次握手这个话题恐怕是网络问答中最常见的问题了，基本上都能说个大概，但是再往下深究，有些问题可能回答的就不是那么顺畅了所以想着再梳理下这个”简单”的概念
-为什么要三次握手首先先了解下TCP这个概念:TCP 是靠谱的协议，但是这不能说明它面临的网络环境好，从IP层面来讲，如果网络状况的确比较差的话，是没有任何可靠性保证的，而作为IP的上一层TCP也无能为力，唯一能做的就是更加努力，不断重传，通过各种算法保证。也就是说，对于 TCP 来讲，IP 层你丢不丢包，我管不着，但是我在我的层面上，会努力保证可靠性
-接下来我们接着讨论为何需要这三次握手呢？类似如下的描述是网上比较常见的回答三次握手...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/09</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/06/20/Memory-Barrier读书笔记/">
-                
-                    <span class="iconfont-archer stick-top">&#xe63d;</span>
-                
-                <span class="abstract-title-text">内存屏障</span>
-            </a>
-            <div class="abstract-content">
-                本篇文章开始之前需要了解一些背景知识
-Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。
-在CPU内部存在一堆的通用寄存器（register），如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤
-
-CPU 从主存中读取地址A的数据到内部通用寄存器 x0（ARM64架构的通用寄存器之一）
-通用寄存器 x0 加1
-CPU 将通...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/17">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/20</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Linux"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Linux
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
-                
-                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
-            </a>
-            <div class="abstract-content">
-                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
-抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
-挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
-
-per...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
-                
-                <span class="abstract-title-text">WFD的学习记录笔记</span>
-            </a>
-            <div class="abstract-content">
-                本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内
-WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager;
-mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
-mDisplayManager.connectWifiDisp...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/15</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">
                 
                 <span class="abstract-title-text">一个SharedPreferences写操作导致的ANR问题分析</span>
@@ -909,10 +712,106 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
         </article>
         <div class="index-post-divider"></div>
     
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/17/一个无法开机问题的分析流程/">
+                
+                <span class="abstract-title-text">一个无法开机问题的分析流程</span>
+            </a>
+            <div class="abstract-content">
+                问题平台Android7.1.1  MT6739
+问题现象走完一部分开机动画后停留在recovery界面，无法进入系统
+初步分析:开机后进入recovery ，以往经验来看猜测是重要进程启动异常，可能被连续被kill
+Step1 日志分析需要的日志：eng版本uart log+main log(如果已经进入Android的话)+data/aee_exp下的db文件(如果有db生成的话)
+Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中的白色接TX，黑色线接地，我这里是在windows下抓取，使用了一个SSCOM的工具，MTK平台上波特率需要选择921600, 这个工具使...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/09/08">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/17</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="稳定性"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                稳定性
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2018/05/14/基于开源框架SlidingUpPanel二次开发/">
+                
+                <span class="abstract-title-text">基于开源框架SlidingUpPanel二次开发</span>
+            </a>
+            <div class="abstract-content">
+                项目需求写一个SystemUI，默认是隐藏，手指在Launcher界面顶部往下滑动时，SystemUI显示并随着手指滑动高度不断变化，直到往下铺满屏幕
+初步分析最初的想法是在原生SystemUI基础上进行修改，在看了原生SystemUI代码后，word天，原生SystemUI代码量十分庞大且代码结构比较复杂，很多地方耦合比较高，初步估计厘清需要耗费的时间会比较长。于是有了单独写一个的想法，这样代码比较简洁，以后项目上也方便复用。
+设计框架下拉面板显然需要一个自定义布局，这个自定义View高度能够手指滑动变化，ok，理论上并不复杂github兜一圈，看看有没有类似的框架，茫茫大海中找到了一...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/14</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
     <!-- paginator  -->
     
         <nav class="page-nav">
-            <a class="extend prev" rel="prev" href="/archives/page/2/">< PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/4/">NEXT ></a>
+            <a class="extend prev" rel="prev" href="/archives/page/2/">< PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
         </nav>
     
 </main>
@@ -1150,195 +1049,7 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1399,7 +1110,7 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 32
+        Total : 28
         </div>
         <!-- search  -->
         
@@ -1409,6 +1120,21 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
     
         
             
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span>
+            <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
             
             <div class="archive-year"> 2021 </div>
             <ul class="year-list">
@@ -1520,36 +1246,6 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/09</span>
-            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">06/20</span>
             <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
         </li>
@@ -1649,19 +1345,9 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="网络">
-            <span class="iconfont-archer">&#xe60a;</span>
-            网络
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">
@@ -1669,9 +1355,19 @@ Step1 初步分析考虑到当时按power键能够退出应用回到待机(项�
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">

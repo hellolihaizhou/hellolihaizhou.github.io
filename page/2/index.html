@@ -784,113 +784,122 @@ DHCP ACK
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2020/08/27/臭名昭著的bufferbloat/">
+            <a class="abstract-title" href="/2020/06/20/Memory-Barrier读书笔记/">
                 
-                <span class="abstract-title-text">臭名昭著的bufferbloat</span>
+                <span class="abstract-title-text">内存屏障</span>
             </a>
             <div class="abstract-content">
-                前言之前看tcp拥塞算法时了解过bufferbloat，明白网络设备的缓冲区是为了让丢包尽量晚点到来，但是大的缓冲区又加重了延时。知乎有一个问题：既然害怕缓冲区膨胀，为啥现在的路由器缓冲区要弄这么大？本文参考很多网络上优秀的文章，希望借此能够比较全面的了解下bufferbloat
-出现背景1980s 以来，基于遗失 (Loss-based) 一直作为拥塞控制的算法标准，并沿用至今 (e.g., 慢启动、拥塞避免、快速重送/恢复)。为使拥塞控制正常运作，必须及时回馈封包遗失的信息，使传送端能选择合适的传输速率。随著科技进步，内存价格下跌，处处充满了大型缓冲区的网路设备，这对基于遗失的拥塞控...
+                本篇文章开始之前需要了解一些背景知识
+Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。
+在CPU内部存在一堆的通用寄存器（register），如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤
+
+CPU 从主存中读取地址A的数据到内部通用寄存器 x0（ARM64架构的通用寄存器之一）
+通用寄存器 x0 加1
+CPU 将通...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/04/10">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/20</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Linux"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Linux
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
+                
+                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
+            </a>
+            <div class="abstract-content">
+                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
+抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
+挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
+
+per...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/10/16">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="性能"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                性能
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
+                
+                <span class="abstract-title-text">WFD的学习记录笔记</span>
+            </a>
+            <div class="abstract-content">
+                本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内
+WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager;
+mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+mDisplayManager.connectWifiDisp...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/27</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/08/27/BBR论文之读后感-三/">
-                
-                <span class="abstract-title-text">BBR论文之读后感(三)</span>
-            </a>
-            <div class="abstract-content">
-                Matching the Packet Flow to the Delivery PathThe core BBR algorithm has two parts:When an ack is received
-Each ack provides new RTT and average delivery rate measurements that update the RTprop and BtlBw estimates:
-12345678910function onAck(packet)  rtt = now - packet.sendtime  update_min_filter(...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/27</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/08/27/BBR论文之读后感-二/">
-                
-                <span class="abstract-title-text">BBR论文之读后感(二)</span>
-            </a>
-            <div class="abstract-content">
-                Characterizing the Bottleneck
-12345A connection runs with the highest throughput and lowest delay when (rate balance) the bottleneck packet arrival rate equals BtlBw and (full pipe) the total data in flight is equal to the BDP (= BtlBw × RTprop).The first condition guarantees that the bottleneck ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/08/27</span>
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/15</span>
                 </div>
                 <!-- tags -->
                 
@@ -919,7 +928,7 @@ Each ack provides new RTT and average delivery rate measurements that update the
     <!-- paginator  -->
     
         <nav class="page-nav">
-            <a class="extend prev" rel="prev" href="/">< PREV</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">NEXT ></a>
+            <a class="extend prev" rel="prev" href="/">< PREV</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">NEXT ></a>
         </nav>
     
 </main>
@@ -1232,195 +1241,7 @@ Each ack provides new RTT and average delivery rate measurements that update the
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1481,7 +1302,7 @@ Each ack provides new RTT and average delivery rate measurements that update the
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 32
+        Total : 28
         </div>
         <!-- search  -->
         
@@ -1491,6 +1312,21 @@ Each ack provides new RTT and average delivery rate measurements that update the
     
         
             
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/10</span>
+            <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
             
             <div class="archive-year"> 2021 </div>
             <ul class="year-list">
@@ -1602,36 +1438,6 @@ Each ack provides new RTT and average delivery rate measurements that update the
     
         
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/臭名昭著的bufferbloat/">臭名昭著的bufferbloat</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-三/">BBR论文之读后感(三)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-二/">BBR论文之读后感(二)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span>
-            <a class="archive-post-title" href="/2020/08/27/BBR论文之读后感-一/">BBR论文之读后感(一)</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/09</span>
-            <a class="archive-post-title" href="/2020/08/09/网络协议系列之聊聊三次握手/">网络系列之三次握手</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">06/20</span>
             <a class="archive-post-title" href="/2020/06/20/Memory-Barrier读书笔记/">内存屏障</a>
         </li>
@@ -1731,19 +1537,9 @@ Each ack provides new RTT and average delivery rate measurements that update the
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="网络">
-            <span class="iconfont-archer">&#xe60a;</span>
-            网络
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">
@@ -1751,9 +1547,19 @@ Each ack provides new RTT and average delivery rate measurements that update the
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="性能">
+            <span class="iconfont-archer">&#xe60a;</span>
+            性能
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">

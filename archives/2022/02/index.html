@@ -475,6 +475,53 @@ Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞�
         </article>
         <div class="index-post-divider"></div>
     
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
+            <a class="abstract-title" href="/2022/02/10/ANR原理分析及常见案例/">
+                
+                <span class="abstract-title-text">ANR原理分析及常见案例</span>
+            </a>
+            <div class="abstract-content">
+                最近看了下ANR代码，结合之前项目上的一些ANR案例，打算对ANR的原理以及常见案例做下小结，涉及的代码均基于Android S
+画了一张图，列举了可能导致ANR的一些影响因素
+原理机制我们平时遇到的ANR问题大部分都是input ANR类型，所以以input ANR为例进行梳理，这块机制并不复杂，只梳理埋计时和check超时的代码部分。正常输入事件的分发流程如下12345InputDispatcher::dispatchOnce() -&gt;InputDispatcher::dispatchOnceInnerLocked -&gt;InputDispatcher::dispatchK...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/04/11">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/02/10</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="ANR"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                ANR
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
     <!-- paginator  -->
     
 </main>
@@ -803,12 +850,6 @@ Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞�
             
         
         <li class="archive-post-item">
-            <span class="archive-post-date">04/10</span>
-            <a class="archive-post-title" href="/2022/04/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
             <span class="archive-post-date">03/20</span>
             <a class="archive-post-title" href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/">ART 虚拟机｜Dex2oat 调优实践之路</a>
         </li>
@@ -817,6 +858,12 @@ Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞�
         <li class="archive-post-item">
             <span class="archive-post-date">02/10</span>
             <a class="archive-post-title" href="/2022/02/10/网络-拥塞控制算法之BBR/">网络|拥塞控制算法之BBR</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/10</span>
+            <a class="archive-post-title" href="/2022/02/10/ANR原理分析及常见案例/">ANR原理分析及常见案例</a>
         </li>
     
         
@@ -1067,6 +1114,11 @@ Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞�
         <span class="sidebar-category-name" data-categories="内存">
             <span class="iconfont-archer">&#xe60a;</span>
             内存
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ANR">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ANR
         </span>
     
     </div>

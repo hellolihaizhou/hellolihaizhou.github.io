@@ -482,246 +482,6 @@ Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞�
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2021/01/24/关于网络-wifi一些基础内容/">
-                
-                <span class="abstract-title-text">关于网络&amp;wifi一些基础内容</span>
-            </a>
-            <div class="abstract-content">
-                前言记录一些网络以及wifi的基础内容，会持续补充，以便后续有需要的时候查漏补缺  
-网络分层
-
-分层的原因？如果不分层的话是否可行？
-有了IP地址为何还需要mac地址？仅从地址作用上看用ipv6来取代mac地址是否可以？
-
-为何分层？Q1_个人理解这种问题网上一大堆,其实我们没有必要纠结这种问题，这种成熟的架构时至今日是这个样子的，必定有其道理，搜索了下网上对此的解释，有不少是拿比喻来解释。通过比喻向初学者解释一个知识点其实是不合适的，但是我们往往在深刻理解了一个东西后会想到用一个比喻，试图用它向不懂的人解释。比喻的意义往往是一群懂的人之间心领神会的交流方式罢了，所以就我个人而言，学习...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/24</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/01/08/wifi断流的一般分析思路/">
-                
-                <span class="abstract-title-text">wifi断流问题的一般分析思路</span>
-            </a>
-            <div class="abstract-content">
-                前言仅针对高通平台，旨在梳理出遇到此类问题的一般应对策略，作为工具篇查阅，快速分类出断流的原因  
-定位时间点根据测试或用户反馈的时间点，先通过如下关键字过滤一遍，尝试定位到具体的时间点
-断流断连关键字1CMD_IP_REACHABILITY_LOST|NETWORK_DISCONNECTION_EVENT|Received Heart Beat Failure|dev wlan0 INCOMPLETE|get addr info failed|arp who-has|ICMPv4 dst|LOST_PROVISIONING|wma_peer_sta_kickout_event_hand...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/08</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/01/03/漫游系列之Dense-roaming/">
-                
-                <span class="abstract-title-text">漫游系列之Dense roaming</span>
-            </a>
-            <div class="abstract-content">
-                本地抓了一份dense roaming的日志，环境是办公室环境下走动到信号相对较弱茶水间再走回来，期间发生两次dense roaming，日志如下：
-对于其中的reason=7代码中定义如下：12345678910111213141516171819202122232425typedef enum &#123;    WMI_ROAM_TRIGGER_REASON_NONE = 0,    WMI_ROAM_TRIGGER_REASON_PER,    WMI_ROAM_TRIGGER_REASON_BMISS,    WMI_ROAM_TRIGGER_REASON_LOW_RSSI, ...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/03</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">
-                
-                <span class="abstract-title-text">一个Beacon miss导致的掉线问题分析</span>
-            </a>
-            <div class="abstract-content">
-                复现步骤：测试机开启双WiFi且连接测试路由主5G，辅2.4G问题现象：主wifi漫游后不久，辅WiFi出现断连问题概率：必现  
-辅wifi为什么会断连？先看下辅wifi为何会断连，从测试同事提供的视频来看时间点大概是15:50:07左右  
-step1:看下这个时间点的辅wifi状态机tip: 过滤的关键字&quot;WifiClientModeImpl:&quot;,打印不同时间点的wifi状态转移变化
-1rec[22]: time=12-30 15:50:07.841 processed=ConnectModeState org=ConnectedState dest=Disco...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/02</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">
-                
-                <span class="abstract-title-text">对投屏工作的回顾小结(持续补充)</span>
-            </a>
-            <div class="abstract-content">
-                前言主要针对高通平台上的miracast投屏遇到的问题，顺便对miracast投屏的一点归纳总结，以便后续如再处理miracast投屏相关的工作，通过本篇文章能够快速重新开始。
-以下主要通过一些QA方式来概述 
-Q：高通上的投屏和谷歌原生的投屏有什么差别吗？
-A：Google WFD 支持AVC, LPCM, and AAC 编码 并支持HDCP加密, 但是缺少对内容保护的支持      通过使用Presentation、MediaRouter和DisplayManager api，它可以作为一个外部WFD提供给应用程序使用。      按照高通文档的解释，谷歌的miracast和高通的...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/12/01</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
             <a class="abstract-title" href="/2020/11/30/从tcpdump看miracast的play流程/">
                 
                 <span class="abstract-title-text">从tcpdump看miracast的play流程(工具篇)</span>
@@ -740,54 +500,6 @@ DHCP ACK
                 <!-- date -->
                 <div class="abstract-date" title="Last updated: 2021/10/16">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/11/30</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/09/15/WFD的学习记录笔记/">
-                
-                <span class="abstract-title-text">WFD的学习记录笔记</span>
-            </a>
-            <div class="abstract-content">
-                本文只讨论miracast，对应的即是设置中投屏的方式，其他视频或者相册中走的是另外一套DLNA协议，不是实时的，还有一些三方应用如腾讯视频爱奇艺是自己搞了一套dlna，DLNA不在本文讨论范围内
-WFD扫盲miracast简介应用层如何操作WFD？连接Miracast设备APIimport android.hardware.display.DisplayManager;
-mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
-mDisplayManager.connectWifiDisp...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/15</span>
                 </div>
                 <!-- tags -->
                 
@@ -1030,49 +742,7 @@ mDisplayManager.connectWifiDisp...
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -1125,7 +795,7 @@ mDisplayManager.connectWifiDisp...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 30
+        Total : 24
         </div>
         <!-- search  -->
         
@@ -1221,30 +891,6 @@ mDisplayManager.connectWifiDisp...
         </li>
     
         
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/24</span>
-            <a class="archive-post-title" href="/2021/01/24/关于网络-wifi一些基础内容/">关于网络&wifi一些基础内容</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/08</span>
-            <a class="archive-post-title" href="/2021/01/08/wifi断流的一般分析思路/">wifi断流问题的一般分析思路</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/03</span>
-            <a class="archive-post-title" href="/2021/01/03/漫游系列之Dense-roaming/">漫游系列之Dense roaming</a>
-        </li>
-    
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/02</span>
-            <a class="archive-post-title" href="/2021/01/02/一个Beacon-miss导致的掉线问题分析/">一个Beacon miss导致的掉线问题分析</a>
-        </li>
-    
-        
             
             
                 
@@ -1253,12 +899,6 @@ mDisplayManager.connectWifiDisp...
             <div class="archive-year"> 2020 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/01</span>
-            <a class="archive-post-title" href="/2020/12/01/对投屏工作的回顾小结-持续补充/">对投屏工作的回顾小结(持续补充)</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">11/30</span>
@@ -1292,12 +932,6 @@ mDisplayManager.connectWifiDisp...
             <div class="archive-year"> 2019 </div>
             <ul class="year-list">
             
-        
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/15</span>
-            <a class="archive-post-title" href="/2019/09/15/WFD的学习记录笔记/">WFD的学习记录笔记</a>
-        </li>
-    
         
         <li class="archive-post-item">
             <span class="archive-post-date">06/23</span>

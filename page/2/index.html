@@ -446,6 +446,56 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2021/10/16/对进程压缩消费Zram速度的优化/">
+                
+                <span class="abstract-title-text">对进程压缩消费Zram速度的优化</span>
+            </a>
+            <div class="abstract-content">
+                从全局看Zram
+修改演变历程
+小结当前的修改方案可能不是最优方案，但是解决了之前遇到的实际问题，后面如果遇到新的问题可能还会进行调整。
+
+Have a good day~
+
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/10/16">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/10/16</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="内存"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                内存
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/09/18/AMS锁严重竞争导致的整机卡顿/">
                 
                 <span class="abstract-title-text">AMS锁严重竞争导致的整机卡顿</span>
@@ -872,52 +922,6 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">
-                
-                <span class="abstract-title-text">一个滑动冲突问题的分析流程</span>
-            </a>
-            <div class="abstract-content">
-                问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog
-初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间Android默认是400ms后会识别为长按事件，此时子View的长按事件被触发。那么问题来了，怎么才能在子view接收到触摸事件并能接管本次事件序列呢？这就要说到老生常谈的事件拦截了，正常拦截事件有...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/06</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1214,7 +1218,14 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1267,7 +1278,7 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 24
+        Total : 25
         </div>
         <!-- search  -->
         
@@ -1281,6 +1292,12 @@ Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地�
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span>
+            <a class="archive-post-title" href="/2022/04/19/Android-S-Doze模式/">Android S Doze模式</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">03/20</span>

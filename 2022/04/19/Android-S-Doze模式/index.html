@@ -19,31 +19,24 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆 归来仍少年">
-    <meta name="description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点) 从高速相机均值数据上，我们的机器上冷启支付宝比竞">
+    <meta name="description" content="愿历尽千帆 归来仍少年">
 <meta property="og:type" content="article">
-<meta property="og:title" content="优化实践:从系统层面优化应用启动速度">
-<meta property="og:url" content="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/index.html">
+<meta property="og:title" content="Android S Doze模式">
+<meta property="og:url" content="http://lihaizhou.top/2022/04/19/Android-S-Doze模式/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点) 从高速相机均值数据上，我们的机器上冷启支付宝比竞">
+<meta property="og:description" content="愿历尽千帆 归来仍少年">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess1.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess2.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess3.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess4.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess5.png">
-<meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess6.png">
-<meta property="og:updated_time" content="2022-03-12T14:31:44.408Z">
+<meta property="og:updated_time" content="2022-04-19T06:19:53.337Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="优化实践:从系统层面优化应用启动速度">
-<meta name="twitter:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点) 从高速相机均值数据上，我们的机器上冷启支付宝比竞">
-<meta name="twitter:image" content="http://blog.lihaizhou.top/startProcess/startProcess1.png">
+<meta name="twitter:title" content="Android S Doze模式">
+<meta name="twitter:description" content="愿历尽千帆 归来仍少年">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
     
         <link rel="alternate" href="/atom.xml" title="愿历尽千帆 归来仍少年" type="application/atom+xml">
     
-    <title>优化实践:从系统层面优化应用启动速度 · 李海洲</title>
+    <title>Android S Doze模式 · 李海洲</title>
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -268,7 +261,7 @@
                 <a href="/">愿历尽千帆 归来仍少年</a>
             </div>
             <div class="post-title header-element">
-                <a href="#" class="post-name">优化实践:从系统层面优化应用启动速度</a>
+                <a href="#" class="post-name">Android S Doze模式</a>
             </div>
         </div>
     
@@ -314,7 +307,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-                优化实践:从系统层面优化应用启动速度
+                Android S Doze模式
             <!-- 404 -->
             
         </h1>
@@ -333,13 +326,13 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">2,460</span>阅读时长: <span class="post-count reading-time">9 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">0</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
                     <span class="iconfont-archer post-intro-calander">&#xe676;</span>
-                    <span class="post-intro-time">2021/11/19</span>
+                    <span class="post-intro-time">2022/04/19</span>
                     <!-- busuanzi -->
                     
                         <span id="busuanzi_container_page_pv" class="busuanzi-pv">
@@ -494,69 +487,15 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <blockquote>
-<p>应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点</p>
-</blockquote>
-<h4 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h4><p>最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单<br>以其中的支付宝为例, 如下是测试提供的支付宝冷启数据<br>(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)<br><img style="margin: left;" src="http://blog.lihaizhou.top/startProcess/startProcess1.png"></p>
-<p>从高速相机均值数据上，我们的机器上冷启支付宝比竞品机慢了29%，另外通过实测同时打开，直观感受上发现绝大部分时候确实慢于竞品机。<br>顺便说一句:<br><code>测试冷启速度最佳方式是通过高速相机，这种方式最贴近用户实际感受，其次便是通过Systrace，但是Systrace的结束帧的确定是个技术活(没有源码情况下)。</code></p>
-<h4 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h4><p>本文将以支付宝为例进行讨论，对于支付宝这种体积的App，在启动过程中会起来上百个业务操作，但是其冷启耗时却能够控制在几百毫秒，我觉得已经是非常之优秀了。<br>其实这种头部App会有专门的性能团队进行优化，相信支付宝已经做了很多的优化工作。<br>PS: 本文深受<a href="https://www.androidperformance.com/" target="_blank" rel="noopener">androidperformance系列文章</a>启发</p>
-<p>本文将致力于回答如下两个问题</p>
-<ol>
-<li>同样的App版本，同样的配置，为何我们的机器启动速度会比竞品机慢？</li>
-<li>如何优化提升我们机器上的应用启动速度？</li>
-</ol>
-<h4 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h4><ol>
-<li>App和系统角度分别看启动速度优化</li>
-<li>CPU提频</li>
-<li>Dex2oat策略优化</li>
-<li>抑制GC次数</li>
-<li>IO优化</li>
-<li>优化后实测数据</li>
-<li>写在最后</li>
-<li>参考文献</li>
-</ol>
-<h4 id="App-amp-系统角度看启动速度优化"><a href="#App-amp-系统角度看启动速度优化" class="headerlink" title="App&amp;系统角度看启动速度优化"></a>App&amp;系统角度看启动速度优化</h4><h5 id="应用角度看启动优化"><a href="#应用角度看启动优化" class="headerlink" title="应用角度看启动优化"></a>应用角度看启动优化</h5><p>对于应用启动优化手段比较常规，主要有如下几种:</p>
-<ol>
-<li>启动页主题之类的替换，达到视觉上的速度加快，并非真的快了。</li>
-<li>初始化的生命周期内一些繁重业务或者库加载尽可能的延迟加载，异步加载，用的时候再加载。</li>
-<li>布局上的优化，尽可能降低布局的复杂度，在需要用的时再加载</li>
-<li>主动dex2oat，需要注意的是在Android10+上谷歌限制了应用进程主动dex2oat，但是其实还是有办法触发，只是实现上会稍微麻烦一点，这里不展开讨论。</li>
-</ol>
-<p>这些常规的优化步骤是最基础的，但是实际优化起来并不一定容易，特别是一些庞大的团队合作App。<br>之前在小米做过启动优化的工作，由于项目业务代码实在太繁杂，初始化代码里充斥了各种回调各种插件，还有很多锁等待，文件读写，反射hook，网络操作等耗时的操作，梳理优化的过程需要有足够的耐心，需要不少的沟通成本。<br>对于应用开发人员而言，分析应用自身的耗时分析手段比较常规，最常见的手段就是Systrace，traceview，simpleperf等，实在不行代码里进行插桩埋点，因为有源代码，一切都好办。<br>而对于一些头部App比如抖音支付宝等，这类App往往有专门的性能团队，可能会涉及到GC优化，dex2oat优化，文件重排列降低IO次数等门槛较高的方向。</p>
-<h5 id="系统全局角度看启动优化"><a href="#系统全局角度看启动优化" class="headerlink" title="系统全局角度看启动优化"></a>系统全局角度看启动优化</h5><p>对于系统工程师而言，需要关注从驱动上报input事件到首页第一帧画面合成的整个过程。<br>主要会涉及input事件传递，一帧的渲染，CPU&amp;GPU的调度频率，Surfaceflinger的合成等等。</p>
-<h4 id="CPU提频"><a href="#CPU提频" class="headerlink" title="CPU提频"></a>CPU提频</h4><p>下图是启动过程中主线程的CPU频率<br><img src="http://blog.lihaizhou.top/startProcess/startProcess2.png" alt=""><br>mtk默认已有实现在进程创建后boost持续10s，从上面Systrace可以看到主线程绘制running的片段是跑在大核上且频率已是最高。<br>但是在对比竞品机Systrace时，笔者发现竞品机surfaceflinger很多时候会跑在大核上，而我们的机器没有跑在大核的时候，其单次onMessageReceived耗时很多时候只有我们的一半。<br>这里先解释下onMessageReceived的作用，主要是处理两个Message</p>
-<ol>
-<li>MessageQueue::INVALIDATE — 主要是执行 handleMessageTransaction&amp;handleMessageInvalidate</li>
-<li>MessageQueue::REFRESH — 主要是执行 handleMessageRefresh 方法<br>可以简单的理解为这块的消息处理越快，合成的速度也会越快，画面能够提早显示出来，降低掉帧的概率。<br>这个时候，你可能会有疑问了，竞品机是做了绑大核处理了吗？</li>
-</ol>
-<p>下面我们看下两者cpuset的差异<br><img src="http://blog.lihaizhou.top/startProcess/startProcess3.png" alt=""><br>可以看到竞品机器对于surfaceflinger设置的是前台进程组，我们的机器遵循的是原生System-background，这也意味着我们机器上surfaceflinger只能跑在0-5核上。<br>那么谷歌设计限制在System-background上基于什么考虑呢？猜测是因为绝大部分时候，这个设计都可以满足需求，占用大核的话可能会导致某些情况下加剧大核队列的负载。</p>
-<h4 id="Dex2oat策略优化"><a href="#Dex2oat策略优化" class="headerlink" title="Dex2oat策略优化"></a>Dex2oat策略优化</h4><p>我们知道dex2oat在优化时，会根据需要优化一定量的method。也就是说并不是优化的method都会被翻译成oat模式。根据优化的method的量的多少，可以分为几种常见的模式：<br><code>verify、quicken、space-profile、space、speed-profile、speed、everything</code><br>字面上比较好理解， 越后面的类型编译时间越长，占用的空间也越大，运行时打开速度也越快，典型空间换时间思路的体现。</p>
-<p>下面是我们的机器和对比机上参数的对比<br><img src="http://blog.lihaizhou.top/startProcess/startProcess4.png" alt=""><br>参数是一致的，其实这也是平台默认的配置, 这些参数中有一项是install时的选择的模式: speed-profile.<br>这里说下speed和speed-profile的区别，speed-profile是对profile中的热点函数进行编译，可以简单理解为是局部编译，而speed是全编。<br>对于dex2oat的调优，其实策略比较常规，根据不同的场景和负载，选择不同的模式。除了原生的idle模式下优化，新增了热点应用的周期性dex2oat。</p>
-<h4 id="降低GC的频率"><a href="#降低GC的频率" class="headerlink" title="降低GC的频率"></a>降低GC的频率</h4><p>之前处理过的性能案例中，有不少是GC引起的性能问题。<br>将友商oppo的修改合入：<br>大意是在进程状态变化触发的GC转换中，如果当前堆增长(自上次GC以来)大小未达到可增长的1/4，则跳过本次GC，这样可以降低启动过程中GC的频率。<br>另外，谷歌在Android R上的一笔GC优化修改，也是降低启动过程中的GC频率<br><img src="http://blog.lihaizhou.top/startProcess/startProcess5.png" alt=""><br>大意就是应用启动过程中等进程fork结束之后，将堆上限阈值调整到最大，因为我们知道GC的触发时机主要取决于堆实际增长是否触及上限值，这样一来的话，进程启动过程中GC的概率就会降低，等两秒钟过后，再将堆上限阈值恢复回来。<br>这些修改的目的都是为了降低GC对启动速度的影响，其实GC的影响不光光在启动上，对于整机的流畅度都起到了很重要影响。</p>
-<h4 id="IO优化"><a href="#IO优化" class="headerlink" title="IO优化"></a>IO优化</h4><p>当内核发起一个读请求时（例如进程发起 read() 请求），首先会检查请求的数据是否缓存到了 pagecache 中。如果有，那么直接从内存中读取，不需要访问磁盘，这被称为 cache命中（cache hit）。如果 cache 中没有请求的数据，即 cache 未命中（cache miss），就必须从磁盘中读取数据。<br>然后内核将读取的数据缓存到 cache 中，这样后续的读请求就可以命中 cache 了。Page 可以只缓存一个文件部分的内容，不需要把整个文件都缓存进来。对磁盘的数据进行缓存从而提高性能主要是基于两个因素：</p>
-<ol>
-<li>磁盘访问的速度比内存慢好几个数量级（毫秒和纳秒的差距）。</li>
-<li>被访问过的数据，有很大概率会被再次访问。</li>
-</ol>
-<p>对于一些头部App比如支付宝就对Apk中的文件进行了重排优化，大意就是:<br><code>通过文件重布局，将启动阶段需要用到的文件在 APK 文件中排布在一起，尽可能的利用 pagecache 机制，用最少的磁盘 IO 次数，读取尽可能多的启动阶段需要的文件，减少 IO 开销，从而达到提升启动性能的目的</code></p>
-<p>上面是App中的IO优化策略，从系统角度的优化策略比较复杂，需要对文件系统比较熟悉, 后续会单独成文记录IO这块的内容</p>
-<h4 id="最终优化效果"><a href="#最终优化效果" class="headerlink" title="最终优化效果"></a>最终优化效果</h4><p>当前采用了如下三种方式对启动性能进行了优化</p>
-<ol>
-<li>对SurfaceFlinger占据的CPU资源调整</li>
-<li>针对不同场景下的dex2oat进行了编译模式调优</li>
-<li>启动过程中降低GC次数<br>影响其实最大的是dex2oat</li>
-</ol>
-<p>在优化后的版本上，我们再次使用高速相机对支付宝进行测试<br><img src="http://blog.lihaizhou.top/startProcess/startProcess6.png" alt=""></p>
-<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><p><a href="https://developer.android.google.cn/topic/performance/vitals/launch-time" target="_blank" rel="noopener">https://developer.android.google.cn/topic/performance/vitals/launch-time</a><br><a href="https://source.android.com/devices/tech/dalvik/configure" target="_blank" rel="noopener">https://source.android.com/devices/tech/dalvik/configure</a></p>
-
+        
     </article>
     <!-- license -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
-            <p>原文链接：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/</a>
-            <p>发表日期：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">November 19th 2021, 10:00:24 am</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">March 12th 2022, 10:31:44 pm</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2022/04/19/Android-S-Doze模式/">http://lihaizhou.top/2022/04/19/Android-S-Doze模式/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2022/04/19/Android-S-Doze模式/">April 19th 2022, 2:19:53 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2022/04/19/Android-S-Doze模式/">April 19th 2022, 2:19:53 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -564,17 +503,12 @@
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2021/11/27/优化实践-高刷下列表滑动出现卡顿掉帧/" title="优化实践: 高刷下列表滑动出现卡顿掉帧">
-                    <div class="nextTitle">优化实践: 高刷下列表滑动出现卡顿掉帧</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/" title="Systrace角度: 拆解分析应用的启动流程">
-                    <div class="prevTitle">Systrace角度: 拆解分析应用的启动流程</div>
+                <a href="/2022/03/20/ART-虚拟机｜Dex2oat-调优实践之路/" title="ART 虚拟机｜Dex2oat 调优实践之路">
+                    <div class="prevTitle">ART 虚拟机｜Dex2oat 调优实践之路</div>
                 </a>
             
         </li>
@@ -706,7 +640,7 @@
                 <div class="toc-catalog">
                     <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
                 </div>
-                <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#故事背景"><span class="toc-number">1.</span> <span class="toc-text">故事背景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#写在前面"><span class="toc-number">2.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#大纲"><span class="toc-number">3.</span> <span class="toc-text">大纲</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#App-amp-系统角度看启动速度优化"><span class="toc-number">4.</span> <span class="toc-text">App&amp;系统角度看启动速度优化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#应用角度看启动优化"><span class="toc-number">4.1.</span> <span class="toc-text">应用角度看启动优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#系统全局角度看启动优化"><span class="toc-number">4.2.</span> <span class="toc-text">系统全局角度看启动优化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CPU提频"><span class="toc-number">5.</span> <span class="toc-text">CPU提频</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dex2oat策略优化"><span class="toc-number">6.</span> <span class="toc-text">Dex2oat策略优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#降低GC的频率"><span class="toc-number">7.</span> <span class="toc-text">降低GC的频率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO优化"><span class="toc-number">8.</span> <span class="toc-text">IO优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最终优化效果"><span class="toc-number">9.</span> <span class="toc-text">最终优化效果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参考资料"><span class="toc-number">10.</span> <span class="toc-text">参考资料</span></a></li></ol>
+                
             </div>
         
         <!-- sidebar -->

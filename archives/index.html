@@ -540,17 +540,19 @@ Idle下的触发条件苛刻，发挥空间有限。
                 <span class="abstract-title-text">网络 | 拥塞控制算法之BBR</span>
             </a>
             <div class="abstract-content">
-                写在前面最近周末，打算将之前看过的BBR论文拿出来重新啃一遍，这次阅读后有了一些新的理解，所以打算记录下来。以便以后回顾完善。
-Bufferbloat在讨论BBR之前不得不说下Bufferbloat，在BBR之前的拥塞控制算法无一例外都和网络缓存耦合在了一起，所以都会存在发生Bufferbloat的情况。
+                
+TCP BBR（Bottleneck Bandwidth and Round-trip propagation time）是由Google 设计，于2016年发布的拥塞算法。以往的大部分拥塞控制算法都是基于丢包来作为降低传输速率的信号，而BBR 则基于模型主动探测。目前已经在Google 内部大范围使用并随着linux 4.9 版本正式发布。
+
+Bufferbloat在讨论BBR 之前不得不先说下Bufferbloat，在BBR 出来之前的拥塞控制算法无一例外都和网络缓存耦合在了一起，所以都会存在发生Bufferbloat 的情况。
 关于bufferbloat的定义
 
-缓冲膨胀是一种因数据包过度缓冲而引起的数据包交换网络高延迟原因。缓冲膨胀还可能导致数据包延迟变化（也称为抖动），并降低整体网络吞吐量。当路由器或交换机配置了过大的缓冲区时，对于许多交互式应用程序，例如IP语音（VoIP），在线游戏，甚至普通的网页浏览...
+Bufferbl...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/04/14">
+                <div class="abstract-date" title="Last updated: 2022/05/22">
                     <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/03/01</span>
                 </div>
                 <!-- tags -->

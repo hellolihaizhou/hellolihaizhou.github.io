@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2022-09-06T13:09:45.451Z</updated>
+  <updated>2022-09-06T13:39:34.644Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -21,11 +21,22 @@
     <link href="http://lihaizhou.top/2022/09/06/Android-%E5%9B%BE%E5%BD%A2%E6%A0%88%E7%96%91%E9%97%AE%E6%B1%87%E6%80%BB-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/"/>
     <id>http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/</id>
     <published>2022-09-06T13:09:45.000Z</published>
-    <updated>2022-09-06T13:09:45.451Z</updated>
+    <updated>2022-09-06T13:39:34.644Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。<br>所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。</p><ol><li>onMeasure/ onLayout/ onDraw 分别做得事？</li><li>如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及其相互的关系?</li><li>如何理解硬件加速这一角色？</li></ol><ul><li>硬件加速引入的初衷？</li><li>会带来什么样的好处及对内存的影响？</li><li>如何强制让View/ Window/ Activity 开启硬件加速？</li><li>如何快速判断是否开了硬件加速？</li><li>什么情况下会依旧采用软件绘制？</li><li>如果是软件绘制的话，大概过程是怎么样的？</li><li>如果是硬件加速的话，大概过程是怎么样的？</li></ul><ol start="4"><li>RenderThread 扮演的角色？ </li></ol><ul><li>为何要另起个线程？</li><li>queueBuffer 结束是否标志GPU 完成？</li><li>RenderThread是如何和MainThread 交互的？</li><li>RenderThread是如何和Sf 交互的？</li></ul><ol start="5"><li>游戏的绘制和普通App 应用有什么区别？</li></ol><ul><li>游戏的绘制阶段buffer 是自身控制还是受系统buffer count限制？</li><li>游戏会听Vsync吗？如果不受Vsync 控制，那么游戏绘制的节奏是如何把握的？</li></ul><ol start="6"><li>Choreographer#doframe 扮演的角色？</li></ol><ul><li>触发的时机？</li></ul><ol start="7"><li>如何理解掉帧这个概念？</li></ol><ul><li>市面统计掉帧工具如PerfDog 等测试原理？</li><li>如何根据Perfetto 快速统计出实际FPS？</li></ul><ol start="8"><li>为何掉帧要看Sf 而不是App 侧？</li></ol><ul><li>如果一帧在绘制阶段超出了一个Vsync，但是此时有其它layer 更新的buffer，此时Sf 拿到了并正常合成，那么这次究竟算不算掉帧？视觉上会不会感受到卡顿？</li></ul><ol start="8"><li>为何Google 声称三缓冲能够有效降低掉帧？</li></ol><ul><li>如果是这样的话，那多增加一些buffer count 不是会更流畅？为何没有这么做？</li><li>对于常见的三级流水线而言，Triple buffer 会比double buffer 触控延时更好？</li><li>试想一下，如果在三级流水线上，分别有绘制稳定、绘制过快、绘制过慢这三种场景下，Triple buffer和double buffer 一帧从绘制到显示的延迟周期差异？</li></ul><ol start="9"><li>如何理解client 和device 合成？</li></ol><ul><li>发起GPU 合成动作是在哪个线程中？</li><li>device 合成是在哪里完成的？涉及到什么硬件？</li><li>如何判断本次合成是GPU合成还是硬件合成？</li></ul><ol start="10"><li>什么情况下layer 会采用GPU 合成?<br>举个例子，比如为何处于桌面静止下dump 出来显示是GPU 合成？</li><li>如何理解画面撕裂这个现象？</li></ol><ul><li>什么情况下可能会出现画面撕裂？</li><li>如果出现了画面撕裂，有哪些分析排查的思路？</li></ul><ol start="12"><li>Vsync offset 引入的目的是？</li></ol><ul><li>其数值不同会有什么影响？</li><li>厂商一般是如何调校SF以及App的offset 数值的？</li><li>调整Sf offset后 对触控延时可能的影响？</li><li>offset 数值的改变对游戏应用有影响吗？</li><li>举个例子，对于60fps而言，如何调整Sf offset 数值并且要满足什么样的条件，会对触控延时有改善即能够省掉一个Vsync 周期时间？</li></ul><ol start="13"><li>图形系统中不同进程是如何操作同一块buffer的？</li><li>一个Vsync 周期内，绘制和合成用的是同一块buf 吗？</li></ol><ul><li>举个例子，在offset为0的情况下，一个Vsync周期内绘制和Sf的合成用的是同一个buffer吗？</li><li>对于三级流水线而言，一帧最快要等几个Vsync周期才能显示？</li></ul><ol start="15"><li>如何快速找到同一块buffer 在绘制、合成、显示的位置? (Perfetto)<br>我们看perfetto 时，经常需要找到一块buffer 对应到App、Sf、HWC、presentFence的位置，这样可以分析waiting for GPU completion和waiting for HWC release 耗时长问题，该如何快速找到比如合成或显示用到的buffer 对应到绘制片段是哪一块？</li><li>不同级数的流水线所带来的影响？</li></ol><ul><li>不同刷新率对应的流水线级数差异？比如高刷120hz下流水线级数？</li><li>如果将三级流水线改为两级或者四级会有什么影响？触控延时会降低吗？</li><li>不同级数对应的buffer数目要求？</li></ul><ol start="17"><li>如何快速厘清dequeue buffer 以及queue buffer 耗时长问题？</li><li>图形显示引入Fence 机制的根本缘由是？(宏观角度概述)<br>Fence是如何跨进程跨硬件的？</li><li>Sf 侧的waiting for presentFence 结束点代表的含义？<br>Android S 上mtk添加</li><li>SurfaceFlinger 是如何和HWC Service交互的？</li><li>怎么理解Hwcomposer 扮演的角色？<br> 为什么不放在Sf 主线程中做？这样似乎可以省去很多的binder交互开销？</li><li>HWC 侧的OverlayEngin扮演的角色是？</li><li>HWC 下到kernel 的过程？</li><li>如何排查Resync问题？<br>哪些场景可能会触发Resync？</li><li>如何排查应用自身不出帧的原因？(Perfetto)</li><li>Sf 默认是跑在什么大核还是小核，什么进程组？</li></ol><ul><li>如果想让其有机会进大核，如何修改？</li><li>如果想在loading轻的时候让其有机会跑大核，最安全的改法？</li></ul><ol start="27"><li>如何排查Sf 挤压问题？<br>一般如何排查以及优化策略？这种情况下还会对齐Vsync-sf吗？</li><li>如何Sf 侧有空白或pending 现象？</li><li>哪种合成会走Drawlayers？</li><li>如何排查Drawlayers 耗时长？和GPU有关系吗？</li><li>acquireFence以及releaseFence之间的关系？</li><li>acquireFence放的慢或releaseFence放的慢分别意味着什么？</li><li>什么情况会出现waiting for HWC release Tag 或waiting for GPU completion？</li><li>如果快速排查waiting for GPU completion 耗时长问题？</li></ol><ul><li>如何快速排查是GPU问题还是releaseFence放的慢了？</li><li>如果是releaseFence放慢了影响到下一帧的合成，那么Systrace侧如何看waiting for GPU completion耗时中GPU空等时长？</li></ul><ol start="34"><li>如Sf 未及时拿走buf 合成，可能是什么原因？<br>Sf bufferTX中有buffer进来，Sf在接到Vsync-sf没有去拿buffer合成，一般是什么原因导致？</li><li>如何从Systrace侧看是否存在buffer 轮转压力？</li></ol><ul><li>当出现buffer轮转压力时，为何waiting for HWC release 后往往会伴随着waiting for GPU completion</li><li>如果waiting for GPU completion在waiting for HWC release之前出现，意味着什么？</li></ul><ol start="36"><li>如何算出一段时间的实际出帧率？(Android S)</li><li>buffer count数量由什么因素决定？(Android S)</li><li>如何知道一段时间内buffer count(Android S)？</li><li>如何理解BBQ机制？(Android S)</li><li>如何理解S上的Duration架构？<br>数值设置的依据是？是一个动态的数值吗？不同的数值会有什么影响？会影响跟手性吗？</li><li>如何理解S上的 Latch signaled buffer？</li><li>如何理解S上的Sf Backpressure？</li></ol>]]></content>
     
     <summary type="html">
     
+      
+      
+        &lt;p&gt;最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。&lt;br&gt;所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;onMeasure/ onLayout/ onDraw 分别做得事？&lt;/l
+      
+    
     </summary>
+    
+      <category term="性能" scheme="http://lihaizhou.top/categories/%E6%80%A7%E8%83%BD/"/>
     
     
   </entry>

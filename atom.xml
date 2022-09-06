@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://lihaizhou.top/"/>
-  <updated>2022-04-19T07:10:17.063Z</updated>
+  <updated>2022-09-06T13:09:45.451Z</updated>
   <id>http://lihaizhou.top/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Android|图形栈疑问汇总(持续更新)</title>
+    <link href="http://lihaizhou.top/2022/09/06/Android-%E5%9B%BE%E5%BD%A2%E6%A0%88%E7%96%91%E9%97%AE%E6%B1%87%E6%80%BB-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/"/>
+    <id>http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/</id>
+    <published>2022-09-06T13:09:45.000Z</published>
+    <updated>2022-09-06T13:09:45.451Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Android S Doze模式</title>
@@ -456,29 +470,6 @@
       
         &lt;p&gt;&lt;strong&gt;当前需求&lt;/strong&gt;&lt;br&gt;新项目遵循竞品的Launcher样式设计&lt;br&gt;&lt;strong&gt;当前计划&lt;/strong&gt;&lt;br&gt;重新编写Launcher，并尽可能的弥补老框架的不足&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;为什么需要重写Launcher？&lt;/str
-      
-    
-    </summary>
-    
-      <category term="Android" scheme="http://lihaizhou.top/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</title>
-    <link href="http://lihaizhou.top/2019/03/11/Android-%E7%B3%BB%E7%BB%9F%E5%B1%82%E6%8D%95%E6%8D%89%E6%89%80%E6%9C%89%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E6%83%85%E5%86%B5%E6%8E%A8%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E5%AE%9E%E8%B7%B5%E4%B9%8B%E8%B7%AF/"/>
-    <id>http://lihaizhou.top/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/</id>
-    <published>2019-03-11T14:19:11.000Z</published>
-    <updated>2019-12-28T07:02:08.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>项目痛点</strong><br>出现偶现崩溃或<code>ANR</code>，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手<br>还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时</p><p><strong>初步想法</strong><br>可不可以将所有<code>ANR</code>,<code>Crash</code>等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位</p><p>以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善</p><p><strong>Step1： 获取钉钉的<code>Webhook</code>地址</strong><br>这个地址后面作为推送的目标地址</p><p>在钉钉中添加机器人接口的步骤参见官网文档<br><a href="https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.XJQ2yZ&amp;treeId=257&amp;articleId=105735&amp;docType=1" target="_blank" rel="noopener">https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.XJQ2yZ&amp;treeId=257&amp;articleId=105735&amp;docType=1</a></p><p>通过以上步骤拿到了Laucnher的Webhook地址，如下:<br><a href="https://oapi.dingtalk.com/robot/send?access_token=a937a86122149aa52a694dd79fae2cdec1c7e448c62bff31471088ec13e941" target="_blank" rel="noopener">https://oapi.dingtalk.com/robot/send?access_token=a937a86122149aa52a694dd79fae2cdec1c7e448c62bff31471088ec13e941</a></p><p><strong>Step2：源码层增加上报机制</strong><br>之所以考虑在源码层中修改，是因为我们需要监测系统中所有应用的出错情况，想到<code>AMS</code>中的<code>Crash</code>弹框，猜想其中一定有相关的写入报错日志的操作</p><p><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/handleApplicationCrash.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br></p><p>这里调用了<code>handleApplicationCrashInner</code>这个函数，接着看这个函数<br><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/handleApplicationCrashInner.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br></p><p>这里追加了一行日志，在应用层添加会造成<code>crash</code>的代码片段，看看这行日志打出的信息</p><p><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/crashLog.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>这里会打出<code>eventtype</code>类型，报错进程，以及关键的堆栈信息，其中的<code>eventtype</code>包括了<code>watchdog</code>、<code>anr</code>、<code>wtf</code>、<code>lowmem</code>、<code>native_crash</code>、<code>crash</code><br>完全满足我们的要求，接下来就是如何把这段发给钉钉了<br>在<code>handleApplicationCrashInner</code>中增加接口<code>reportAllErrorToXunDingTalk</code></p><p><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/AddReportFunction.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br></p><p><code>reportAllErrorToXunDingTalk</code>接口如下：<br><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/report1.png?raw=true" align="left" style=" width:700px;height:300 px"><br><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/report2.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p><p>这个时候应用端报错的话话，钉钉群会收到消息<br><img src="https://github.com/hellolihaizhou/FrescoDemo/blob/master/dingding.png?raw=true" align="left" style=" width:700px;height:300 px"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></p><hr><font color="#000000" size="2" face="楷体">good night!</font>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;strong&gt;项目痛点&lt;/strong&gt;&lt;br&gt;出现偶现崩溃或&lt;code&gt;ANR&lt;/code&gt;，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手&lt;br&gt;还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，
       
     
     </summary>

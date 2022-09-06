@@ -22,7 +22,7 @@
     <meta name="description" content="愿历尽千帆 归来仍少年">
 <meta property="og:type" content="website">
 <meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/archives/2020/index.html">
+<meta property="og:url" content="http://lihaizhou.top/archives/2022/09/index.html">
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="愿历尽千帆 归来仍少年">
 <meta property="og:locale" content="zh-Hans">
@@ -433,192 +433,21 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2020/11/30/从tcpdump看miracast的play流程/">
+            <a class="abstract-title" href="/2022/09/06/Android-图形栈疑问汇总-持续更新/">
                 
-                <span class="abstract-title-text">从tcpdump看miracast的play流程(工具篇)</span>
+                <span class="abstract-title-text">Android|图形栈疑问汇总(持续更新)</span>
             </a>
             <div class="abstract-content">
-                前言：基于高通平台，其他平台都是类似的本文作为工具篇，记录下来的目的是以便后续如再接触投屏工作能够快速对照上手
-当我们开始准备连接sink设备时，开始的时候，source会创建一个socket监听着并等待sink端过来连接，sink端会触发”connect”的socket函数并开始tcp 握手之路，这个时候source接收到之后，它会触发”accept”的socket函数来处理sink发过俩的连接请求
-开始是握手 Key Message #1~#4
-RTSP connect M1~M8:
-DHCP ACK
-如果这里DHCP Discover -&gt; DHCP ACK耗时超过 5s, ...
+                
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/11/30</span>
+                <div class="abstract-date" title="Last updated: 2022/09/06">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/09/06</span>
                 </div>
                 <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="网络"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                网络
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">
-                
-                <span class="abstract-title-text">一次SystemServer OOM导致的系统重启分析之路</span>
-            </a>
-            <div class="abstract-content">
-                测试步骤MTBF测试跑出来的机器重启，先解释下何为MTBF？MTBF测试(Mean Time Between Failure)主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数
-复现概率1/200
-问题现象机器出现重启，并自动给出源头是OOM导致的结论
-初步分析正常步骤先看bugreport确定下是否是OOM导致的重启，搜索关键字”system_server_crash”或”am_crash”1234567892020-12-07 10:56:18 system_server_...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/11/25</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="稳定性"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                稳定性
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/06/20/Memory-Barrier读书笔记/">
-                
-                <span class="abstract-title-text">内存屏障</span>
-            </a>
-            <div class="abstract-content">
-                本篇文章开始之前需要了解一些背景知识
-Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。
-在CPU内部存在一堆的通用寄存器（register），如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤
-
-CPU 从主存中读取地址A的数据到内部通用寄存器 x0（ARM64架构的通用寄存器之一）
-通用寄存器 x0 加1
-CPU 将通...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/04/10">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/20</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Linux"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Linux
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/03/04/谁拖慢了列表的滑动速度/">
-                
-                <span class="abstract-title-text">谁拖慢了列表的滑动速度</span>
-            </a>
-            <div class="abstract-content">
-                问题描述在开机向导界面滑动wifi列表界面时比较卡顿，概率为必现
-抓一份systrace，红色帧有多处，总体上看有不少处发生掉帧
-挑其中一处红色帧放大看下耗时中的measure是大头，其中一次measure有数十次obtainview，对比其他绿色正常帧，发现正常的时候没有measure的过程放大一次obtainview的过程，做的其实是inflate一项item的过程，红圈处对应了wifi一个item的布局我们都知道，ViewRootImpl的performTraversals方法会经过measure、layout和draw三个流程才能将一帧View需要显示的内容绘制到屏幕上
-
-per...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/10/16">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/04</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
                 
             </div>
         </article>

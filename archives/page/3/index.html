@@ -433,6 +433,55 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
+                
+                <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
+            </a>
+            <div class="abstract-content">
+                项目痛点出现偶现崩溃或ANR，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时
+初步想法可不可以将所有ANR,Crash等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位
+以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善
+Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地址
+在钉...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2019/12/28">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2018/06/06/一个滑动冲突问题的分析流程/">
                 
                 <span class="abstract-title-text">一个滑动冲突问题的分析流程</span>
@@ -892,7 +941,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -947,7 +1003,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 25
+        Total : 26
         </div>
         <!-- search  -->
         
@@ -961,6 +1017,12 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/06</span>
+            <a class="archive-post-title" href="/2022/09/06/Android-图形栈疑问汇总-持续更新/">Android|图形栈疑问汇总(持续更新)</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/19</span>
@@ -1164,14 +1226,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="ANR">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ANR
-        </span>
-    
         <span class="sidebar-category-name" data-categories="性能">
             <span class="iconfont-archer">&#xe60a;</span>
             性能
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ANR">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">

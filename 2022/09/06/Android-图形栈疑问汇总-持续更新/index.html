@@ -19,17 +19,17 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆 归来仍少年">
-    <meta name="description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。  onMeasure/ onLayout/ onDraw 分别做得事？ 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及">
+    <meta name="description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，到了S以及T上有了较多的变化，单看理论源码的话，难以形成深刻的认知。所以打算在最近的学习过程中列举出自己的一些疑问，后面会持续的更新疑问并补充个人的理解。 1. onMeasure/ onLayout/ onDraw 分别做得事？2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ Textu">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android|图形栈疑问汇总(持续更新)">
 <meta property="og:url" content="http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。  onMeasure/ onLayout/ onDraw 分别做得事？ 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及">
+<meta property="og:description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，到了S以及T上有了较多的变化，单看理论源码的话，难以形成深刻的认知。所以打算在最近的学习过程中列举出自己的一些疑问，后面会持续的更新疑问并补充个人的理解。 1. onMeasure/ onLayout/ onDraw 分别做得事？2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ Textu">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2022-09-06T13:39:34.644Z">
+<meta property="og:updated_time" content="2022-09-06T13:48:14.808Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android|图形栈疑问汇总(持续更新)">
-<meta name="twitter:description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。  onMeasure/ onLayout/ onDraw 分别做得事？ 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及">
+<meta name="twitter:description" content="最近在看图形显示方面的内容，这块的知识点繁多且复杂，到了S以及T上有了较多的变化，单看理论源码的话，难以形成深刻的认知。所以打算在最近的学习过程中列举出自己的一些疑问，后面会持续的更新疑问并补充个人的理解。 1. onMeasure/ onLayout/ onDraw 分别做得事？2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ Textu">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
@@ -326,7 +326,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1,738</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1,750</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -487,154 +487,52 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <p>最近在看图形显示方面的内容，这块的知识点繁多且复杂，单看理论知识的话，可能形成不了深刻的认知。<br>所以打算在学习过程中列举出一些疑问，以便于后面回过头来做题时加深理解。</p>
-<ol>
-<li>onMeasure/ onLayout/ onDraw 分别做得事？</li>
-<li>如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及其相互的关系?</li>
-<li>如何理解硬件加速这一角色？</li>
-</ol>
-<ul>
+        <p>最近在看图形显示方面的内容，这块的知识点繁多且复杂，到了S以及T上有了较多的变化，单看理论源码的话，难以形成深刻的认知。<br>所以打算在最近的学习过程中列举出自己的一些疑问，后面会持续的更新疑问并补充个人的理解。</p>
+<h4 id="1-onMeasure-onLayout-onDraw-分别做得事？"><a href="#1-onMeasure-onLayout-onDraw-分别做得事？" class="headerlink" title="1. onMeasure/ onLayout/ onDraw 分别做得事？"></a>1. onMeasure/ onLayout/ onDraw 分别做得事？</h4><h4 id="2-如何理解Window-ViewRootImpl-Surface-SurfaceTexture-TextureView-GLSurfaceview-概念及其相互的关系"><a href="#2-如何理解Window-ViewRootImpl-Surface-SurfaceTexture-TextureView-GLSurfaceview-概念及其相互的关系" class="headerlink" title="2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及其相互的关系?"></a>2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及其相互的关系?</h4><h4 id="3-如何理解硬件加速这一角色？"><a href="#3-如何理解硬件加速这一角色？" class="headerlink" title="3. 如何理解硬件加速这一角色？"></a>3. 如何理解硬件加速这一角色？</h4><ul>
 <li>硬件加速引入的初衷？</li>
 <li>会带来什么样的好处及对内存的影响？</li>
 <li>如何强制让View/ Window/ Activity 开启硬件加速？</li>
 <li>如何快速判断是否开了硬件加速？</li>
 <li>什么情况下会依旧采用软件绘制？</li>
 <li>如果是软件绘制的话，大概过程是怎么样的？</li>
-<li>如果是硬件加速的话，大概过程是怎么样的？</li>
-</ul>
-<ol start="4">
-<li>RenderThread 扮演的角色？ </li>
-</ol>
-<ul>
+<li>如果是硬件加速的话，大概过程是怎么样的？<h4 id="4-RenderThread-扮演的角色？"><a href="#4-RenderThread-扮演的角色？" class="headerlink" title="4. RenderThread 扮演的角色？"></a>4. RenderThread 扮演的角色？</h4></li>
 <li>为何要另起个线程？</li>
 <li>queueBuffer 结束是否标志GPU 完成？</li>
 <li>RenderThread是如何和MainThread 交互的？</li>
-<li>RenderThread是如何和Sf 交互的？</li>
-</ul>
-<ol start="5">
-<li>游戏的绘制和普通App 应用有什么区别？</li>
-</ol>
-<ul>
+<li>RenderThread是如何和Sf 交互的？<h4 id="5-游戏的绘制和普通App-应用有什么区别？"><a href="#5-游戏的绘制和普通App-应用有什么区别？" class="headerlink" title="5. 游戏的绘制和普通App 应用有什么区别？"></a>5. 游戏的绘制和普通App 应用有什么区别？</h4></li>
 <li>游戏的绘制阶段buffer 是自身控制还是受系统buffer count限制？</li>
-<li>游戏会听Vsync吗？如果不受Vsync 控制，那么游戏绘制的节奏是如何把握的？</li>
-</ul>
-<ol start="6">
-<li>Choreographer#doframe 扮演的角色？</li>
-</ol>
-<ul>
-<li>触发的时机？</li>
-</ul>
-<ol start="7">
-<li>如何理解掉帧这个概念？</li>
-</ol>
-<ul>
+<li>游戏会听Vsync吗？如果不受Vsync 控制，那么游戏绘制的节奏是如何把握的？<h4 id="6-Choreographer-doframe-扮演的角色？"><a href="#6-Choreographer-doframe-扮演的角色？" class="headerlink" title="6. Choreographer#doframe 扮演的角色？"></a>6. Choreographer#doframe 扮演的角色？</h4></li>
+<li>触发的时机？<h4 id="7-如何理解掉帧这个概念？"><a href="#7-如何理解掉帧这个概念？" class="headerlink" title="7. 如何理解掉帧这个概念？"></a>7. 如何理解掉帧这个概念？</h4></li>
 <li>市面统计掉帧工具如PerfDog 等测试原理？</li>
 <li>如何根据Perfetto 快速统计出实际FPS？</li>
-</ul>
-<ol start="8">
 <li>为何掉帧要看Sf 而不是App 侧？</li>
-</ol>
-<ul>
-<li>如果一帧在绘制阶段超出了一个Vsync，但是此时有其它layer 更新的buffer，此时Sf 拿到了并正常合成，那么这次究竟算不算掉帧？视觉上会不会感受到卡顿？</li>
-</ul>
-<ol start="8">
-<li>为何Google 声称三缓冲能够有效降低掉帧？</li>
-</ol>
-<ul>
+<li>如果一帧在绘制阶段超出了一个Vsync，但是此时有其它layer 更新的buffer，此时Sf 拿到了并正常合成，那么这次究竟算不算掉帧？视觉上会不会感受到卡顿？<h4 id="8-为何Google-声称三缓冲能够有效降低掉帧？"><a href="#8-为何Google-声称三缓冲能够有效降低掉帧？" class="headerlink" title="8. 为何Google 声称三缓冲能够有效降低掉帧？"></a>8. 为何Google 声称三缓冲能够有效降低掉帧？</h4></li>
 <li>如果是这样的话，那多增加一些buffer count 不是会更流畅？为何没有这么做？</li>
 <li>对于常见的三级流水线而言，Triple buffer 会比double buffer 触控延时更好？</li>
-<li>试想一下，如果在三级流水线上，分别有绘制稳定、绘制过快、绘制过慢这三种场景下，Triple buffer和double buffer 一帧从绘制到显示的延迟周期差异？</li>
-</ul>
-<ol start="9">
-<li>如何理解client 和device 合成？</li>
-</ol>
-<ul>
+<li>试想一下，如果在三级流水线上，分别有绘制稳定、绘制过快、绘制过慢这三种场景下，Triple buffer和double buffer 一帧从绘制到显示的延迟周期差异？<h4 id="9-如何理解client-和device-合成？"><a href="#9-如何理解client-和device-合成？" class="headerlink" title="9. 如何理解client 和device 合成？"></a>9. 如何理解client 和device 合成？</h4></li>
 <li>发起GPU 合成动作是在哪个线程中？</li>
 <li>device 合成是在哪里完成的？涉及到什么硬件？</li>
-<li>如何判断本次合成是GPU合成还是硬件合成？</li>
-</ul>
-<ol start="10">
-<li>什么情况下layer 会采用GPU 合成?<br>举个例子，比如为何处于桌面静止下dump 出来显示是GPU 合成？</li>
-<li>如何理解画面撕裂这个现象？</li>
-</ol>
-<ul>
+<li>如何判断本次合成是GPU合成还是硬件合成？<h4 id="10-什么情况下layer-会采用GPU-合成"><a href="#10-什么情况下layer-会采用GPU-合成" class="headerlink" title="10. 什么情况下layer 会采用GPU 合成?"></a>10. 什么情况下layer 会采用GPU 合成?</h4>举个例子，比如为何处于桌面静止下dump 出来显示是GPU 合成？<h4 id="11-如何理解画面撕裂这个现象？"><a href="#11-如何理解画面撕裂这个现象？" class="headerlink" title="11. 如何理解画面撕裂这个现象？"></a>11. 如何理解画面撕裂这个现象？</h4></li>
 <li>什么情况下可能会出现画面撕裂？</li>
-<li>如果出现了画面撕裂，有哪些分析排查的思路？</li>
-</ul>
-<ol start="12">
-<li>Vsync offset 引入的目的是？</li>
-</ol>
-<ul>
+<li>如果出现了画面撕裂，有哪些分析排查的思路？<h4 id="12-Vsync-offset-引入的目的是？"><a href="#12-Vsync-offset-引入的目的是？" class="headerlink" title="12. Vsync offset 引入的目的是？"></a>12. Vsync offset 引入的目的是？</h4></li>
 <li>其数值不同会有什么影响？</li>
 <li>厂商一般是如何调校SF以及App的offset 数值的？</li>
 <li>调整Sf offset后 对触控延时可能的影响？</li>
 <li>offset 数值的改变对游戏应用有影响吗？</li>
-<li>举个例子，对于60fps而言，如何调整Sf offset 数值并且要满足什么样的条件，会对触控延时有改善即能够省掉一个Vsync 周期时间？</li>
-</ul>
-<ol start="13">
-<li>图形系统中不同进程是如何操作同一块buffer的？</li>
-<li>一个Vsync 周期内，绘制和合成用的是同一块buf 吗？</li>
-</ol>
-<ul>
+<li>举个例子，对于60fps而言，如何调整Sf offset 数值并且要满足什么样的条件，会对触控延时有改善即能够省掉一个Vsync 周期时间？<h4 id="13-图形系统中不同进程是如何操作同一块buffer的？"><a href="#13-图形系统中不同进程是如何操作同一块buffer的？" class="headerlink" title="13. 图形系统中不同进程是如何操作同一块buffer的？"></a>13. 图形系统中不同进程是如何操作同一块buffer的？</h4><h4 id="14-一个Vsync-周期内，绘制和合成用的是同一块buf-吗？"><a href="#14-一个Vsync-周期内，绘制和合成用的是同一块buf-吗？" class="headerlink" title="14. 一个Vsync 周期内，绘制和合成用的是同一块buf 吗？"></a>14. 一个Vsync 周期内，绘制和合成用的是同一块buf 吗？</h4></li>
 <li>举个例子，在offset为0的情况下，一个Vsync周期内绘制和Sf的合成用的是同一个buffer吗？</li>
-<li>对于三级流水线而言，一帧最快要等几个Vsync周期才能显示？</li>
-</ul>
-<ol start="15">
-<li>如何快速找到同一块buffer 在绘制、合成、显示的位置? (Perfetto)<br>我们看perfetto 时，经常需要找到一块buffer 对应到App、Sf、HWC、presentFence的位置，这样可以分析waiting for GPU completion和waiting for HWC release 耗时长问题，该如何快速找到比如合成或显示用到的buffer 对应到绘制片段是哪一块？</li>
-<li>不同级数的流水线所带来的影响？</li>
-</ol>
-<ul>
+<li>对于三级流水线而言，一帧最快要等几个Vsync周期才能显示？<h4 id="15-如何快速找到同一块buffer-在绘制、合成、显示的位置-Perfetto"><a href="#15-如何快速找到同一块buffer-在绘制、合成、显示的位置-Perfetto" class="headerlink" title="15. 如何快速找到同一块buffer 在绘制、合成、显示的位置? (Perfetto)"></a>15. 如何快速找到同一块buffer 在绘制、合成、显示的位置? (Perfetto)</h4>我们看perfetto 时，经常需要找到一块buffer 对应到App、Sf、HWC、presentFence的位置，这样可以分析waiting for GPU completion和waiting for HWC release 耗时长问题，该如何快速找到比如合成或显示用到的buffer 对应到绘制片段是哪一块？<h4 id="16-不同级数的流水线所带来的影响？"><a href="#16-不同级数的流水线所带来的影响？" class="headerlink" title="16. 不同级数的流水线所带来的影响？"></a>16. 不同级数的流水线所带来的影响？</h4></li>
 <li>不同刷新率对应的流水线级数差异？比如高刷120hz下流水线级数？</li>
 <li>如果将三级流水线改为两级或者四级会有什么影响？触控延时会降低吗？</li>
-<li>不同级数对应的buffer数目要求？</li>
-</ul>
-<ol start="17">
-<li>如何快速厘清dequeue buffer 以及queue buffer 耗时长问题？</li>
-<li>图形显示引入Fence 机制的根本缘由是？(宏观角度概述)<br>Fence是如何跨进程跨硬件的？</li>
-<li>Sf 侧的waiting for presentFence 结束点代表的含义？<br>Android S 上mtk添加</li>
-<li>SurfaceFlinger 是如何和HWC Service交互的？</li>
-<li>怎么理解Hwcomposer 扮演的角色？<br> 为什么不放在Sf 主线程中做？这样似乎可以省去很多的binder交互开销？</li>
-<li>HWC 侧的OverlayEngin扮演的角色是？</li>
-<li>HWC 下到kernel 的过程？</li>
-<li>如何排查Resync问题？<br>哪些场景可能会触发Resync？</li>
-<li>如何排查应用自身不出帧的原因？(Perfetto)</li>
-<li>Sf 默认是跑在什么大核还是小核，什么进程组？</li>
-</ol>
-<ul>
+<li>不同级数对应的buffer数目要求？<h4 id="17-如何快速厘清dequeue-buffer-以及queue-buffer-耗时长问题？"><a href="#17-如何快速厘清dequeue-buffer-以及queue-buffer-耗时长问题？" class="headerlink" title="17. 如何快速厘清dequeue buffer 以及queue buffer 耗时长问题？"></a>17. 如何快速厘清dequeue buffer 以及queue buffer 耗时长问题？</h4><h4 id="18-图形显示引入Fence-机制的根本缘由是？-宏观角度概述"><a href="#18-图形显示引入Fence-机制的根本缘由是？-宏观角度概述" class="headerlink" title="18. 图形显示引入Fence 机制的根本缘由是？(宏观角度概述)"></a>18. 图形显示引入Fence 机制的根本缘由是？(宏观角度概述)</h4></li>
+<li>Fence是如何跨进程跨硬件的？<h4 id="19-Sf-侧的waiting-for-presentFence-结束点代表的含义？"><a href="#19-Sf-侧的waiting-for-presentFence-结束点代表的含义？" class="headerlink" title="19. Sf 侧的waiting for presentFence 结束点代表的含义？"></a>19. Sf 侧的waiting for presentFence 结束点代表的含义？</h4><h4 id="20-SurfaceFlinger-是如何和HWC-Service交互的？"><a href="#20-SurfaceFlinger-是如何和HWC-Service交互的？" class="headerlink" title="20. SurfaceFlinger 是如何和HWC Service交互的？"></a>20. SurfaceFlinger 是如何和HWC Service交互的？</h4><h4 id="21-怎么理解Hwcomposer-扮演的角色？"><a href="#21-怎么理解Hwcomposer-扮演的角色？" class="headerlink" title="21. 怎么理解Hwcomposer 扮演的角色？"></a>21. 怎么理解Hwcomposer 扮演的角色？</h4>   为什么不放在Sf 主线程中做？这样似乎可以省去很多的binder交互开销？<h4 id="22-HWC-侧的OverlayEngin扮演的角色是？"><a href="#22-HWC-侧的OverlayEngin扮演的角色是？" class="headerlink" title="22. HWC 侧的OverlayEngin扮演的角色是？"></a>22. HWC 侧的OverlayEngin扮演的角色是？</h4><h4 id="23-HWC-下到kernel-的过程？"><a href="#23-HWC-下到kernel-的过程？" class="headerlink" title="23. HWC 下到kernel 的过程？"></a>23. HWC 下到kernel 的过程？</h4><h4 id="24-如何排查Resync问题？"><a href="#24-如何排查Resync问题？" class="headerlink" title="24. 如何排查Resync问题？"></a>24. 如何排查Resync问题？</h4>哪些场景可能会触发Resync？<h4 id="25-如何排查应用自身不出帧的原因？-Perfetto"><a href="#25-如何排查应用自身不出帧的原因？-Perfetto" class="headerlink" title="25. 如何排查应用自身不出帧的原因？(Perfetto)"></a>25. 如何排查应用自身不出帧的原因？(Perfetto)</h4><h4 id="26-Sf-默认是跑在什么大核还是小核，什么进程组？"><a href="#26-Sf-默认是跑在什么大核还是小核，什么进程组？" class="headerlink" title="26. Sf 默认是跑在什么大核还是小核，什么进程组？"></a>26. Sf 默认是跑在什么大核还是小核，什么进程组？</h4></li>
 <li>如果想让其有机会进大核，如何修改？</li>
-<li>如果想在loading轻的时候让其有机会跑大核，最安全的改法？</li>
-</ul>
-<ol start="27">
-<li>如何排查Sf 挤压问题？<br>一般如何排查以及优化策略？这种情况下还会对齐Vsync-sf吗？</li>
-<li>如何Sf 侧有空白或pending 现象？</li>
-<li>哪种合成会走Drawlayers？</li>
-<li>如何排查Drawlayers 耗时长？和GPU有关系吗？</li>
-<li>acquireFence以及releaseFence之间的关系？</li>
-<li>acquireFence放的慢或releaseFence放的慢分别意味着什么？</li>
-<li>什么情况会出现waiting for HWC release Tag 或waiting for GPU completion？</li>
-<li>如果快速排查waiting for GPU completion 耗时长问题？</li>
-</ol>
-<ul>
+<li>如果想在loading轻的时候让其有机会跑大核，最安全的改法？<h4 id="27-如何排查Sf-挤压问题？"><a href="#27-如何排查Sf-挤压问题？" class="headerlink" title="27. 如何排查Sf 挤压问题？"></a>27. 如何排查Sf 挤压问题？</h4>一般如何排查以及优化策略？这种情况下还会对齐Vsync-sf吗？<h4 id="28-如何Sf-侧有空白或pending-现象？"><a href="#28-如何Sf-侧有空白或pending-现象？" class="headerlink" title="28. 如何Sf 侧有空白或pending 现象？"></a>28. 如何Sf 侧有空白或pending 现象？</h4><h4 id="29-哪种合成会走Drawlayers？"><a href="#29-哪种合成会走Drawlayers？" class="headerlink" title="29. 哪种合成会走Drawlayers？"></a>29. 哪种合成会走Drawlayers？</h4><h4 id="30-如何排查Drawlayers-耗时长？和GPU有关系吗？"><a href="#30-如何排查Drawlayers-耗时长？和GPU有关系吗？" class="headerlink" title="30. 如何排查Drawlayers 耗时长？和GPU有关系吗？"></a>30. 如何排查Drawlayers 耗时长？和GPU有关系吗？</h4><h4 id="31-acquireFence以及releaseFence之间的关系？"><a href="#31-acquireFence以及releaseFence之间的关系？" class="headerlink" title="31. acquireFence以及releaseFence之间的关系？"></a>31. acquireFence以及releaseFence之间的关系？</h4><h4 id="32-acquireFence放的慢或releaseFence放的慢分别意味着什么？"><a href="#32-acquireFence放的慢或releaseFence放的慢分别意味着什么？" class="headerlink" title="32. acquireFence放的慢或releaseFence放的慢分别意味着什么？"></a>32. acquireFence放的慢或releaseFence放的慢分别意味着什么？</h4><h4 id="33-什么情况会出现waiting-for-HWC-release-Tag-或waiting-for-GPU-completion？"><a href="#33-什么情况会出现waiting-for-HWC-release-Tag-或waiting-for-GPU-completion？" class="headerlink" title="33. 什么情况会出现waiting for HWC release Tag 或waiting for GPU completion？"></a>33. 什么情况会出现waiting for HWC release Tag 或waiting for GPU completion？</h4><h4 id="34-如果快速排查waiting-for-GPU-completion-耗时长问题？"><a href="#34-如果快速排查waiting-for-GPU-completion-耗时长问题？" class="headerlink" title="34. 如果快速排查waiting for GPU completion 耗时长问题？"></a>34. 如果快速排查waiting for GPU completion 耗时长问题？</h4></li>
 <li>如何快速排查是GPU问题还是releaseFence放的慢了？</li>
-<li>如果是releaseFence放慢了影响到下一帧的合成，那么Systrace侧如何看waiting for GPU completion耗时中GPU空等时长？</li>
-</ul>
-<ol start="34">
-<li>如Sf 未及时拿走buf 合成，可能是什么原因？<br>Sf bufferTX中有buffer进来，Sf在接到Vsync-sf没有去拿buffer合成，一般是什么原因导致？</li>
-<li>如何从Systrace侧看是否存在buffer 轮转压力？</li>
-</ol>
-<ul>
+<li>如果是releaseFence放慢了影响到下一帧的合成，那么Systrace侧如何看waiting for GPU completion耗时中GPU空等时长？<h4 id="34-如Sf-未及时拿走buf-合成，可能是什么原因？"><a href="#34-如Sf-未及时拿走buf-合成，可能是什么原因？" class="headerlink" title="34. 如Sf 未及时拿走buf 合成，可能是什么原因？"></a>34. 如Sf 未及时拿走buf 合成，可能是什么原因？</h4>Sf bufferTX中有buffer进来，Sf在接到Vsync-sf没有去拿buffer合成，一般是什么原因导致？<h4 id="35-如何从Systrace侧看是否存在buffer-轮转压力？"><a href="#35-如何从Systrace侧看是否存在buffer-轮转压力？" class="headerlink" title="35. 如何从Systrace侧看是否存在buffer 轮转压力？"></a>35. 如何从Systrace侧看是否存在buffer 轮转压力？</h4></li>
 <li>当出现buffer轮转压力时，为何waiting for HWC release 后往往会伴随着waiting for GPU completion</li>
-<li>如果waiting for GPU completion在waiting for HWC release之前出现，意味着什么？</li>
+<li>如果waiting for GPU completion在waiting for HWC release之前出现，意味着什么？<h4 id="36-如何算出一段时间的实际出帧率？-Android-S"><a href="#36-如何算出一段时间的实际出帧率？-Android-S" class="headerlink" title="36. 如何算出一段时间的实际出帧率？(Android S)"></a>36. 如何算出一段时间的实际出帧率？(Android S)</h4><h4 id="37-buffer-count数量由什么因素决定？-Android-S"><a href="#37-buffer-count数量由什么因素决定？-Android-S" class="headerlink" title="37. buffer count数量由什么因素决定？(Android S)"></a>37. buffer count数量由什么因素决定？(Android S)</h4><h4 id="38-如何知道一段时间内buffer-count-Android-S-？"><a href="#38-如何知道一段时间内buffer-count-Android-S-？" class="headerlink" title="38. 如何知道一段时间内buffer count(Android S)？"></a>38. 如何知道一段时间内buffer count(Android S)？</h4><h4 id="39-如何理解BBQ机制？-Android-S"><a href="#39-如何理解BBQ机制？-Android-S" class="headerlink" title="39. 如何理解BBQ机制？(Android S)"></a>39. 如何理解BBQ机制？(Android S)</h4><h4 id="40-如何理解S上的Duration架构？"><a href="#40-如何理解S上的Duration架构？" class="headerlink" title="40. 如何理解S上的Duration架构？"></a>40. 如何理解S上的Duration架构？</h4>数值设置的依据是？是一个动态的数值吗？不同的数值会有什么影响？会影响跟手性吗？<h4 id="41-如何理解S上的-Latch-signaled-buffer？"><a href="#41-如何理解S上的-Latch-signaled-buffer？" class="headerlink" title="41. 如何理解S上的 Latch signaled buffer？"></a>41. 如何理解S上的 Latch signaled buffer？</h4><h4 id="42-如何理解S上的Sf-Backpressure？"><a href="#42-如何理解S上的Sf-Backpressure？" class="headerlink" title="42. 如何理解S上的Sf Backpressure？"></a>42. 如何理解S上的Sf Backpressure？</h4></li>
 </ul>
-<ol start="36">
-<li>如何算出一段时间的实际出帧率？(Android S)</li>
-<li>buffer count数量由什么因素决定？(Android S)</li>
-<li>如何知道一段时间内buffer count(Android S)？</li>
-<li>如何理解BBQ机制？(Android S)</li>
-<li>如何理解S上的Duration架构？<br>数值设置的依据是？是一个动态的数值吗？不同的数值会有什么影响？会影响跟手性吗？</li>
-<li>如何理解S上的 Latch signaled buffer？</li>
-<li>如何理解S上的Sf Backpressure？</li>
-</ol>
 
     </article>
     <!-- license -->
@@ -643,7 +541,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/">http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/">September 6th 2022, 9:09:45 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/">September 6th 2022, 9:39:34 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2022/09/06/Android-图形栈疑问汇总-持续更新/">September 6th 2022, 9:48:14 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -788,7 +686,7 @@
                 <div class="toc-catalog">
                     <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
                 </div>
-                
+                <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-onMeasure-onLayout-onDraw-分别做得事？"><span class="toc-number">1.</span> <span class="toc-text">1. onMeasure/ onLayout/ onDraw 分别做得事？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-如何理解Window-ViewRootImpl-Surface-SurfaceTexture-TextureView-GLSurfaceview-概念及其相互的关系"><span class="toc-number">2.</span> <span class="toc-text">2. 如何理解Window/ ViewRootImpl/ Surface/ SurfaceTexture/ TextureView/ GLSurfaceview 概念及其相互的关系?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-如何理解硬件加速这一角色？"><span class="toc-number">3.</span> <span class="toc-text">3. 如何理解硬件加速这一角色？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-RenderThread-扮演的角色？"><span class="toc-number">4.</span> <span class="toc-text">4. RenderThread 扮演的角色？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-游戏的绘制和普通App-应用有什么区别？"><span class="toc-number">5.</span> <span class="toc-text">5. 游戏的绘制和普通App 应用有什么区别？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-Choreographer-doframe-扮演的角色？"><span class="toc-number">6.</span> <span class="toc-text">6. Choreographer#doframe 扮演的角色？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-如何理解掉帧这个概念？"><span class="toc-number">7.</span> <span class="toc-text">7. 如何理解掉帧这个概念？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-为何Google-声称三缓冲能够有效降低掉帧？"><span class="toc-number">8.</span> <span class="toc-text">8. 为何Google 声称三缓冲能够有效降低掉帧？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-如何理解client-和device-合成？"><span class="toc-number">9.</span> <span class="toc-text">9. 如何理解client 和device 合成？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-什么情况下layer-会采用GPU-合成"><span class="toc-number">10.</span> <span class="toc-text">10. 什么情况下layer 会采用GPU 合成?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-如何理解画面撕裂这个现象？"><span class="toc-number">11.</span> <span class="toc-text">11. 如何理解画面撕裂这个现象？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-Vsync-offset-引入的目的是？"><span class="toc-number">12.</span> <span class="toc-text">12. Vsync offset 引入的目的是？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-图形系统中不同进程是如何操作同一块buffer的？"><span class="toc-number">13.</span> <span class="toc-text">13. 图形系统中不同进程是如何操作同一块buffer的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-一个Vsync-周期内，绘制和合成用的是同一块buf-吗？"><span class="toc-number">14.</span> <span class="toc-text">14. 一个Vsync 周期内，绘制和合成用的是同一块buf 吗？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-如何快速找到同一块buffer-在绘制、合成、显示的位置-Perfetto"><span class="toc-number">15.</span> <span class="toc-text">15. 如何快速找到同一块buffer 在绘制、合成、显示的位置? (Perfetto)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-不同级数的流水线所带来的影响？"><span class="toc-number">16.</span> <span class="toc-text">16. 不同级数的流水线所带来的影响？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17-如何快速厘清dequeue-buffer-以及queue-buffer-耗时长问题？"><span class="toc-number">17.</span> <span class="toc-text">17. 如何快速厘清dequeue buffer 以及queue buffer 耗时长问题？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18-图形显示引入Fence-机制的根本缘由是？-宏观角度概述"><span class="toc-number">18.</span> <span class="toc-text">18. 图形显示引入Fence 机制的根本缘由是？(宏观角度概述)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19-Sf-侧的waiting-for-presentFence-结束点代表的含义？"><span class="toc-number">19.</span> <span class="toc-text">19. Sf 侧的waiting for presentFence 结束点代表的含义？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20-SurfaceFlinger-是如何和HWC-Service交互的？"><span class="toc-number">20.</span> <span class="toc-text">20. SurfaceFlinger 是如何和HWC Service交互的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#21-怎么理解Hwcomposer-扮演的角色？"><span class="toc-number">21.</span> <span class="toc-text">21. 怎么理解Hwcomposer 扮演的角色？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-HWC-侧的OverlayEngin扮演的角色是？"><span class="toc-number">22.</span> <span class="toc-text">22. HWC 侧的OverlayEngin扮演的角色是？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#23-HWC-下到kernel-的过程？"><span class="toc-number">23.</span> <span class="toc-text">23. HWC 下到kernel 的过程？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#24-如何排查Resync问题？"><span class="toc-number">24.</span> <span class="toc-text">24. 如何排查Resync问题？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#25-如何排查应用自身不出帧的原因？-Perfetto"><span class="toc-number">25.</span> <span class="toc-text">25. 如何排查应用自身不出帧的原因？(Perfetto)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#26-Sf-默认是跑在什么大核还是小核，什么进程组？"><span class="toc-number">26.</span> <span class="toc-text">26. Sf 默认是跑在什么大核还是小核，什么进程组？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#27-如何排查Sf-挤压问题？"><span class="toc-number">27.</span> <span class="toc-text">27. 如何排查Sf 挤压问题？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#28-如何Sf-侧有空白或pending-现象？"><span class="toc-number">28.</span> <span class="toc-text">28. 如何Sf 侧有空白或pending 现象？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#29-哪种合成会走Drawlayers？"><span class="toc-number">29.</span> <span class="toc-text">29. 哪种合成会走Drawlayers？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#30-如何排查Drawlayers-耗时长？和GPU有关系吗？"><span class="toc-number">30.</span> <span class="toc-text">30. 如何排查Drawlayers 耗时长？和GPU有关系吗？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#31-acquireFence以及releaseFence之间的关系？"><span class="toc-number">31.</span> <span class="toc-text">31. acquireFence以及releaseFence之间的关系？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#32-acquireFence放的慢或releaseFence放的慢分别意味着什么？"><span class="toc-number">32.</span> <span class="toc-text">32. acquireFence放的慢或releaseFence放的慢分别意味着什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#33-什么情况会出现waiting-for-HWC-release-Tag-或waiting-for-GPU-completion？"><span class="toc-number">33.</span> <span class="toc-text">33. 什么情况会出现waiting for HWC release Tag 或waiting for GPU completion？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#34-如果快速排查waiting-for-GPU-completion-耗时长问题？"><span class="toc-number">34.</span> <span class="toc-text">34. 如果快速排查waiting for GPU completion 耗时长问题？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#34-如Sf-未及时拿走buf-合成，可能是什么原因？"><span class="toc-number">35.</span> <span class="toc-text">34. 如Sf 未及时拿走buf 合成，可能是什么原因？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#35-如何从Systrace侧看是否存在buffer-轮转压力？"><span class="toc-number">36.</span> <span class="toc-text">35. 如何从Systrace侧看是否存在buffer 轮转压力？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#36-如何算出一段时间的实际出帧率？-Android-S"><span class="toc-number">37.</span> <span class="toc-text">36. 如何算出一段时间的实际出帧率？(Android S)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#37-buffer-count数量由什么因素决定？-Android-S"><span class="toc-number">38.</span> <span class="toc-text">37. buffer count数量由什么因素决定？(Android S)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#38-如何知道一段时间内buffer-count-Android-S-？"><span class="toc-number">39.</span> <span class="toc-text">38. 如何知道一段时间内buffer count(Android S)？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#39-如何理解BBQ机制？-Android-S"><span class="toc-number">40.</span> <span class="toc-text">39. 如何理解BBQ机制？(Android S)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#40-如何理解S上的Duration架构？"><span class="toc-number">41.</span> <span class="toc-text">40. 如何理解S上的Duration架构？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#41-如何理解S上的-Latch-signaled-buffer？"><span class="toc-number">42.</span> <span class="toc-text">41. 如何理解S上的 Latch signaled buffer？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#42-如何理解S上的Sf-Backpressure？"><span class="toc-number">43.</span> <span class="toc-text">42. 如何理解S上的Sf Backpressure？</span></a></li></ol>
             </div>
         
         <!-- sidebar -->

@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/Kswapd/9.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Kswapd/10.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Kswapd/11.png">
-<meta property="og:updated_time" content="2023-04-17T08:08:20.122Z">
+<meta property="og:updated_time" content="2023-04-17T08:16:01.971Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于kswapd 并发的思考">
 <meta name="twitter:description" content="关于Kswapd 相信是比较熟悉了，如果经常分析Perfetto 的话，会经常看见这玩意的身影，尤其是内存紧张的场景下。 以前有过这样的一个想法，为何不将kswapd 改为并发呢？充分利用多核的优势，正好最近在Aosp 上看到一笔修改，觉得挺有意思，正是将kswapd 改为并发的方式，虽然不能在当前手机设备上应用(UMA 架构的缘故，下面会提到)，但是思路不错，也借此机会再熟悉下kswapd 的工">
@@ -543,31 +543,18 @@
 <p>其实不管是 direct reclaim 的阻塞式同步回收，还是 kswapd 的异步回收，决定回收页面数量的一个核心函数都是 <em>get_scan_count，</em>swappiness 正是在这个函数中做的文章</p>
 <p><strong>`shrink_node</strong>() <strong>–</strong>&gt; <strong>shrink_node_memcg</strong>(mem_cgroup_iter) <strong>–</strong>&gt; <strong>shrink_lruvec</strong>() <strong>–</strong>&gt; <strong>get_scan_count</strong>()`</p>
 <p>下面我们开始拆分分析<em>get_scan_count 这一函数</em></p>
-<ol>
-<li>开头首先判断下是否含有Swap分区，没有的话就不会扫描匿名页</li>
-</ol>
+<p>1.开头首先判断下是否含有Swap分区，没有的话就不会扫描匿名页</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* If we have no swap space, do not bother scanning anon folios. */</span></span><br><span class="line">	<span class="keyword">if</span> (!sc-&gt;may_swap || !can_reclaim_anon_pages(memcg, pgdat-&gt;node_id, sc)) &#123;</span><br><span class="line">		scan_balance = SCAN_FILE;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>如果不是全局设置的swappiness 而是单独的group 中的参数，那么如果swappiness 为0，则会只扫描文件页。</li>
-</ol>
+<p>2.如果不是全局设置的swappiness 而是单独的group 中的参数，那么如果swappiness 为0，则会只扫描文件页。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Global reclaim will swap to prevent OOM even with no</span></span><br><span class="line"><span class="comment">	 * swappiness, but memcg users want to use this knob to</span></span><br><span class="line"><span class="comment">	 * disable swapping for individual groups completely when</span></span><br><span class="line"><span class="comment">	 * using the memory controller's swap limit feature would be</span></span><br><span class="line"><span class="comment">	 * too expensive.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (cgroup_reclaim(sc) &amp;&amp; !swappiness) &#123;</span><br><span class="line">		scan_balance = SCAN_FILE;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>sc-&gt;priority 变量用于在内存回收期间确定匿名和文件LRU列表的扫描程度，priority 的值等于 0 了，说明现在离 OOM 很可能不远了。</p>
-<p> 所以如果sc-&gt;priority为零且swappiness为非零，则会平等扫描匿名和文件页面。</p>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Do not apply any pressure balancing cleverness when the</span></span><br><span class="line"><span class="comment">	 * system is close to OOM, scan both anon and file equally</span></span><br><span class="line"><span class="comment">	 * (unless the swappiness setting disagrees with swapping).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (!sc-&gt;priority &amp;&amp; swappiness) &#123;</span><br><span class="line">		scan_balance = SCAN_EQUAL;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>如果当前可回收文件页非常少，不管swappiness 设定值直接强制回收匿名页</li>
-</ol>
+<p>3.sc-&gt;priority 变量用于在内存回收期间确定匿名和文件LRU列表的扫描程度，priority 的值等于 0 了，说明现在离 OOM 很可能不远了。</p>
+<pre><code>所以如果sc-&gt;priority为零且swappiness为非零，则会平等扫描匿名和文件页面。
+</code></pre><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Do not apply any pressure balancing cleverness when the</span></span><br><span class="line"><span class="comment">	 * system is close to OOM, scan both anon and file equally</span></span><br><span class="line"><span class="comment">	 * (unless the swappiness setting disagrees with swapping).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (!sc-&gt;priority &amp;&amp; swappiness) &#123;</span><br><span class="line">		scan_balance = SCAN_EQUAL;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>4.如果当前可回收文件页非常少，不管swappiness 设定值直接强制回收匿名页</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* The file folios on the current node are dangerously low */</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> file_is_tiny:<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * If the system is almost out of file pages, force-scan anon.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">if</span> (sc-&gt;file_is_tiny) &#123;</span><br><span class="line">	scan_balance = SCAN_ANON;</span><br><span class="line">	<span class="keyword">goto</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>如果此时inactive file 很充足，则只回收file 页，毕竟回收开销低</li>
-</ol>
+<p>5.如果此时inactive file 很充足，则只回收file 页，毕竟回收开销低</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * If there is enough inactive page cache, we do not reclaim</span></span><br><span class="line"><span class="comment">	 * anything from the anonymous working right now.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (sc-&gt;cache_trim_mode) &#123;</span><br><span class="line">		scan_balance = SCAN_FILE;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<ol>
-<li>这个时候，来到了根据swappiness 数值来平衡文件页和匿名页的地方了</li>
-</ol>
+<p>6.这个时候，来到了根据swappiness 数值来平衡文件页和匿名页的地方了</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">scan_balance = SCAN_FRACT;</span><br><span class="line"> <span class="comment">// With swappiness at 100, anon and file have equal IO cost.</span></span><br><span class="line"> total_cost = sc-&gt;anon_cost + sc-&gt;file_cost;</span><br><span class="line">anon_cost = total_cost + sc-&gt;anon_cost;</span><br><span class="line">file_cost = total_cost + sc-&gt;file_cost;</span><br><span class="line">total_cost = anon_cost + file_cost;</span><br><span class="line"></span><br><span class="line">ap = swappiness * (total_cost + <span class="number">1</span>);</span><br><span class="line">ap /= anon_cost + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">fp = (<span class="number">200</span> - swappiness) * (total_cost + <span class="number">1</span>);</span><br><span class="line">fp /= file_cost + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 <p>有了前面的基础铺垫，接下来，来看下这个关于kswapd 的并发修改</p>
 <p><a href="https://android-review.googlesource.com/c/kernel/common/+/1579505" target="_blank" rel="noopener">https://android-review.googlesource.com/c/kernel/common/+/1579505</a></p>
@@ -582,15 +569,9 @@
 <p>归纳下来就是：</p>
 <p>对kswapd 采用多线程可以利用额外的CPU资源来进行主动页面替换，以减少direct reclaim 次数，从而减少任务的延迟，但并不意味着不会发生direct reclaim，如果采用的并发线程数值较高的情况下仍然发生了direct reclaim，由于锁竞争的加剧，这种情况下如果出现direct reclaim的开销（延迟）可能更高。</p>
 <p>下面将看下修改的具体内容</p>
-<ol>
-<li>将传参字符串转换为整数，并将其存储在kswapd_threads 变量中，如转换失败或超出最大限制数值16 则返回0</li>
-</ol>
+<p>1.将传参字符串转换为整数，并将其存储在kswapd_threads 变量中，如转换失败或超出最大限制数值16 则返回0</p>
 <p><img src="http://blog.lihaizhou.top/Kswapd/10.png" alt="Untitled"></p>
-<ol>
-<li><p>在kswapd_run 函数中调用kswapd_per_node_run 函数(kswapd_threads &gt; 1情况下)，</p>
-<p> 循环创建kswapd 线程，个数是kswapd_threads 个</p>
-</li>
-</ol>
+<p>2.在kswapd_run 函数中调用kswapd_per_node_run 函数(kswapd_threads &gt; 1情况下)，循环创建kswapd 线程，个数是kswapd_threads 个</p>
 <p><img src="http://blog.lihaizhou.top/Kswapd/11.png" alt="Untitled"></p>
 <p>但是没有地方调用kswapd_per_node_setup ，也就是这个修改目前只是集成了支持配置kswapd 线程数的功能，实际上在当前主流的手机设备上，是不适用这个修改的，原因在前面提到过，因为只有一个内存节点的缘故，即便真的在手机设备上改为了并发，相信会带来严重的锁竞争，反而得不偿失。</p>
 <p>所以这个修改理解适用场景应该是NUMA 架构的设备上，多个node多CPU，这样才能在一定程度上提升kswapd 的吞吐量。</p>
@@ -609,7 +590,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2023/04/17/关于kswapd-并发的思考/">http://lihaizhou.top/2023/04/17/关于kswapd-并发的思考/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2023/04/17/关于kswapd-并发的思考/">April 17th 2023, 4:04:02 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2023/04/17/关于kswapd-并发的思考/">April 17th 2023, 4:08:20 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/04/17/关于kswapd-并发的思考/">April 17th 2023, 4:16:01 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1210,11 +1191,6 @@
             ANR
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
@@ -1228,6 +1204,11 @@
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

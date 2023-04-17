@@ -451,12 +451,12 @@
                 <span class="abstract-title-text">关于kswapd 并发的思考</span>
             </a>
             <div class="abstract-content">
-                关于Kswapd 相信是比较熟悉了，如果经常分析Perfetto 的话，会经常看见这玩意的身影，尤其是内存紧张的场景下。
-以前有过这样的一个想法，为何不将kswapd 改为并发呢？充分利用多核的优势，正好最近在Aosp 上看到一笔修改，觉得挺有意思，正是将kswapd 改为并发的方式，虽然不能在当前手机设备上应用(UMA 架构的缘故，下面会提到)，但是思路不错，也借此机会再熟悉下kswapd 的工作机制也不错。
+                前言关于Kswapd 相信是比较熟悉了，如果经常分析Perfetto 的话，会经常看见这玩意的身影，尤其是内存紧张的场景下。
+以前有过这样的一个想法，为何不将kswapd 改为并发呢？充分利用多核的优势，正好最近在Aosp 上看到一笔修改，觉得挺有意思，正是将kswapd 改为并发的方式，虽然不能在当前手机设备上应用(UMA 架构的缘故，下面会提到)，但是思路不错，也借此机会再熟悉下kswapd 的工作机制。
 Linux内核中的页面置换有两种方式：
 1）异步方式，通过kswapd 处理2）同步方式，通过direct reclaim 处理
 下面列举出几个关于Kswapd 场景的问题
-Q：...
+ksw...
             </div>
             <!-- read more -->
             
@@ -1555,14 +1555,14 @@ Systrace角度分析先看下应用区域帧绘制的情况
             ANR
         </span>
     
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="稳定性">
-            <span class="iconfont-archer">&#xe60a;</span>
-            稳定性
         </span>
     
         <span class="sidebar-category-name" data-categories="Linux">
@@ -1570,9 +1570,9 @@ Systrace角度分析先看下应用区域帧绘制的情况
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
+        <span class="sidebar-category-name" data-categories="稳定性">
             <span class="iconfont-archer">&#xe60a;</span>
-            ART
+            稳定性
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

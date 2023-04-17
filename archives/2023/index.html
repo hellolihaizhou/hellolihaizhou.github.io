@@ -22,7 +22,7 @@
     <meta name="description" content="愿历尽千帆 归来仍少年">
 <meta property="og:type" content="website">
 <meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/archives/2019/index.html">
+<meta property="og:url" content="http://lihaizhou.top/archives/2023/index.html">
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="愿历尽千帆 归来仍少年">
 <meta property="og:locale" content="zh-Hans">
@@ -433,21 +433,24 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">
+            <a class="abstract-title" href="/2023/04/17/关于kswapd-并发的思考/">
                 
-                <span class="abstract-title-text">一个SharedPreferences写操作导致的ANR问题分析</span>
+                <span class="abstract-title-text">关于kswapd 并发的思考</span>
             </a>
             <div class="abstract-content">
-                问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台
-日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点
-106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,3861,com.android.settings,952745541,Input dispatching timed out (com.android.settings/com.android...
+                关于Kswapd 相信是比较熟悉了，如果经常分析Perfetto 的话，会经常看见这玩意的身影，尤其是内存紧张的场景下。
+以前有过这样的一个想法，为何不将kswapd 改为并发呢？充分利用多核的优势，正好最近在Aosp 上看到一笔修改，觉得挺有意思，正是将kswapd 改为并发的方式，虽然不能在当前手机设备上应用(UMA 架构的缘故，下面会提到)，但是思路不错，也借此机会再熟悉下kswapd 的工作机制也不错。
+Linux内核中的页面置换有两种方式：
+1）异步方式，通过kswapd 处理2）同步方式，通过direct reclaim 处理
+下面列举出几个关于Kswapd 场景的问题
+Q：...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/23</span>
+                <div class="abstract-date" title="Last updated: 2023/04/17">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/04/17</span>
                 </div>
                 <!-- tags -->
                 
@@ -458,105 +461,10 @@
             
         
         
-        <span class="post-category" data-categories="性能"">
+        <span class="post-category" data-categories="kernel"">
             <i class="fas fa-folder post-category-icon"></i>
             <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
-                
-                <span class="abstract-title-text">Launcher应用的重构之路</span>
-            </a>
-            <div class="abstract-content">
-                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
-为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
-                
-                <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
-            </a>
-            <div class="abstract-content">
-                项目痛点出现偶现崩溃或ANR，因为没有开启日志开关，后面尝试复现又比较困难，研发同事比较苦恼，无从下手还有一个测试同事抓取日志后还要记录时间点，再上传到JIRA上，研发同事下载日志还需要搜索报错点，整个流程比较费时
-初步想法可不可以将所有ANR,Crash等出错信息的关键日志片段直接传给服务器，在后面的摸索过程中发现钉钉可以提供对外的URL接口，这样的话直接传给钉钉就很方便了，正好平时的办公用的也是这个软件，这样一来就省去了很多的步骤，一步到位
-以下是实做的步骤记录，只是实现了一个初稿，后面还需要不断优化完善
-Step1： 获取钉钉的Webhook地址这个地址后面作为推送的目标地址
-在钉...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2019/12/28">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/11</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
+                kernel
             </span>
         </span>
     

@@ -446,6 +446,56 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2023/04/17/关于kswapd-并发的思考/">
+                
+                <span class="abstract-title-text">关于kswapd 并发的思考</span>
+            </a>
+            <div class="abstract-content">
+                关于Kswapd 相信是比较熟悉了，如果经常分析Perfetto 的话，会经常看见这玩意的身影，尤其是内存紧张的场景下。
+以前有过这样的一个想法，为何不将kswapd 改为并发呢？充分利用多核的优势，正好最近在Aosp 上看到一笔修改，觉得挺有意思，正是将kswapd 改为并发的方式，虽然不能在当前手机设备上应用(UMA 架构的缘故，下面会提到)，但是思路不错，也借此机会再熟悉下kswapd 的工作机制也不错。
+Linux内核中的页面置换有两种方式：
+1）异步方式，通过kswapd 处理2）同步方式，通过direct reclaim 处理
+下面列举出几个关于Kswapd 场景的问题
+Q：...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/04/17">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/04/17</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="kernel"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                kernel
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2022/09/06/Android-图形栈疑问汇总-持续更新/">
                 
                 <span class="abstract-title-text">Android|图形栈疑问汇总(持续更新)</span>
@@ -887,52 +937,6 @@ Systrace角度分析先看下应用区域帧绘制的情况
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">
-                
-                <span class="abstract-title-text">第三视角: 一个ART GC的优化故事</span>
-            </a>
-            <div class="abstract-content">
-                前言从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章的铺垫，阅读本文将会比较轻松。笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。
-故事的缘起笔者在梳理GC这块的代码时，偶然看到一处友商的提交，不禁有点好奇。为了探究其修改的缘由，仔细阅读了这笔修改的提交更新以及所有的comment之后，觉得其中一些思路对我们有启发作用，故而决定将这个思路过程尽可能的还原出来。P...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/03/12">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/01</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="ART"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                ART
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1239,7 +1243,14 @@ Systrace角度分析先看下应用区域帧绘制的情况
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1296,7 +1307,7 @@ Systrace角度分析先看下应用区域帧绘制的情况
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 26
+        Total : 27
         </div>
         <!-- search  -->
         
@@ -1306,6 +1317,21 @@ Systrace角度分析先看下应用区域帧绘制的情况
     
         
             
+            
+            <div class="archive-year"> 2023 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/17</span>
+            <a class="archive-post-title" href="/2023/04/17/关于kswapd-并发的思考/">关于kswapd 并发的思考</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
             
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
@@ -1552,6 +1578,11 @@ Systrace角度分析先看下应用区域帧绘制的情况
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="kernel">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

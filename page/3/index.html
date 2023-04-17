@@ -446,6 +446,52 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
+                
+                <span class="abstract-title-text">Launcher应用的重构之路</span>
+            </a>
+            <div class="abstract-content">
+                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
+为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/09/08">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2019/03/11/Android-系统层捕捉所有应用崩溃情况推送到钉钉实践之路/">
                 
                 <span class="abstract-title-text">Android 系统层捕捉所有应用崩溃情况推送到钉钉实践之路</span>
@@ -1034,7 +1080,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1091,7 +1144,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 26
+        Total : 27
         </div>
         <!-- search  -->
         
@@ -1101,6 +1154,21 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
         
             
+            
+            <div class="archive-year"> 2023 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/17</span>
+            <a class="archive-post-title" href="/2023/04/17/关于kswapd-并发的思考/">关于kswapd 并发的思考</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
             
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
@@ -1347,6 +1415,11 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="kernel">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

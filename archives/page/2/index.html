@@ -433,6 +433,52 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2021/11/01/第三视角-一个ART-GC的优化故事/">
+                
+                <span class="abstract-title-text">第三视角: 一个ART GC的优化故事</span>
+            </a>
+            <div class="abstract-content">
+                前言从事过整机性能优化的同事，在实际项目上相信都遇到过GC引起的性能问题。有了上一篇文章的铺垫，阅读本文将会比较轻松。笔者在梳理GC这块的代码过程中，深感其复杂并非一蹴而就，如果你对其某处代码的设计缘由不甚理解，不妨试着去追踪它的提交记录。通过其一系列的patch更新以及comment，跟着提交owner的思路历程，便可以了解这个”成品”是如何被加工出来的。
+故事的缘起笔者在梳理GC这块的代码时，偶然看到一处友商的提交，不禁有点好奇。为了探究其修改的缘由，仔细阅读了这笔修改的提交更新以及所有的comment之后，觉得其中一些思路对我们有启发作用，故而决定将这个思路过程尽可能的还原出来。P...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/03/12">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/01</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="ART"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                ART
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/10/27/对Android-S-ART-GC的源码梳理/">
                 
                 <span class="abstract-title-text">对Android S ART GC的源码梳理</span>
@@ -872,52 +918,6 @@ per...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
-                
-                <span class="abstract-title-text">Launcher应用的重构之路</span>
-            </a>
-            <div class="abstract-content">
-                当前需求新项目遵循竞品的Launcher样式设计当前计划重新编写Launcher，并尽可能的弥补老框架的不足
-为什么需要重写Launcher？从样式上来看新版Launcher的UI显示上与老版本差异较大，左右滑动的菜单页变化最大从代码结构上看一. 不符合单一原则:  视图层承担过重的业务数据处理逻辑, 老版本的视图层代码量比较大，主Activity及LauncherService均近两千行，承担的任务过重。其中包含了View的显示逻辑，也有数据处理的逻辑，也有接收广播相关，也有与Fwk的网络接口交互处理的逻辑，还有一些其他应用需要在返回Launcher后对自身的一些判断逻辑等。二. 从整...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/09/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/12</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Android"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Android
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1149,7 +1149,14 @@ per...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1206,7 +1213,7 @@ per...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 26
+        Total : 27
         </div>
         <!-- search  -->
         
@@ -1216,6 +1223,21 @@ per...
     
         
             
+            
+            <div class="archive-year"> 2023 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/17</span>
+            <a class="archive-post-title" href="/2023/04/17/关于kswapd-并发的思考/">关于kswapd 并发的思考</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
             
             <div class="archive-year"> 2022 </div>
             <ul class="year-list">
@@ -1462,6 +1484,11 @@ per...
         <span class="sidebar-category-name" data-categories="网络">
             <span class="iconfont-archer">&#xe60a;</span>
             网络
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="kernel">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

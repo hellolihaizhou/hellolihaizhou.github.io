@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/8.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/9.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/10.png">
-<meta property="og:updated_time" content="2023-04-20T11:00:23.092Z">
+<meta property="og:updated_time" content="2023-04-20T11:06:14.392Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="反碎片化 | Proactive compaction">
 <meta name="twitter:description" content="历年来内核中为反碎片化所做的努力，如下图所示：    Publish date Articles on LWN.net     2004-09-08 https://lwn.net/Articles/101230/   2004-05-10 https://lwn.net/Articles/105021/   2005-02-01 https://lwn.net/Articles/121618/">
@@ -346,7 +346,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">965</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">966</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -576,20 +576,20 @@
 </table>
 <p>内存规整有几条不同的路径可以触发：</p>
 <ol>
-<li>直接规整，由alloc_page 进入到慢速回收阶段会触发</li>
+<li>直接规整，由<code>alloc_page</code> 进入到慢速回收阶段会触发</li>
 <li>kcompactd </li>
 <li>手动触发</li>
 </ol>
-<p>这三种情况都会走到compact_zone ，进而到最终的页面迁移函数migrate_pages 中</p>
+<p>这三种情况都会走到<code>ompact_zone</code> ，进而到最终的页面迁移函数<code>migrate_pages</code> 中</p>
 <p>本文主要针对kcompactd 触发的情形进行讨论</p>
-<h3 id="kcompactd-触发时机"><a href="#kcompactd-触发时机" class="headerlink" title="kcompactd 触发时机"></a>kcompactd 触发时机</h3><p>在正式介绍Proactive compaction 之前，先看下之前都有哪些情况下会触发kcompact 线程</p>
+<h3 id="kcompactd-触发时机"><a href="#kcompactd-触发时机" class="headerlink" title="kcompactd 触发时机"></a>kcompactd 触发时机</h3><p>在正式介绍<code>Proactive compaction</code> 之前，先看下之前都有哪些情况下会触发kcompact 线程</p>
 <p>唤醒kcompact 线程是通过wakeup_kcompactd 这一函数</p>
 <ol>
 <li>kswapd_try_to_sleep 即将进入睡眠时触发kcompact 线程</li>
-<li>wakeup_kswapd 即唤醒kswapd 函数中，kswapd 回收失败超过16 次，触发direct reclaim时</li>
+<li>wakeup_kswapd 即唤醒kswapd 函数中，kswapd 回收失败超过16 次，触发direct reclaim 时</li>
 </ol>
 <p><img src="http://blog.lihaizhou.top/kcompact/1.png" alt="Untitled"></p>
-<ol>
+<ol start="3">
 <li>开启了watermark_boost，在balance_pgdat 这一内存回收的核心函数中满足一定条件触发</li>
 </ol>
 <p>本文将着重解读Proactive compaction 这一功能</p>
@@ -603,12 +603,12 @@
 <li>node 的分数</li>
 </ol>
 <p><img src="http://blog.lihaizhou.top/kcompact/3.png" alt="Untitled"></p>
-<ol>
+<ol start="2">
 <li>单个zone 的分数</li>
 </ol>
 <p><img src="http://blog.lihaizhou.top/kcompact/4.png" alt="Untitled"></p>
 <p>这里的分母加1为了避免分母出现0的情况</p>
-<ol>
+<ol start="3">
 <li>对于给定的zone以及order 计算出的分数</li>
 </ol>
 <p><img src="http://blog.lihaizhou.top/kcompact/5.png" alt="Untitled"></p>
@@ -621,8 +621,8 @@
 <p>在kcompactd 函数中的循环中</p>
 <p><img src="http://blog.lihaizhou.top/kcompact/8.png" alt="Untitled"></p>
 <p>这里有一个疑问：</p>
-<p>这里的得分只是判断本次是否超过上次，如果每次规整后的收益非常非常小，但是确实满足了比上次高，那是不是会存在在满足低于触发阈值之前，每间隔默认的timeout （500ms）就触发kcompact 线程。</p>
-<p>如果改成比例的形式会不会更好点，比如本次分值比上次高2%，再进行规整。</p>
+<p>**如果每次规整后的收益非常非常小，但是得分确实满足了比上次高，比如存在某些进程不断轻微的碎片化。<br>那是不是会存在在满足低于触发阈值之前，每间隔默认的timeout （500ms）就触发kcompact 线程。</p>
+<p>如果改成比例的形式会不会更好点，比如本次分值比上次高2%，再进行规整。**</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Fragmentation score check interval for proactive compaction purposes.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HPAGE_FRAG_CHECK_INTERVAL_MSEC	(500)</span></span><br></pre></td></tr></table></figure>
 <p>接着看proactive_compact_node 函数</p>
 <p><img src="http://blog.lihaizhou.top/kcompact/9.png" alt="Untitled"></p>
@@ -630,9 +630,7 @@
 <p>函数注释中提示由于各种退避条件（例如，对每个节点或每个区域锁的争用），该函数可能在达到得分目标之前返回。</p>
 <p>大致包含如下几种退避条件：</p>
 <p><img src="http://blog.lihaizhou.top/kcompact/10.png" alt="Untitled"></p>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://lwn.net/Articles/368869/" target="_blank" rel="noopener">https://lwn.net/Articles/368869/</a></p>
-<p><a href="https://lwn.net/Articles/817905/" target="_blank" rel="noopener">https://lwn.net/Articles/817905/</a></p>
-<p><a href="https://lwn.net/ml/linux-kernel/20200310222539.1981-1-nigupta%40nvidia.com/" target="_blank" rel="noopener">https://lwn.net/ml/linux-kernel/20200310222539.1981-1-nigupta%40nvidia.com/</a></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://lwn.net/Articles/368869/" target="_blank" rel="noopener">https://lwn.net/Articles/368869/</a><br><a href="https://lwn.net/Articles/817905/" target="_blank" rel="noopener">https://lwn.net/Articles/817905/</a><br><a href="https://lwn.net/ml/linux-kernel/20200310222539.1981-1-nigupta%40nvidia.com/" target="_blank" rel="noopener">https://lwn.net/ml/linux-kernel/20200310222539.1981-1-nigupta%40nvidia.com/</a></p>
 
     </article>
     <!-- license -->
@@ -641,7 +639,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 20th 2023, 6:51:03 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 20th 2023, 7:00:23 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 20th 2023, 7:06:14 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1250,24 +1248,24 @@
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="ANR">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ANR
-        </span>
-    
         <span class="sidebar-category-name" data-categories="性能">
             <span class="iconfont-archer">&#xe60a;</span>
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="Android">
+        <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
-            Android
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
             ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">

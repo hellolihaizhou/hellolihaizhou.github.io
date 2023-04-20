@@ -22,7 +22,7 @@
     <meta name="description" content="愿历尽千帆 归来仍少年">
 <meta property="og:type" content="website">
 <meta property="og:title" content="李海洲">
-<meta property="og:url" content="http://lihaizhou.top/categories/ANR/index.html">
+<meta property="og:url" content="http://lihaizhou.top/tags/kernel/index.html">
 <meta property="og:site_name" content="李海洲">
 <meta property="og:description" content="愿历尽千帆 归来仍少年">
 <meta property="og:locale" content="zh-Hans">
@@ -433,38 +433,56 @@
             
         
         <article class="index-post">
-            <a class="abstract-title" href="/2022/02/10/ANR原理分析及常见案例/">
+            <a class="abstract-title" href="/2023/04/20/反碎片化-Proactive-compaction/">
                 
-                <span class="abstract-title-text">ANR原理分析及常见案例</span>
+                <span class="abstract-title-text">反碎片化 | Proactive compaction</span>
             </a>
             <div class="abstract-content">
-                最近看了下ANR代码，结合之前项目上的一些ANR案例，打算对ANR的原理以及常见案例做下小结，涉及的代码均基于Android S
-画了一张图，列举了可能导致ANR的一些影响因素
-原理机制我们平时遇到的ANR问题大部分都是input ANR类型，所以以input ANR为例进行梳理，这块机制并不复杂，只梳理埋计时和check超时的代码部分。正常输入事件的分发流程如下12345InputDispatcher::dispatchOnce() -&gt;InputDispatcher::dispatchOnceInnerLocked -&gt;InputDispatcher::dispatchK...
+                历年来内核中为反碎片化所做的努力，如下图所示：
+
+
+
+Publish date
+Articles on LWN.net
+
+
+
+
+2004-09-08
+https://lwn.net/Articles/101230/
+
+
+2004-05-10
+https://lwn.net/Articles/105021/
+
+
+2005-02-01
+https://lwn.net/Articles/121618/
+
+
+2005-11-02
+https://lwn.net/Articles/158211/
+
+
+2005-11-08
+https://lwn.net/Articles/159110/
+
+
+200...
             </div>
             <!-- read more -->
             
             <div class="abstract-post-meta">
                 <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/04/11">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2022/02/10</span>
+                <div class="abstract-date" title="Last updated: 2023/04/20">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/04/20</span>
                 </div>
                 <!-- tags -->
                 
                     <div class= abstract-tags >
     
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="ANR"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                ANR
-            </span>
-        </span>
     
+        <a class="post-tag" href="javascript:void(0);" data-tags="kernel">kernel</a>
     
 </div>
 

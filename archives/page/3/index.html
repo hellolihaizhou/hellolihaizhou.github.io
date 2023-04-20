@@ -433,6 +433,53 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">
+                
+                <span class="abstract-title-text">一个SharedPreferences写操作导致的ANR问题分析</span>
+            </a>
+            <div class="abstract-content">
+                问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台
+日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点
+106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,3861,com.android.settings,952745541,Input dispatching timed out (com.android.settings/com.android...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2021/09/08">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/23</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="性能"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                性能
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2019/04/12/Launcher应用的重构之路/">
                 
                 <span class="abstract-title-text">Launcher应用的重构之路</span>
@@ -997,7 +1044,14 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1056,7 +1110,7 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 27
+        Total : 28
         </div>
         <!-- search  -->
         
@@ -1070,6 +1124,12 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
             <div class="archive-year"> 2023 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/20</span>
+            <a class="archive-post-title" href="/2023/04/20/反碎片化-Proactive-compaction/">反碎片化 | Proactive compaction</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/17</span>
@@ -1283,6 +1343,11 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
         
+            <span class="sidebar-tag-name" data-tags="kernel">
+                <span class="iconfont-archer">&#xe606;</span>
+                kernel
+            </span>
+        
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -1294,24 +1359,24 @@ Step1.1  抓取串口日志首先说下串口日志的获取方式:串口线中�
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
+        <span class="sidebar-category-name" data-categories="性能">
             <span class="iconfont-archer">&#xe60a;</span>
-            ART
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">

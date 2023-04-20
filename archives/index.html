@@ -433,6 +433,71 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2023/04/20/反碎片化-Proactive-compaction/">
+                
+                <span class="abstract-title-text">反碎片化 | Proactive compaction</span>
+            </a>
+            <div class="abstract-content">
+                历年来内核中为反碎片化所做的努力，如下图所示：
+
+
+
+Publish date
+Articles on LWN.net
+
+
+
+
+2004-09-08
+https://lwn.net/Articles/101230/
+
+
+2004-05-10
+https://lwn.net/Articles/105021/
+
+
+2005-02-01
+https://lwn.net/Articles/121618/
+
+
+2005-11-02
+https://lwn.net/Articles/158211/
+
+
+2005-11-08
+https://lwn.net/Articles/159110/
+
+
+200...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/04/20">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/04/20</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="kernel">kernel</a>
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2023/04/17/关于kswapd-并发的思考/">
                 
                 <span class="abstract-title-text">关于kswapd 并发的思考</span>
@@ -869,61 +934,6 @@ Bufferbl...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/11/08/案例分析-切换应用后高概率操作无响应-Systrace/">
-                
-                <span class="abstract-title-text">案例分析:打开应用后操作界面无响应(Systrace)</span>
-            </a>
-            <div class="abstract-content">
-                问题现象打开应用(热启动)后，概率性出现手指滑动界面无任何响应(界面控件支持上下滑动)
-Systrace角度分析先看下应用区域帧绘制的情况
-
-这个时间段除了开头的几帧，后面几乎是空白的，复现时手指明明是一直滑动的。
-先确认下input事件是否正常，在分析input事件流转是否正常之前
-我们先简单的介绍下input事件大概的流转过程
-
-1.触摸屏每隔几毫秒扫描一次，如果有触摸事件，那么把事件上报到对应的驱动
-2.InputReader 读取触摸事件交给 InputDispatcher 进行事件派发
-3.InputDispatcher 将触摸事件发给注册了 Input 事件的 App
-4.a...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2021/11/08">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/08</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1160,7 +1170,14 @@ Systrace角度分析先看下应用区域帧绘制的情况
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1219,7 +1236,7 @@ Systrace角度分析先看下应用区域帧绘制的情况
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 27
+        Total : 28
         </div>
         <!-- search  -->
         
@@ -1233,6 +1250,12 @@ Systrace角度分析先看下应用区域帧绘制的情况
             <div class="archive-year"> 2023 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/20</span>
+            <a class="archive-post-title" href="/2023/04/20/反碎片化-Proactive-compaction/">反碎片化 | Proactive compaction</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/17</span>
@@ -1446,6 +1469,11 @@ Systrace角度分析先看下应用区域帧绘制的情况
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
         
+            <span class="sidebar-tag-name" data-tags="kernel">
+                <span class="iconfont-archer">&#xe606;</span>
+                kernel
+            </span>
+        
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -1457,24 +1485,24 @@ Systrace角度分析先看下应用区域帧绘制的情况
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="性能">
-            <span class="iconfont-archer">&#xe60a;</span>
-            性能
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
+        <span class="sidebar-category-name" data-categories="性能">
             <span class="iconfont-archer">&#xe60a;</span>
-            ART
+            性能
         </span>
     
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">

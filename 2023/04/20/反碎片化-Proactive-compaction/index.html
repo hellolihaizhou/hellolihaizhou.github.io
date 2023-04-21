@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/8.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/9.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/kcompact/10.png">
-<meta property="og:updated_time" content="2023-04-20T11:06:14.392Z">
+<meta property="og:updated_time" content="2023-04-21T01:20:38.670Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="反碎片化 | Proactive compaction">
 <meta name="twitter:description" content="历年来内核中为反碎片化所做的努力，如下图所示：    Publish date Articles on LWN.net     2004-09-08 https://lwn.net/Articles/101230/   2004-05-10 https://lwn.net/Articles/105021/   2005-02-01 https://lwn.net/Articles/121618/">
@@ -580,7 +580,7 @@
 <li>kcompactd </li>
 <li>手动触发</li>
 </ol>
-<p>这三种情况都会走到<code>ompact_zone</code> ，进而到最终的页面迁移函数<code>migrate_pages</code> 中</p>
+<p>这三种情况都会走到<code>compact_zone</code> ，进而到最终的页面迁移函数<code>migrate_pages</code> 中</p>
 <p>本文主要针对kcompactd 触发的情形进行讨论</p>
 <h3 id="kcompactd-触发时机"><a href="#kcompactd-触发时机" class="headerlink" title="kcompactd 触发时机"></a>kcompactd 触发时机</h3><p>在正式介绍<code>Proactive compaction</code> 之前，先看下之前都有哪些情况下会触发kcompact 线程</p>
 <p>唤醒kcompact 线程是通过wakeup_kcompactd 这一函数</p>
@@ -621,8 +621,8 @@
 <p>在kcompactd 函数中的循环中</p>
 <p><img src="http://blog.lihaizhou.top/kcompact/8.png" alt="Untitled"></p>
 <p>这里有一个疑问：</p>
-<p>**如果每次规整后的收益非常非常小，但是得分确实满足了比上次高，比如存在某些进程不断轻微的碎片化。<br>那是不是会存在在满足低于触发阈值之前，每间隔默认的timeout （500ms）就触发kcompact 线程。</p>
-<p>如果改成比例的形式会不会更好点，比如本次分值比上次高2%，再进行规整。**</p>
+<p>如果每次规整后的收益非常非常小，但是得分确实满足了比上次高，比如存在某些进程不断轻微的碎片化。<br>那是不是会存在在满足低于触发阈值之前，每间隔默认的timeout （500ms）就触发kcompact 线程。</p>
+<p>如果改成比例的形式会不会更好点，比如本次分值比上次高2%，再进行规整。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Fragmentation score check interval for proactive compaction purposes.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HPAGE_FRAG_CHECK_INTERVAL_MSEC	(500)</span></span><br></pre></td></tr></table></figure>
 <p>接着看proactive_compact_node 函数</p>
 <p><img src="http://blog.lihaizhou.top/kcompact/9.png" alt="Untitled"></p>
@@ -639,7 +639,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 20th 2023, 6:51:03 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 20th 2023, 7:06:14 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/04/20/反碎片化-Proactive-compaction/">April 21st 2023, 9:20:38 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1258,14 +1258,14 @@
             ANR
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">

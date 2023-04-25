@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://blog.lihaizhou.top/Uffd/uffd2.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Uffd/uffd3.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/Uffd/uffd4.png">
-<meta property="og:updated_time" content="2023-04-25T01:31:52.374Z">
+<meta property="og:updated_time" content="2023-04-25T07:30:23.673Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Userfaultfd 在 ART GC 上的应用">
 <meta name="twitter:description" content="前言Google 自Android 12 开始将ART 模块mainline，对于Android 12 及其之后的设备而言，后续ART 性能优化补丁都可以通过Google play 在线升级ART 模块获得，不用再等每次的Android 大版本升级。 本文主要简单介绍为何在Android 12 上引入userfaultfd 这一kernel 特性，不会涉及到具体细节，只是先有个大概印象：userf">
@@ -332,7 +332,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">3,055</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">3,099</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -526,6 +526,7 @@
 <p><img src="http://blog.lihaizhou.top/Uffd/uffd3.png" alt="Untitled"></p>
 <p>Userfaults 相对于常规的虚拟内存管理接口（如 mremap/mprotect）的真正优势在于，Userfaults 在所有操作中都不涉及像 vmas 这样的重量级数据结构（实际上，userfaultfd 运行期间的写操作从不会持有 mmap_lock 锁），另外对于大型虚拟地址空间时，使用VMA进行页面（或大页面）粒度的fault 跟踪并不适合，因为需要太多的VMA 数据结构才能达到这个目的。</p>
 <p>userfaultfd 一旦创建，还可以通过 Unix 域套接字传递给管理进程，因此同一个管理进程可以处理多个不同进程的 userfaults，而这些进程不会意识到正在发生什么。</p>
+<p>事实上，将原本内核处理pagefault 的活外包给用户空间这个想法，很久以前就有了，可以看下这个文章：<a href="https://lwn.net/Articles/550555/" target="_blank" rel="noopener">User-space page fault handling</a></p>
 <p>除此之外，相比先前的算法还有一些其它的优势，不一一介绍了，详情参见：<strong><a href="https://www.youtube.com/watch?v=DYdHLqLVspY&amp;authuser=2&amp;hl=id" target="_blank" rel="noopener">What’s new in app performance - YouTube</a></strong></p>
 <p>假设存在这样的场景:<br>GC 过程中正在将一个可达对象从一块内存区域拷贝到另一块内存区域 ，如果同一时间应用线程(也称“mutators”) 正尝试访问或修改这个对象，那么可能会出现数据不一致的情况。</p>
 <p>这是因为拷贝过程中的某些变量或状态可能已经不同于正在访问的应用线程所期望的，这可能会导致意想不到的结果。因此，GC 过程中需要采取适当的同步措施，以确保数据的一致性和正确性。</p>
@@ -584,7 +585,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">http://lihaizhou.top/2023/04/25/Userfaultfd-在-ART-GC-上的应用/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">April 25th 2023, 9:15:41 am</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">April 25th 2023, 9:31:52 am</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">April 25th 2023, 3:30:23 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1206,19 +1207,14 @@
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="ANR">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ANR
-        </span>
-    
         <span class="sidebar-category-name" data-categories="性能">
             <span class="iconfont-archer">&#xe60a;</span>
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
+        <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
-            ART
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="Android">
@@ -1226,19 +1222,24 @@
             Android
         </span>
     
+        <span class="sidebar-category-name" data-categories="ART">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ART
+        </span>
+    
         <span class="sidebar-category-name" data-categories="稳定性">
             <span class="iconfont-archer">&#xe60a;</span>
             稳定性
         </span>
     
-        <span class="sidebar-category-name" data-categories="Linux">
-            <span class="iconfont-archer">&#xe60a;</span>
-            Linux
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel，Android">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel，Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Linux">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Linux
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

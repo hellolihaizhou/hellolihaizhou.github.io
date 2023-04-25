@@ -433,6 +433,54 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">
+                
+                <span class="abstract-title-text">Userfaultfd 在 ART GC 上的应用</span>
+            </a>
+            <div class="abstract-content">
+                前言Google 自Android 12 开始将ART 模块mainline，对于Android 12 及其之后的设备而言，后续ART 性能优化补丁都可以通过Google play 在线升级ART 模块获得，不用再等每次的Android 大版本升级。
+本文主要简单介绍为何在Android 12 上引入userfaultfd 这一kernel 特性，不会涉及到具体细节，只是先有个大概印象：userfaultfd 是什么，为何引入，有哪些优势，后面会另开笔记详细介绍。
+为何引入userfaultfd先说下为何引入userfaultfd ，其实就是为了解决现有的问题，主要有以下两个主要的问题
+...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/04/25">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/04/25</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="kernel，Android"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                kernel，Android
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2023/04/20/反碎片化-Proactive-compaction/">
                 
                 <span class="abstract-title-text">反碎片化 | Proactive compaction</span>
@@ -885,55 +933,6 @@ Bufferbl...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">
-                
-                <span class="abstract-title-text">Systrace角度: 拆解分析应用的启动流程</span>
-            </a>
-            <div class="abstract-content">
-                上周看了一个支付宝启动速度逊色于对比机的案例，花了些时间整理了下这个过程。应用启动过程中牵扯的知识点较多，基本涵盖了Android几大重要的子系统，非一篇文章能够讲清。本文将以支付宝为例，介绍下从input事件触发到首页帧显示完成的整个流程，后面会单独成文介绍与竞品的差异分析。
-本文深受androidperformance系列文章启发
-测试步骤
-使用user版本，开机后连接信号好的WIFI网络，清理后台所有程序。登录支付宝账号后先启动几次，最后再forceStop
-手机放置五分钟后，确保机器未发热，此时打开Systrace录制，通过高速相机拍摄，点击icon冷启，再forceStop下，...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/03/12">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/11</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1175,7 +1174,14 @@ Bufferbl...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1236,7 +1242,7 @@ Bufferbl...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 28
+        Total : 29
         </div>
         <!-- search  -->
         
@@ -1250,6 +1256,12 @@ Bufferbl...
             <div class="archive-year"> 2023 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span>
+            <a class="archive-post-title" href="/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">Userfaultfd 在 ART GC 上的应用</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/20</span>
@@ -1495,14 +1507,14 @@ Bufferbl...
             ANR
         </span>
     
-        <span class="sidebar-category-name" data-categories="Android">
-            <span class="iconfont-archer">&#xe60a;</span>
-            Android
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
             ART
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
         </span>
     
         <span class="sidebar-category-name" data-categories="稳定性">
@@ -1510,19 +1522,24 @@ Bufferbl...
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="网络">
-            <span class="iconfont-archer">&#xe60a;</span>
-            网络
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="网络">
+            <span class="iconfont-archer">&#xe60a;</span>
+            网络
         </span>
     
         <span class="sidebar-category-name" data-categories="内存">

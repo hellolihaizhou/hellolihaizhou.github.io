@@ -446,6 +446,55 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">
+                
+                <span class="abstract-title-text">优化实践:从系统层面优化应用启动速度</span>
+            </a>
+            <div class="abstract-content">
+                
+应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点
+
+故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)
+从高速相机均值数据上，我们的机器上冷启支付宝比竞品机慢了29%，另外通过实测同时打开，直观感受上发现绝大部分时候确实慢于竞品机。顺便说一句:测试冷启速度最佳方式是通过高速相机，这种方式最贴近用户实际感受，其次便是通过Systrace，但是Sy...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2022/03/12">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/19</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="性能"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                性能
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2021/11/11/Systrace角度-拆解分析应用的启动流程/">
                 
                 <span class="abstract-title-text">Systrace角度: 拆解分析应用的启动流程</span>
@@ -888,57 +937,6 @@ DHCP ACK
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2020/06/20/Memory-Barrier读书笔记/">
-                
-                <span class="abstract-title-text">内存屏障</span>
-            </a>
-            <div class="abstract-content">
-                本篇文章开始之前需要了解一些背景知识
-Cache Memory我们都知道程序是运行在 RAM之中，RAM 就是我们常说的DDR（例如 DDR3、DDR4等），我们称之为main memory（主存）当我们需要运行一个进程的时候，首先会从Flash设备（例如，eMMC、UFS等）中将可执行程序load到main memory中，然后开始执行。
-在CPU内部存在一堆的通用寄存器（register），如果CPU需要将一个变量（假设地址是A）加1，一般分为以下3个步骤
-
-CPU 从主存中读取地址A的数据到内部通用寄存器 x0（ARM64架构的通用寄存器之一）
-通用寄存器 x0 加1
-CPU 将通...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/04/10">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/06/20</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="Linux"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                Linux
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1260,7 +1258,14 @@ CPU 将通...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1323,7 +1328,7 @@ CPU 将通...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 29
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -1337,6 +1342,12 @@ CPU 将通...
             <div class="archive-year"> 2023 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span>
+            <a class="archive-post-title" href="/2023/05/08/BPF-CPU-scheduler-可行性调研/">BPF | CPU scheduler 可行性调研</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/25</span>
@@ -1583,14 +1594,9 @@ CPU 将通...
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="Android">
+        <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
-            Android
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="稳定性">
-            <span class="iconfont-archer">&#xe60a;</span>
-            稳定性
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">
@@ -1598,19 +1604,29 @@ CPU 将通...
             ART
         </span>
     
-        <span class="sidebar-category-name" data-categories="ANR">
+        <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
-            ANR
+            Android
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ebpf">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ebpf
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
         </span>
     
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

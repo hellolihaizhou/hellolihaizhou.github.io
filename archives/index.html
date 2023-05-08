@@ -433,6 +433,63 @@
             
         
         <article class="index-post">
+            <a class="abstract-title" href="/2023/05/08/BPF-CPU-scheduler-可行性调研/">
+                
+                <span class="abstract-title-text">BPF | CPU scheduler 可行性调研</span>
+            </a>
+            <div class="abstract-content">
+                本文将主要涉及如下内容
+
+解读 邮件内容
+ 摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。
+
+介绍Google 的GhOSt 开源框架
+
+
+同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解
+关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物
+
+Roman Gushchin  Facebook ，内核调度策略中加入BPF 基础设施的owner
+Hao Luo                  Google，开源框架ghOSt 的owner，还有一个owner ...
+            </div>
+            <!-- read more -->
+            
+            <div class="abstract-post-meta">
+                <!-- date -->
+                <div class="abstract-date" title="Last updated: 2023/05/08">
+                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2023/05/08</span>
+                </div>
+                <!-- tags -->
+                
+                    <div class= abstract-tags >
+    
+        
+        
+            
+        
+        
+        <span class="post-category" data-categories="ebpf"">
+            <i class="fas fa-folder post-category-icon"></i>
+            <span class="post-category-text">
+                ebpf
+            </span>
+        </span>
+    
+    
+</div>
+
+                
+            </div>
+        </article>
+        <div class="index-post-divider"></div>
+    
+        
+        
+        
+        
+            
+        
+        <article class="index-post">
             <a class="abstract-title" href="/2023/04/25/Userfaultfd-在-ART-GC-上的应用/">
                 
                 <span class="abstract-title-text">Userfaultfd 在 ART GC 上的应用</span>
@@ -884,55 +941,6 @@ Bufferbl...
         </article>
         <div class="index-post-divider"></div>
     
-        
-        
-        
-        
-            
-        
-        <article class="index-post">
-            <a class="abstract-title" href="/2021/11/19/优化实践-从系统层面优化应用启动速度/">
-                
-                <span class="abstract-title-text">优化实践:从系统层面优化应用启动速度</span>
-            </a>
-            <div class="abstract-content">
-                
-应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点
-
-故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点)
-从高速相机均值数据上，我们的机器上冷启支付宝比竞品机慢了29%，另外通过实测同时打开，直观感受上发现绝大部分时候确实慢于竞品机。顺便说一句:测试冷启速度最佳方式是通过高速相机，这种方式最贴近用户实际感受，其次便是通过Systrace，但是Sy...
-            </div>
-            <!-- read more -->
-            
-            <div class="abstract-post-meta">
-                <!-- date -->
-                <div class="abstract-date" title="Last updated: 2022/03/12">
-                    <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/11/19</span>
-                </div>
-                <!-- tags -->
-                
-                    <div class= abstract-tags >
-    
-        
-        
-            
-        
-        
-        <span class="post-category" data-categories="性能"">
-            <i class="fas fa-folder post-category-icon"></i>
-            <span class="post-category-text">
-                性能
-            </span>
-        </span>
-    
-    
-</div>
-
-                
-            </div>
-        </article>
-        <div class="index-post-divider"></div>
-    
     <!-- paginator  -->
     
         <nav class="page-nav">
@@ -1179,7 +1187,14 @@ Bufferbl...
         
         
         
+        
+        
+        
+        
+        
     
+        
+        
         
         
         
@@ -1242,7 +1257,7 @@ Bufferbl...
     
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 29
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -1256,6 +1271,12 @@ Bufferbl...
             <div class="archive-year"> 2023 </div>
             <ul class="year-list">
             
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span>
+            <a class="archive-post-title" href="/2023/05/08/BPF-CPU-scheduler-可行性调研/">BPF | CPU scheduler 可行性调研</a>
+        </li>
+    
         
         <li class="archive-post-item">
             <span class="archive-post-date">04/25</span>
@@ -1502,14 +1523,9 @@ Bufferbl...
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="Android">
+        <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
-            Android
-        </span>
-    
-        <span class="sidebar-category-name" data-categories="稳定性">
-            <span class="iconfont-archer">&#xe60a;</span>
-            稳定性
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="ART">
@@ -1517,19 +1533,29 @@ Bufferbl...
             ART
         </span>
     
-        <span class="sidebar-category-name" data-categories="ANR">
+        <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
-            ANR
+            Android
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ebpf">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ebpf
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="稳定性">
+            <span class="iconfont-archer">&#xe60a;</span>
+            稳定性
         </span>
     
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">

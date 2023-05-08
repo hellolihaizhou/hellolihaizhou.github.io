@@ -19,24 +19,27 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆 归来仍少年">
-    <meta name="description" content="问题现象在应用中出现屏幕右滑无响应 复现概率:once 问题平台:Android N  MT6739 Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中.">
+    <meta name="description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个屏幕滑动无响应问题的分析流程">
-<meta property="og:url" content="http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/index.html">
+<meta property="og:title" content="BPF | CPU scheduler 可行性调研">
+<meta property="og:url" content="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="问题现象在应用中出现屏幕右滑无响应 复现概率:once 问题平台:Android N  MT6739 Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中.">
+<meta property="og:description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-28T06:59:46.000Z">
+<meta property="og:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png">
+<meta property="og:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler2.png">
+<meta property="og:updated_time" content="2023-05-08T09:43:47.900Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一个屏幕滑动无响应问题的分析流程">
-<meta name="twitter:description" content="问题现象在应用中出现屏幕右滑无响应 复现概率:once 问题平台:Android N  MT6739 Step1 初步分析考虑到当时按power键能够退出应用回到待机(项目中对power键功能进行了定制)，说明没有发生死机刚接到问题的时候，第一反应是觉得可能发生了ANR，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将data/anr文件夹pull出来看下，内容为空。进到event日志中.">
+<meta name="twitter:title" content="BPF | CPU scheduler 可行性调研">
+<meta name="twitter:description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
+<meta name="twitter:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="icon" href="/assets/favicon.ico">
     
         <link rel="alternate" href="/atom.xml" title="愿历尽千帆 归来仍少年" type="application/atom+xml">
     
-    <title>一个屏幕滑动无响应问题的分析流程 · 李海洲</title>
+    <title>BPF | CPU scheduler 可行性调研 · 李海洲</title>
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -261,7 +264,7 @@
                 <a href="/">愿历尽千帆 归来仍少年</a>
             </div>
             <div class="post-title header-element">
-                <a href="#" class="post-name">一个屏幕滑动无响应问题的分析流程</a>
+                <a href="#" class="post-name">BPF | CPU scheduler 可行性调研</a>
             </div>
         </div>
     
@@ -307,7 +310,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-                一个屏幕滑动无响应问题的分析流程
+                BPF | CPU scheduler 可行性调研
             <!-- 404 -->
             
         </h1>
@@ -326,13 +329,13 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">2,048</span>阅读时长: <span class="post-count reading-time">10 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4,504</span>阅读时长: <span class="post-count reading-time">20 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <!-- 撰写日期 -->
                     <span class="iconfont-archer post-intro-calander">&#xe676;</span>
-                    <span class="post-intro-time">2018/05/29</span>
+                    <span class="post-intro-time">2023/05/08</span>
                     <!-- busuanzi -->
                     
                         <span id="busuanzi_container_page_pv" class="busuanzi-pv">
@@ -487,39 +490,202 @@
             <div class="container container-unloaded">
                 <main class="main post-page">
     <article class="article-entry">
-        <p>问题现象<br><code>在应用中出现屏幕右滑无响应</code></p>
-<p>复现概率:<br><code>once</code></p>
-<p>问题平台:<br><code>Android N</code>  <code>MT6739</code></p>
-<p><strong>Step1 初步分析</strong><br>考虑到当时按<code>power</code>键能够退出应用回到待机(项目中对<code>power</code>键功能进行了定制)，说明没有发生死机<br>刚接到问题的时候，第一反应是觉得可能发生了<code>ANR</code>，与测试同事沟通，当时没有弹框出来。ok，拿到机器后, 将<code>data/anr</code>文件夹pull出来看下，内容为空。进到<code>event</code>日志中. 搜索<code>&quot;am_anr&quot;</code>关键字，没有搜到。测试同事所言没错，当时没有弹框出来是因为并没有发生<code>ANR</code>。<br>那会不会是低内存呢，这样猜想并不是没有道理的。因为我们机器本身内存比较小，之前经常出现内存不足的情况。进到<code>kernel</code>日志中看下<code>lowmemorykiller</code>杀进程的次数，只有四次且都不在问题发生的时间段，看来当时内存没有紧张<br>ok,大写的懵逼…下面开始分析日志  </p>
-<p><strong>Step2 日志分析</strong><br>测试同事反馈当时因为右滑无法退出(项目中对右滑进行了特殊处理代替虚拟按键返回键)，只能通过power键退出<br>ok,先找到按power键的时间点</p>
-<p><strong>step 2.1 main日志</strong><br>我们知道按键会先到<code>PhoneWindowManager</code>的<code>interceptKeyBeforeQueueing</code>函数进行处理，然后才会分发给应用，power键也不例外，只是power键会做特殊处理不会分发给应用<br>根据测试同事反馈的时间点，在<code>main</code>日志中搜到如下对应时间点的日志片段  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.019221</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">667518</span>, downTime=<span class="number">667326</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br></pre></td></tr></table></figure>
-<p>这一处的日志便是<code>PhoneWindowManager</code>的<code>interceptKeyBeforeQueueing</code>函数中打印，问题点确定了在<code>18:12:42.019221</code>之前三四十秒的时间段内，ok，范围缩小了</p>
-<p><strong>step2.2 event日志</strong><br>这里顺便说下，<code>event</code>日志一般记录了各个<code>activity</code>周期及事件，我个人一般看<code>event</code>日志主要看当时的界面变化过程以及确定anr时间点</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.766062</span>  <span class="number">1038</span>  <span class="number">1091</span> I am_resume_activity: [<span class="number">0</span>,<span class="number">123117617</span>,<span class="number">8</span>,com.XXX.music/.MusicActivity]</span><br><span class="line">....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.130951</span>  <span class="number">1038</span>  <span class="number">1053</span> I am_pause_activity: [<span class="number">0</span>,<span class="number">123117617</span>,com.XXX.music/.MusicActivity]</span><br><span class="line">....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.223856</span>  <span class="number">1038</span>  <span class="number">1274</span> I am_resume_activity: [<span class="number">0</span>,<span class="number">69789570</span>,<span class="number">2</span>,com.XXX.launcher/.activity.MainActivity]</span><br></pre></td></tr></table></figure>
-<p>这里可以确定问题发生时界面停留在音乐应用，后面因为按了<code>power</code>键的缘故回到了待机界面</p>
-<p><strong>step2.3 sys日志</strong><br>对于<code>sys</code>日志呢，一般输出的是系统日志，一般在main日志里找不到可以在<code>sys</code>日志里找到</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Music应用开始播放音乐</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">10</span>:<span class="number">01.384340</span>  <span class="number">2827</span>  <span class="number">2827</span> E MusicActivity: Receive: 讲真的</span><br><span class="line">…..</span><br><span class="line"><span class="comment">//按power键点亮屏幕</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.771419</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">619270</span>, downTime=<span class="number">619127</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">53.843990</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherMainActivity: screen on</span><br><span class="line">......</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.195224</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.866527</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.866599</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">100.58091</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.874044</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">100.58091</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.883822</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">100.58091</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.893310</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">100.58091</span>-&gt;<span class="number">203.15353</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">11</span>:<span class="number">58.895061</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.243408</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">4</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.414854</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.415105</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">0.0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.423284</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">0.0</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">32.423391</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromTop</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.611702</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.861078</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.861215</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">86.63901</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.868822</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">86.63901</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.878235</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">86.63901</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.888622</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">31.86722</span>,<span class="number">86.63901</span>-&gt;<span class="number">179.25311</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">34.888704</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">.....</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">37.952528</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">4</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.195578</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.195683</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">0.0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.201532</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">0.0</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">38.201606</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromTop</span><br><span class="line">......</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">40.888861</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: mSwipeFireable=<span class="literal">false</span> mSwipeType=<span class="number">1</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.131752</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down pointerIndex=<span class="number">0</span> trackingIndex=<span class="number">0</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.131874</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> down x=<span class="number">0.0</span> y=<span class="number">95.60166</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.137845</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">95.60166</span>-&gt;<span class="number">253.94191</span>) <span class="keyword">in</span> <span class="number">9</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.147534</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">0.0</span>,<span class="number">95.60166</span>-&gt;<span class="number">0.0</span>) <span class="keyword">in</span> <span class="number">19</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.157208</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">95.60166</span>-&gt;<span class="number">209.12863</span>) <span class="keyword">in</span> <span class="number">29</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">41.157279</span>  <span class="number">1038</span>  <span class="number">1082</span> D SystemGestures: Firing onSwipeFromLeft</span><br><span class="line">......</span><br><span class="line"><span class="comment">//按power键返回待机界面</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.019221</span>  <span class="number">1038</span>  <span class="number">1103</span> D WindowManager: interceptKeyBeforeQueueing: eventKeyEvent &#123; action=ACTION_UP, keyCode=KEYCODE_POWER, scanCode=<span class="number">116</span>, metaState=<span class="number">0</span>, flags=<span class="number">0x8</span>, repeatCount=<span class="number">0</span>, eventTime=<span class="number">667518</span>, downTime=<span class="number">667326</span>, deviceId=<span class="number">1</span>, source=<span class="number">0x101</span> &#125;</span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">12</span>:<span class="number">42.036468</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherService: goback to homescreen and clear all background apps</span><br><span class="line">......</span><br><span class="line"><span class="comment">//此时通过launcher菜单再次进入Music应用，提示处于高温下</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">21</span>:<span class="number">56.784003</span>  <span class="number">1558</span>  <span class="number">1558</span> I LauncherMainActivity: onItemClick, position = <span class="number">10</span></span><br><span class="line"><span class="number">05</span><span class="number">-28</span> <span class="number">18</span>:<span class="number">21</span>:<span class="number">56.784848</span>  <span class="number">1558</span>  <span class="number">1558</span> D LauncherMainActivity: isNetwrokOk = :<span class="literal">true</span>,isBinded = :<span class="literal">true</span>,isHighTemper = :<span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>这段日志呢可以看出屏幕无响应的一段时间内，是有手势滑动发生的</p>
-<p><strong>step2.4 代码分析</strong><br>既然有手势滑动为什么界面不能退出呢，是不是我们自己写的判断条件出了问题，上面日志中这些片段  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SystemGestures: pointer <span class="number">0</span> moved (<span class="number">0.0</span>-&gt;<span class="number">20.912863</span>,<span class="number">95.60166</span>-&gt;<span class="number">209.12863</span>) <span class="keyword">in</span> <span class="number">29</span></span><br></pre></td></tr></table></figure>
-<p>代表什么意思呢, 跟到代码里看一看<br><code>frameworks/base/services/core/java/com/android/server/policy/SystemGesturesPointerEventListener.java</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">detectSwipe</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">long</span> time, <span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> fromX = mDownX[i];</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> fromY = mDownY[i];</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> elapsed = time - mDownTime[i];</span><br><span class="line">        <span class="keyword">if</span> (DEBUG) Slog.d(TAG, <span class="string">"pointer "</span> + mDownPointerId[i]</span><br><span class="line">                + <span class="string">" moved ("</span> + fromX + <span class="string">"-&gt;"</span> + x + <span class="string">","</span> + fromY + <span class="string">"-&gt;"</span> + y + <span class="string">") in "</span> + elapsed);</span><br><span class="line">         <span class="comment">//省略部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>日志打印的代表<code>X坐标</code>,<code>Y坐标</code>的滑动变化以及滑动时间</p>
-<p>此时再来看看日志中问题发生时测试同事滑动轨迹,<code>Y坐标</code>看上去没有问题,<code>X坐标</code>看着有点奇怪，怎么都是从0开始的呢,且松开时移动距离非常小<br>那么如此小的移动距离，有没有满足滑动退出的条件呢？因为这一块判断条件是客制化的，需要<code>X坐标</code>滑动起码达到<code>60</code>才能满足滑动退出的条件，这里就不贴出具体代码</p>
-<p>小结：<br>在测试同事反应屏幕滑动无响应的时间段内，40秒的时间段内有四次手势发生，手指滑动的X坐标变化幅度很小<br>鉴于<code>SystemGesturesPointerEventListener.java</code>这支文件中的<code>detectSwipe</code>函数会对<code>X坐标</code>的变化幅度进行判断，至少达到<code>60</code>以上才会返回SWIPE_BACK(该type类型是根据项目客制化添加的)<br>很显然上面日志中X坐标变化幅度没有达到这个要求，也就导致了onPointerEvent函数中走不到inject back action逻辑中，从而系统判断没有返回事件发生<br>同测试同事沟通当时是正常的尝试滑动退出，故上面的X坐标变化历程显然有误，数值过小且起始点坐标与落下点坐标也与实际情况不符</p>
-<p><strong>综合下来: 判定是屏幕报点不准导致</strong></p>
-<p>Have a good day!</p>
-<hr>
-<font color="#000000" size="2" face="楷体">公司，上班前，听着歌，惬意</font>
+        <p>本文将主要涉及如下内容</p>
+<ol>
+<li><p>解读<bpf scheduler=""> 邮件内容</bpf></p>
+<p> 摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。</p>
+</li>
+<li><p>介绍Google 的GhOSt 开源框架</p>
+</li>
+</ol>
+<p>同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解</p>
+<h3 id="关于BPF-scheduler-的邮件讨论"><a href="#关于BPF-scheduler-的邮件讨论" class="headerlink" title="关于BPF scheduler 的邮件讨论"></a>关于BPF scheduler <strong>的邮件讨论</strong></h3><p>将BPF 引入CPU  scheduler <em>**</em>，业内有过一些讨论，涉及到的主要人物</p>
+<ul>
+<li><code>Roman Gushchin</code>  Facebook ，内核调度策略中加入BPF 基础设施的owner</li>
+<li><code>Hao Luo</code>                  Google，开源框架ghOSt 的owner，还有一个owner <code>Barret Rhoden</code></li>
+<li><code>Qais Yousef</code>         ARM，针对Roman 的patchSet 提出一系列关于移动端的疑问</li>
+<li><code>Ren Zhijie</code>           华为，  在<code>Roman</code> 的PatchSet 基础上做了二次开发</li>
+</ul>
+<p>故事的开始是Facebook 的<code>Roman Gushchin</code> 致力于想要将这笔<a href="https://lwn.net/ml/linux-kernel/20210916162451.709260-1-guro@fb.com/" target="_blank" rel="noopener">Scheduler BPF</a> 合入到内核主线中 ，对于该PatchSet 的目的他本人给出的理由：</p>
+<blockquote>
+<p>This patchset aims to start a discussion about potential applications of BPF to the scheduler. <strong>It also aims to land some very basic BPF infrastructure necessary to add new BPF hooks to the scheduler</strong>, a minimal set of useful helpers, corresponding libbpf changes, etc.</p>
+</blockquote>
+<p>本补丁集旨在启动关于将 BPF 应用于调度器的潜在应用讨论，它还旨在实现一些非常基本的 BPF 基础设施，以添加新的 BPF 钩子到调度器，提供一组最小的实用程序，对应的 libbpf 更改等。</p>
+<p>同时<code>Roman Gushchin</code> 提到了目前这笔PatchSet 实测效果以及谷歌也正在做类似的事情</p>
+<blockquote>
+<p>Our very first experiments with using BPF in CFS look very promising. We’re at a very early stage, however already have seen a nice latency and ~1% RPS wins for our (Facebook’s) main web workload.</p>
+<p>As I know, Google is working on a more radical approach [2]: they aim to move the scheduling code into userspace. It seems that their core motivation is somewhat similar: to make the scheduler changes easier to develop, validate and deploy. Even though their approach is different, they also use BPF for speeding up some hot paths. I think the suggested infrastructure can serve their purpose too.</p>
+</blockquote>
+<p>我们在 CFS 中使用 BPF 的第一个实验看起来非常有前途。虽然还处于早期阶段，但已经看到了对我们（Facebook）的主要 Web 工作负载产生的良好延迟和约 1% 的请求秒数优化。</p>
+<p>据我所知，谷歌正在进行一种更激进的方法[2]：<strong>他们的目标是将调度代码移动到用户空间</strong>，看起来他们的核心动机也有些类似：</p>
+<p><strong>使调度器的更改更易于开发，验证和部署。即使他们的方法不同，他们也使用 BPF 来加速一些热点路径，我认为所提供的基础设施也可以为他们的目的服务。</strong></p>
+<p><strong>额外补充：</strong></p>
+<p>这里<code>Roman Gushchin</code> 说的“<strong>他们的目标是将调度代码移动到用户空间</strong>”，容易让人误解，应该指的是调度的决策代码挪到了用户空间。事实上Google 的GhOSt 实际调度运行代码是在BPF 中实现的，运行在内核中，如果真的将调度代码挪到用户空间，那将引起大量的用户/内核之间的切换。</p>
+<p>对于<code>Roman Gushchin</code> 上面邮件的内容</p>
+<p>Google GhOSt  Owner <code>Hao Luo</code>  于15 Sep 2021 在邮件中回复到：</p>
+<blockquote>
+<p>Yes. Barret can talk more about this, but I think it summarized the work of ghOSt [3] and the use of BPF in ghOSt well.</p>
+</blockquote>
+<p>Looking forward, I agree that BPF has a great potential in customizing policies in the scheduler. It has the advantage of quick experimentation and deployment. One of the use cases I’m thinking of is to customize load balancing policies. For example, allow using BPF to influence whether a task can migrate (can_migrate_task). This is currently only an idea.</p>
+<blockquote>
+</blockquote>
+<p>没错，谷歌的开源框架ghOSt (<a href="https://lpc.events/event/11/contributions/954/" target="_blank" rel="noopener">Use of eBPF in cpu scheduler</a>) 正是利用BPF 实现了定制调度策略。</p>
+<p>展望未来，我同意 BPF 对于定制化调度器策略有着巨大的潜力，它具有快速实验和部署的优势。我正在考虑其中一种用例，那就是定制负载平衡策略。</p>
+<p>例如，可以使用 BPF 来影响一个任务是否可以迁移（can_migrate_task），这目前只是一个想法。</p>
+<p>当天(15 Sep 2021) 晚些时候，<code>Roman Gushchin</code> 邮件回复了<code>Hao Luo</code></p>
+<blockquote>
+<p>I took a brief look over how you use BPF in ghOSt and I think what I suggest will work for you as well. I’d appreciate any comments/feedback whether it’s definitely true.</p>
+</blockquote>
+<p>我大致看了下你们用BPF 实现的ghOSt 框架，相信我的这笔patchSet 同样能够达到你们的目的。</p>
+<p><code>Roman Gushchin</code> 和 <code>Hao Luo</code> 的邮件讨论，引起了来自ARM 的<code>Qais Yousef</code> 的注意</p>
+<p><code>Yousef</code>于06 Oct 2021 回复了该主题的邮件，并提出了自己担忧</p>
+<blockquote>
+<p>I am (very) wary of these hooks. Scheduler (in mobile at least) is an area that gets heavily modified by vendors and OEMs. We try very hard to understand the problems they face and get the right set of solutions in mainline. Which would ultimately help towards the goal of having a single Generic kernel Image [1] that gives you what you’d expect out of the platform without any need for additional cherries on top.</p>
+</blockquote>
+<p>So my worry is that this will open the gate for these hooks to get more than just micro-optimization done in a platform specific way. And that it will discourage having the right discussion to fix real problems in the scheduler because the easy path is to do whatever you want in userspace. I am not sure we can control how these hooks are used.</p>
+<p>The question is: why can’t we fix any issues in the scheduler/make it better and must have these hooks instead?</p>
+<blockquote>
+</blockquote>
+<p>我对这些钩子的引入非常担忧，调度器（至少在移动领域）是一个被供应商和OEM大量客制化的领域。</p>
+<p>我们非常努力地了解他们面临的问题，并在主线中获得正确的解决方案。这最终将有助于实现GKI 目标。所以，我担心这笔patchSet 一旦引入，内核将无法控制用户空间的行为。</p>
+<p>问题是：</p>
+<p><strong>为什么我们不能在内核主线中解决调度器中遇到的问题并使其更好，而非要使用这些钩子？</strong></p>
+<p>同时，<code>Yousef</code> 提出如果要用钩子的话，最好要合入内核，这将使大家都能用得上，也方便以后追溯合入的原因，以及方便在不需要的时候移除。</p>
+<p><strong>额外补充：</strong></p>
+<p>这里说下OEM 客制化调度器这件事，社区一直在尝试解读OEM 的补丁修改，去试图理解清楚他们修改背后的动机，以便后续在主线内核中修复这些问题，同时摘取了一些OEM 的修改进行了性能测试验证。</p>
+<p>详细可以阅读这篇文章 &lt;<a href="https://lwn.net/Articles/820825/" target="_blank" rel="noopener">Evaluating vendor changes to the scheduler</a>&gt;</p>
+<p>另外，既然这里Yousef  提到了Android 的GKI，我们再简单的介绍下Google 对于ACK 后续的规划</p>
+<p><img src="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png" alt="Untitled"></p>
+<p>从上图可以看出，谷歌的目标是Android 通用内核 (ACK) 尽量贴近上游，所以后续对于内核的修改，厂商必须优先使用 Linux 内核邮件列表 (LKML) 向上游提交代码更改，并且只有在有充分理由说明上游不可行时才将代码更改提交到 ACK <code>android-mainline</code>分支。</p>
+<p>如果因修改不够通用无法被上游采纳，并且没有打算重构下再提交到上游的计划，同样不会被ACK 采纳。</p>
+<p>合入到上游这点很难，因为需要明确的案例说明这个修改是有帮助的。尤其是调度以及内存相关的修改，社区态度一向十分谨慎，然而很多手机厂商的客制化修改其实并非通用且多是策略优化 + 性能数据采集。</p>
+<p>GKI 相关资料：</p>
+<ol>
+<li><a href="https://source.android.com/devices/architecture/kernel/kernel-code?hl=zh-cn#changes-to-gki-defconfig" target="_blank" rel="noopener">为 GKI 开发内核代码</a></li>
+<li><a href="https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/README.md" target="_blank" rel="noopener">如何向 Android 通用内核提交补丁</a></li>
+<li><a href="https://source.android.com/docs/core/architecture/kernel/android-common?hl=zh-cn" target="_blank" rel="noopener">Android 通用内核</a></li>
+</ol>
+<p>再继续回到邮件讨论上，对于<code>Yousef</code>的担忧，<code>Roman Gushchin</code> 在隔了几天后(11 Oct 2021) 回复了邮件：</p>
+<blockquote>
+<p>I think a relatively small and stable set of hooks can cover a large percent of potential customization ideas.</p>
+</blockquote>
+<p><code>Roman</code>认为提供一套小的且稳定的hooks，可以满足大部分的定制需求</p>
+<blockquote>
+<p>Shipping a custom kernel (actually any kernel) at this scale isn’t easy or fast.<br>Just for example, imagine a process of rebooting of a 1000000 machines running<br>1000’s different workloads, each with their own redundancy and capacity requirements.</p>
+</blockquote>
+<p>同时<code>Roman</code>解释了如果在内核主线上修改的话，修改以及重新部署内核的成本比较高，如果能够通过用户空间推送修改，这样可以节省不少的成本。</p>
+<p>第二天(12 Oct 2021) <code>Yousef</code> 回复了<code>Roman Gushchin</code> 的邮件：</p>
+<blockquote>
+<p>I think you’re still referring to ghOSt here. I thought your 2 use cases are different as you mentioned they “completely move the scheduler code into userspace/bpf”; but it could be just me mis-interpreting what this means. That didn’t read to me they want to micro-optimize (few) certain decisions in the scheduler, rather replace it altogether, hence my question.</p>
+</blockquote>
+<p>Anyway. My 2cents here is that we should be careful not to introduce something that encourages out-of-tree workarounds for real scheduler problems nor have it done in a way where we lose visibility over how these hooks are used and being able to share it with others who could benefit from the same mico-optimization too.</p>
+<blockquote>
+</blockquote>
+<p>这段不太好直接翻过来，根据个人理解下来<code>Yousef</code> 表达的大意是：</p>
+<p>无论是优化还是移植，我们都需要小心，以免引入一些可能导致未来出现真正调度问题却绕过内核的解决方案。同时，我们还需要确保我们在使用调度钩子时具有完整的可见性和透明性，以便将这些经验分享给其他人，让更多人从这些优化中受益。如果我们失去了这些调度钩子的可见性和透明性，可能会导致很多人错过这些优化，或者可能会出现一些我们无法预知的复杂调度问题。</p>
+<p>至此，关于该主题的邮件讨论平息了一段时间</p>
+<p><code>Yafang Shao</code> 在一个月后(25 Nov 2021) 回复<code>Roman</code></p>
+<blockquote>
+<p>Scheduler BPF is a great idea. Thanks for the work.<br>Scheduler BPF won’t be a small feature,  I think we’d better give a summary of possible hooks it may add first.<br>We must have a <em>basic rule</em> to control what it will tend to be to avoid adding BPF hooks here and there.<br>I haven’t found a clear rule yet, but maybe we can learn it from netfilter, which has 5 basic hooks.<br>Regarding the scheduler BPF hooks, some possible basic hooks may be:</p>
+<ul>
+<li>Hook for Enqueue</li>
+<li>Hook for Dequeue</li>
+<li>Hook for Put Prev Task</li>
+<li>Hook for Set Next Task</li>
+</ul>
+</blockquote>
+<p>BPF 调度是一个不错的想法，并且不是一个小功能，建议先想下都有哪些地方需要加钩子，可以学习下netfilter 模块(有5个基本的钩子)，而调度这块可能会涉及到的钩子如Enqueue、Dequeue、Put Prev Task、Set Next Task等。</p>
+<p><code>Roman</code> 次日(26 Nov 2021 )回复了<code>Yafang Shao</code>：</p>
+<blockquote>
+<p>I think it depends on what we want to achieve. There are several options:<br>we might aim to implement the whole scheduler logic in bpf, we might aim<br>to do some adjustments to the existing scheduler behavior or a mix of those<br>approaches.</p>
+</blockquote>
+<p>对于<code>Yafang Shao</code> 前面提到的这个功能不是一个小功能，<code>Roman</code> 认为这取决于我们想要达到什么样的效果</p>
+<p>目前有如下几种选择</p>
+<ol>
+<li>在BPF中实现整个调度逻辑</li>
+<li>对现有的调度基础上进行一些调整</li>
+<li>混合使用这些方法</li>
+</ol>
+<p><code>Roman</code> 接着说到：</p>
+<blockquote>
+<p>Bpf as now is now is not capable enough to implement a new scheduler class without a substantial amount of new c code (in form of helpers, maybe custom maps, some verifier changes etc). In particular, it’s a challenging to provide strong safety guarantees: any scheduler bpf program loaded shouldn’t crash or deadlock the system (otherwise bpf isn’t any better than a kernel module). Also performance margins are quite tight.</p>
+</blockquote>
+<p>在当前的情况下，BPF现在还不足以在不添加大量新的C代码（比如帮助程序、自定义映射、一些验证程序的更改等）的情况下实现一个完全新的调度类。</p>
+<p>特别是，要提供强有力的安全保障是一项挑战性的任务：任何加载的调度BPF程序都不应该使系统崩溃或死锁（否则BPF与内核模块的效果就没什么区别了），此外，性能表现非常重要。</p>
+<blockquote>
+<p>I’m not saying that providing such generic hooks is impossible or useless, but it requires a lot of changes and support code and I’m not sure that we have a good justification for them right now.<br>I think instead we might want to see bpf hooks as a better form of (sysctl) tunables, which are more flexible (e.g. can be used for specific processes, cgroups, cpus, being enabled depending on load, weather, etc) and do not create an ABI (so are easier to maintain).</p>
+</blockquote>
+<p>我们可能希望将bpf hooks 视为更好的（sysctl）可调参数的形式，这些参数更加灵活（例如可以用于特定进程、cgroup、CPU，根据负载、weather 等情况启用），并且不会创建ABI（因此更易于维护）。</p>
+<p>再过去了大半年后(19 Jul 2022)，华为的的<code>Ren Zhijie</code> 回复了该主题邮件</p>
+<blockquote>
+<p>We want to implement a programmable scheduler to meet the schedule requirements of different workloads.<br>Using BPF, we can easily deploy schedule policies for specific workloads, quickly verifying without modifying the kernel code.<br>This greatly reduces the cost of deploying new schedule policies in the production environment.<br>Therefore, we want to continue to develop based on your patch. <strong>We plan to merge it into the openeuler open-source community and use the community to continuously evolve and maintain it</strong>.(link: <a href="https://www.openeuler.org/en/" target="_blank" rel="noopener">https://www.openeuler.org/en/</a>)</p>
+</blockquote>
+<p><code>Ren Zhijie</code> 开头先说了下BPF 定制调度能够快速部署，修改便利等，相比之前节省了成本，同时提出了他们正打算利用BPF 实现一个可编程调度器以应对不同的负载情况。</p>
+<p>并打算在<code>Roman</code> 的patchSet 基础上进行修改，后面会贡献给openeuler  开源社区。</p>
+<p>同时，<code>Ren Zhijie</code> 说明了他们做了哪些额外的修改</p>
+<blockquote>
+<p>We made some changes to your patch:</p>
+<ol>
+<li>Adapt to the openeuler-OLK-5.10 branch, which mostly base on linux<br>longterm branch 5.10.</li>
+<li>Introduce the Kconfig CONFIG_BPF_SCHED to isolate related code at<br>compile time.</li>
+<li>helpers bpf_sched_entity_to_cgrpid() and bpf_sched_entity_belongs_to_cgrp() are modified to obtain the task group to which the sched entity belongs through se-&gt;my_q-&gt;tg-&gt;css.cgroup.</li>
+</ol>
+<p>We have some ideas for the next iteration of Scheduler BPF that we would like to share with you:</p>
+<ol>
+<li>The tag field is added to struct task_struct and struct task_group. Users can use the file system interface to mark different tags for specific workloads. The bpf prog obtains the tags to detect different workloads.</li>
+<li>Add BPF hook and helper to scheduling processes such as select_task_rq and pick_next_task to enable scalability.</li>
+</ol>
+<p><strong>It’s a new attempt, and there’s bound to be a lot of problems later, but it’s exciting that it makes the schduler programmable.</strong></p>
+</blockquote>
+<p>当天晚些时候，<code>Roman</code> 回复了<code>Ren Zhijie</code>：</p>
+<blockquote>
+<p>Great to hear my work is useful and thank you for describing your plans!<br>I’m not actively working on it right now, but I might start again in the future.<br>Let me know if I can help you with this effort.</p>
+</blockquote>
+<p>很高兴我的PatchSet 给你带来了帮助，不过我现在没在搞这个，后面可能会再捡起来继续搞。</p>
+<p><code>Roman Gushchin</code> 的patchSet 内容比较多，可以从下面的PATCH rfc 1/6 慢慢看起</p>
+<p><a href="https://lwn.net/ml/linux-kernel/20210916162451.709260-2-guro@fb.com/" target="_blank" rel="noopener">https://lwn.net/ml/linux-kernel/20210916162451.709260-2-guro@fb.com/</a></p>
+<p>另外关于BPF 调度的一个示例简单 Demo </p>
+<p><a href="https://github.com/rgushchin/atc" target="_blank" rel="noopener">https://github.com/rgushchin/atc</a></p>
+<p>这个Demo 中包含三个hook 点，在<code>Roman Gushchin</code> 的patchSet 中同样涉及这三个</p>
+<p><code>cfs_check_preempt_tic</code>、<code>cfs_check_preempt_wakeup</code>、<code>cfs_wakeup_preempt_entity</code></p>
+<p>关于这三个hook 点的说明</p>
+<blockquote>
+<p>The first one allows to force or suppress a preemption from a tick context.<br>An obvious usage example is to minimize the number of non-voluntary context switches and decrease an associated latency penalty by (conditionally) providing tasks or task groups an extended execution slice.<br>It can be used instead of tweaking sysctl_sched_min_granularity.</p>
+</blockquote>
+<p>The second one is called from the wakeup preemption code and allows to redefine whether a newly woken task should preempt the execution of the current task. This is useful to minimize a number of preemptions of latency sensitive tasks.<br>To some extent it’s a more flexible analog of a sysctl_sched_wakeup_granularity.</p>
+<p>The third one is similar, but it tweaks the wakeup_preempt_entity() function, which is called not only from a wakeup context, but also from pick_next_task(), which allows to influence the decision on which task will be running next.</p>
+<blockquote>
+</blockquote>
+<h3 id="Google-开源框架ghOSt"><a href="#Google-开源框架ghOSt" class="headerlink" title="Google 开源框架ghOSt"></a>Google 开源框架ghOSt</h3><blockquote>
+<p>ghOSt is a general-purpose delegation of scheduling policy implemented on top of the Linux kernel. The ghOSt framework provides a rich API that receives scheduling decisions for processes from userspace and actuates them as transactions. Programmers can use any language or tools to develop policies, which can be upgraded without a machine reboot. ghOSt supports policies for a range of scheduling objectives, from µs-scale latency, to throughput, to energy efficiency, and beyond, and incurs low overheads for scheduling actions. Many policies are just a few hundred lines of code. Overall, ghOSt provides a performant framework for delegation of thread scheduling policy to userspace processes that enables policy optimization, non-disruptive upgrades, and fault isolation.</p>
+</blockquote>
+<p>ghOSt 是一个通用的Linux内核调度策略委托工具，它提供了丰富的API，可以从用户空间接收进程调度决策并将它们作为交易来实施。</p>
+<p>开发人员可以使用任何编程语言或工具来编写策略，并且可以在不重启机器的情况下进行升级。ghOSt支持多种调度目标，包括微秒级延迟、吞吐量、能源效率等，并且对调度操作的开销很小。</p>
+<p>许多策略只需要几百行代码就可以实现。总的来说，ghOSt为将线程调度策略委托给用户空间进程提供了一个高性能的框架，可以实现策略优化、非破坏性升级和故障隔离。</p>
+<p>如果说<code>Roman Gushchin</code> 的patchSet 是在内核中提供BPF 基础设施，那么Google 的ghOSt 则看起来是一整套框架(user + kernel)，一套完整的调度策略(和CFS 共存，优先级低于CFS)。</p>
+<p>目前已在Google search 和snap 上落地，且有不错的性能测试数据，按paper 中的性能测试数据来看的话ghOSt 的调度开销只比现有的内核调度器略高。</p>
+<p>Paper 中摘取一段Google 针对ghOSt  的性能测试图表</p>
+<p>Linux 4.15 with our ghOSt patches applied.We run microbenchmarks on a 2-socket Intel Xeon Platinum 8173M @ 2GHz, 28 cores per socket, 2 logical cores each.</p>
+<p><img src="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler2.png" alt="Untitled"></p>
+<p>关于ghOSt 的资料：</p>
+<ol>
+<li><a href="https://lpc.events/event/16/contributions/1365/attachments/986/1912/lpc22-ebpf-kernel-scheduling-with-ghost.pdf" target="_blank" rel="noopener">eBPF Kernel Scheduling with Ghost</a>  Google <code>Barret Rhoden</code> 2022.09.12 的PPT</li>
+<li><a href="https://github.com/google/ghost-kernel" target="_blank" rel="noopener">https://github.com/google/ghost-kernel</a> kernel 源码，基于Linux 5.11</li>
+<li><a href="https://github.com/google/ghost-userspace" target="_blank" rel="noopener">https://github.com/google/ghost-userspace</a> userspace 源码</li>
+<li><a href="https://netdevconf.info/0x15/papers/25/ghOSt.pdf" target="_blank" rel="noopener">paper</a>  非常详细的技术细节解读，同时含有性能测试数据，看不动了内容太多</li>
+<li><a href="https://www.youtube.com/watch?v=auen1MpxxGY&amp;list=PLrninrcyMo3L-hsJv23hFyDGRaeBY1EJO" target="_blank" rel="noopener">video</a>   可以结合着PPT 看</li>
+</ol>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Google 的ghOSt  框架已经有实际落地项目(snap + search)，用户空间和内核代码都现成的，甚至测试工具都备好了，不过没看到有介绍说落地在Android 设备上，如果要用ghOSt  的话，不知道是否能够应用在移动端，需要阅读<a href="https://netdevconf.info/0x15/papers/25/ghOSt.pdf" target="_blank" rel="noopener">paper</a> 并结合源码。</p>
+<p>而Roman 的patchSet 则是提供了一组内核的基础设施，个人理解以Roman 的patchSet 入手先进行微小的实践(比如结合这个demo ‣)或许是一个不错的开始。</p>
+
     </article>
     <!-- license -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
-            <p>原文链接：<a href="http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/">http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/</a>
-            <p>发表日期：<a href="http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/">May 29th 2018, 7:19:15 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2018/05/29/一个屏幕滑动无响应问题的分析流程/">December 28th 2019, 2:59:46 pm</a>
+            <p>原文链接：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/</a>
+            <p>发表日期：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">May 8th 2023, 5:41:33 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">May 8th 2023, 5:43:47 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -527,17 +693,12 @@
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/" title="一个底层内存分配异常导致无法进入launcher问题分析">
-                    <div class="nextTitle">一个底层内存分配异常导致无法进入launcher问题分析</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2018/05/17/一个无法开机问题的分析流程/" title="一个无法开机问题的分析流程">
-                    <div class="prevTitle">一个无法开机问题的分析流程</div>
+                <a href="/2023/04/25/Userfaultfd-在-ART-GC-上的应用/" title="Userfaultfd 在 ART GC 上的应用">
+                    <div class="prevTitle">Userfaultfd 在 ART GC 上的应用</div>
                 </a>
             
         </li>
@@ -669,7 +830,7 @@
                 <div class="toc-catalog">
                     <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
                 </div>
-                
+                <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#关于BPF-scheduler-的邮件讨论"><span class="toc-number">1.</span> <span class="toc-text">关于BPF scheduler 的邮件讨论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Google-开源框架ghOSt"><span class="toc-number">2.</span> <span class="toc-text">Google 开源框架ghOSt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结"><span class="toc-number">3.</span> <span class="toc-text">小结</span></a></li></ol>
             </div>
         
         <!-- sidebar -->

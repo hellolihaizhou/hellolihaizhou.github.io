@@ -19,19 +19,19 @@
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="愿历尽千帆 归来仍少年">
-    <meta name="description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
+    <meta name="description" content="本文将主要涉及如下内容 1.解读 邮件内容   摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。 2.介绍Google 的GhOSt 开源框架 同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler，业内有过一些讨论，涉及到的主要人物  Roman Gushchin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BPF | CPU scheduler 可行性调研">
 <meta property="og:url" content="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/index.html">
 <meta property="og:site_name" content="李海洲">
-<meta property="og:description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
+<meta property="og:description" content="本文将主要涉及如下内容 1.解读 邮件内容   摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。 2.介绍Google 的GhOSt 开源框架 同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler，业内有过一些讨论，涉及到的主要人物  Roman Gushchin">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png">
 <meta property="og:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler2.png">
-<meta property="og:updated_time" content="2023-05-08T09:43:47.900Z">
+<meta property="og:updated_time" content="2023-05-08T09:51:25.723Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BPF | CPU scheduler 可行性调研">
-<meta name="twitter:description" content="本文将主要涉及如下内容  解读 邮件内容  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。  介绍Google 的GhOSt 开源框架   同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler **，业内有过一些讨论，涉及到的主要人物  Roman Gushch">
+<meta name="twitter:description" content="本文将主要涉及如下内容 1.解读 邮件内容   摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。 2.介绍Google 的GhOSt 开源框架 同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解 关于BPF scheduler 的邮件讨论将BPF 引入CPU  scheduler，业内有过一些讨论，涉及到的主要人物  Roman Gushchin">
 <meta name="twitter:image" content="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -329,7 +329,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">4,504</span>阅读时长: <span class="post-count reading-time">20 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4,498</span>阅读时长: <span class="post-count reading-time">20 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -491,20 +491,16 @@
                 <main class="main post-page">
     <article class="article-entry">
         <p>本文将主要涉及如下内容</p>
-<ol>
-<li><p>解读<bpf scheduler=""> 邮件内容</bpf></p>
-<p> 摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。</p>
-</li>
-<li><p>介绍Google 的GhOSt 开源框架</p>
-</li>
-</ol>
+<p>1.解读<bpf scheduler=""> 邮件内容</bpf></p>
+<p>  摘取其中的关键内容，尽量将围绕这个话题的关键讨论以时间线展示。</p>
+<p>2.介绍Google 的GhOSt 开源框架</p>
 <p>同时会穿插一些额外的内容(比如GKI 的基础介绍、OEM 的定制修改) 以便于更好的理解</p>
-<h3 id="关于BPF-scheduler-的邮件讨论"><a href="#关于BPF-scheduler-的邮件讨论" class="headerlink" title="关于BPF scheduler 的邮件讨论"></a>关于BPF scheduler <strong>的邮件讨论</strong></h3><p>将BPF 引入CPU  scheduler <em>**</em>，业内有过一些讨论，涉及到的主要人物</p>
+<h3 id="关于BPF-scheduler-的邮件讨论"><a href="#关于BPF-scheduler-的邮件讨论" class="headerlink" title="关于BPF scheduler 的邮件讨论"></a>关于BPF scheduler <strong>的邮件讨论</strong></h3><p>将BPF 引入CPU  scheduler，业内有过一些讨论，涉及到的主要人物</p>
 <ul>
 <li><code>Roman Gushchin</code>  Facebook ，内核调度策略中加入BPF 基础设施的owner</li>
-<li><code>Hao Luo</code>                  Google，开源框架ghOSt 的owner，还有一个owner <code>Barret Rhoden</code></li>
-<li><code>Qais Yousef</code>         ARM，针对Roman 的patchSet 提出一系列关于移动端的疑问</li>
-<li><code>Ren Zhijie</code>           华为，  在<code>Roman</code> 的PatchSet 基础上做了二次开发</li>
+<li><code>Hao Luo</code>         Google，开源框架ghOSt 的owner，还有一个owner <code>Barret Rhoden</code></li>
+<li><code>Qais Yousef</code>     ARM，针对Roman 的patchSet 提出一系列关于移动端的疑问</li>
+<li><code>Ren Zhijie</code>      华为，  在<code>Roman</code> 的PatchSet 基础上做了二次开发</li>
 </ul>
 <p>故事的开始是Facebook 的<code>Roman Gushchin</code> 致力于想要将这笔<a href="https://lwn.net/ml/linux-kernel/20210916162451.709260-1-guro@fb.com/" target="_blank" rel="noopener">Scheduler BPF</a> 合入到内核主线中 ，对于该PatchSet 的目的他本人给出的理由：</p>
 <blockquote>
@@ -526,8 +522,8 @@
 <blockquote>
 <p>Yes. Barret can talk more about this, but I think it summarized the work of ghOSt [3] and the use of BPF in ghOSt well.</p>
 </blockquote>
-<p>Looking forward, I agree that BPF has a great potential in customizing policies in the scheduler. It has the advantage of quick experimentation and deployment. One of the use cases I’m thinking of is to customize load balancing policies. For example, allow using BPF to influence whether a task can migrate (can_migrate_task). This is currently only an idea.</p>
 <blockquote>
+<p>Looking forward, I agree that BPF has a great potential in customizing policies in the scheduler. It has the advantage of quick experimentation and deployment. One of the use cases I’m thinking of is to customize load balancing policies. For example, allow using BPF to influence whether a task can migrate (can_migrate_task). This is currently only an idea.</p>
 </blockquote>
 <p>没错，谷歌的开源框架ghOSt (<a href="https://lpc.events/event/11/contributions/954/" target="_blank" rel="noopener">Use of eBPF in cpu scheduler</a>) 正是利用BPF 实现了定制调度策略。</p>
 <p>展望未来，我同意 BPF 对于定制化调度器策略有着巨大的潜力，它具有快速实验和部署的优势。我正在考虑其中一种用例，那就是定制负载平衡策略。</p>
@@ -542,22 +538,24 @@
 <blockquote>
 <p>I am (very) wary of these hooks. Scheduler (in mobile at least) is an area that gets heavily modified by vendors and OEMs. We try very hard to understand the problems they face and get the right set of solutions in mainline. Which would ultimately help towards the goal of having a single Generic kernel Image [1] that gives you what you’d expect out of the platform without any need for additional cherries on top.</p>
 </blockquote>
-<p>So my worry is that this will open the gate for these hooks to get more than just micro-optimization done in a platform specific way. And that it will discourage having the right discussion to fix real problems in the scheduler because the easy path is to do whatever you want in userspace. I am not sure we can control how these hooks are used.</p>
-<p>The question is: why can’t we fix any issues in the scheduler/make it better and must have these hooks instead?</p>
 <blockquote>
+<p>So my worry is that this will open the gate for these hooks to get more than just micro-optimization done in a platform specific way. And that it will discourage having the right discussion to fix real problems in the scheduler because the easy path is to do whatever you want in userspace. I am not sure we can control how these hooks are used.</p>
 </blockquote>
-<p>我对这些钩子的引入非常担忧，调度器（至少在移动领域）是一个被供应商和OEM大量客制化的领域。</p>
+<blockquote>
+<p>The question is: why can’t we fix any issues in the scheduler/make it better and must have these hooks instead?</p>
+</blockquote>
+<p>我对这些钩子的引入非常担忧，调度器（至少在移动端）是一个被供应商和OEM大量客制化的领域。</p>
 <p>我们非常努力地了解他们面临的问题，并在主线中获得正确的解决方案。这最终将有助于实现GKI 目标。所以，我担心这笔patchSet 一旦引入，内核将无法控制用户空间的行为。</p>
 <p>问题是：</p>
 <p><strong>为什么我们不能在内核主线中解决调度器中遇到的问题并使其更好，而非要使用这些钩子？</strong></p>
 <p>同时，<code>Yousef</code> 提出如果要用钩子的话，最好要合入内核，这将使大家都能用得上，也方便以后追溯合入的原因，以及方便在不需要的时候移除。</p>
 <p><strong>额外补充：</strong></p>
-<p>这里说下OEM 客制化调度器这件事，社区一直在尝试解读OEM 的补丁修改，去试图理解清楚他们修改背后的动机，以便后续在主线内核中修复这些问题，同时摘取了一些OEM 的修改进行了性能测试验证。</p>
+<p>这里说下OEM 客制化调度器这件事，社区一直在尝试解读OEM 的补丁修改，试图理解他们修改背后的动机，以便后续在主线内核中修复这些问题，同时摘取了一些OEM 的修改进行了性能测试验证。</p>
 <p>详细可以阅读这篇文章 &lt;<a href="https://lwn.net/Articles/820825/" target="_blank" rel="noopener">Evaluating vendor changes to the scheduler</a>&gt;</p>
 <p>另外，既然这里Yousef  提到了Android 的GKI，我们再简单的介绍下Google 对于ACK 后续的规划</p>
 <p><img src="http://blog.lihaizhou.top/BPF-scheduler/BPF-scheduler1.png" alt="Untitled"></p>
 <p>从上图可以看出，谷歌的目标是Android 通用内核 (ACK) 尽量贴近上游，所以后续对于内核的修改，厂商必须优先使用 Linux 内核邮件列表 (LKML) 向上游提交代码更改，并且只有在有充分理由说明上游不可行时才将代码更改提交到 ACK <code>android-mainline</code>分支。</p>
-<p>如果因修改不够通用无法被上游采纳，并且没有打算重构下再提交到上游的计划，同样不会被ACK 采纳。</p>
+<p>如因修改不通用无法被上游采纳，并且没有打算重构下再提交到上游的计划，同样不会被ACK 采纳。</p>
 <p>合入到上游这点很难，因为需要明确的案例说明这个修改是有帮助的。尤其是调度以及内存相关的修改，社区态度一向十分谨慎，然而很多手机厂商的客制化修改其实并非通用且多是策略优化 + 性能数据采集。</p>
 <p>GKI 相关资料：</p>
 <ol>
@@ -578,8 +576,8 @@
 <blockquote>
 <p>I think you’re still referring to ghOSt here. I thought your 2 use cases are different as you mentioned they “completely move the scheduler code into userspace/bpf”; but it could be just me mis-interpreting what this means. That didn’t read to me they want to micro-optimize (few) certain decisions in the scheduler, rather replace it altogether, hence my question.</p>
 </blockquote>
-<p>Anyway. My 2cents here is that we should be careful not to introduce something that encourages out-of-tree workarounds for real scheduler problems nor have it done in a way where we lose visibility over how these hooks are used and being able to share it with others who could benefit from the same mico-optimization too.</p>
 <blockquote>
+<p>Anyway. My 2cents here is that we should be careful not to introduce something that encourages out-of-tree workarounds for real scheduler problems nor have it done in a way where we lose visibility over how these hooks are used and being able to share it with others who could benefit from the same mico-optimization too.</p>
 </blockquote>
 <p>这段不太好直接翻过来，根据个人理解下来<code>Yousef</code> 表达的大意是：</p>
 <p>无论是优化还是移植，我们都需要小心，以免引入一些可能导致未来出现真正调度问题却绕过内核的解决方案。同时，我们还需要确保我们在使用调度钩子时具有完整的可见性和透明性，以便将这些经验分享给其他人，让更多人从这些优化中受益。如果我们失去了这些调度钩子的可见性和透明性，可能会导致很多人错过这些优化，或者可能会出现一些我们无法预知的复杂调度问题。</p>
@@ -654,8 +652,6 @@
 </blockquote>
 <p>The second one is called from the wakeup preemption code and allows to redefine whether a newly woken task should preempt the execution of the current task. This is useful to minimize a number of preemptions of latency sensitive tasks.<br>To some extent it’s a more flexible analog of a sysctl_sched_wakeup_granularity.</p>
 <p>The third one is similar, but it tweaks the wakeup_preempt_entity() function, which is called not only from a wakeup context, but also from pick_next_task(), which allows to influence the decision on which task will be running next.</p>
-<blockquote>
-</blockquote>
 <h3 id="Google-开源框架ghOSt"><a href="#Google-开源框架ghOSt" class="headerlink" title="Google 开源框架ghOSt"></a>Google 开源框架ghOSt</h3><blockquote>
 <p>ghOSt is a general-purpose delegation of scheduling policy implemented on top of the Linux kernel. The ghOSt framework provides a rich API that receives scheduling decisions for processes from userspace and actuates them as transactions. Programmers can use any language or tools to develop policies, which can be upgraded without a machine reboot. ghOSt supports policies for a range of scheduling objectives, from µs-scale latency, to throughput, to energy efficiency, and beyond, and incurs low overheads for scheduling actions. Many policies are just a few hundred lines of code. Overall, ghOSt provides a performant framework for delegation of thread scheduling policy to userspace processes that enables policy optimization, non-disruptive upgrades, and fault isolation.</p>
 </blockquote>
@@ -685,7 +681,7 @@
             <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
             <p>原文链接：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">May 8th 2023, 5:41:33 pm</a>
-            <p>更新日期：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">May 8th 2023, 5:43:47 pm</a>
+            <p>更新日期：<a href="http://lihaizhou.top/2023/05/08/BPF-CPU-scheduler-可行性调研/">May 8th 2023, 5:51:25 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1325,11 +1321,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ANR">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ANR
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
             ART
@@ -1338,6 +1329,11 @@
         <span class="sidebar-category-name" data-categories="Android">
             <span class="iconfont-archer">&#xe60a;</span>
             Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="ANR">
+            <span class="iconfont-archer">&#xe60a;</span>
+            ANR
         </span>
     
         <span class="sidebar-category-name" data-categories="ebpf">

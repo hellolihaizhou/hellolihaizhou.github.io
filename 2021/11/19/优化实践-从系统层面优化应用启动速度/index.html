@@ -12,9 +12,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Steven Li">
+    <meta name="author" content="lidahai">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Steven Li">
+    <meta name="copyright" content="lidahai">
     
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="优化实践:从系统层面优化应用启动速度">
 <meta property="og:url" content="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/index.html">
-<meta property="og:site_name" content="李海洲">
+<meta property="og:site_name" content="lidahai">
 <meta property="og:description" content="应用的启动表现特别是冷启动的速度，是用户对App的第一印象。很多时候也会被评测机构用来测试一个手机性能的依据，所以对启动速度的优化一直以来是App和手机厂商发力的重点  故事背景最近，测试提了很多应用启动速度落后于竞品荣耀x20的问题单以其中的支付宝为例, 如下是测试提供的支付宝冷启数据(通过高速相机，以手指松开为起点，以首页内容加载出为结束点) 从高速相机均值数据上，我们的机器上冷启支付宝比竞">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://blog.lihaizhou.top/startProcess/startProcess1.png">
@@ -553,7 +553,7 @@
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文作者：<a href="http://lihaizhou.top">lidahai</a>
             <p>原文链接：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">November 19th 2021, 10:00:24 am</a>
             <p>更新日期：<a href="http://lihaizhou.top/2021/11/19/优化实践-从系统层面优化应用启动速度/">March 12th 2022, 10:31:44 pm</a>
@@ -620,18 +620,7 @@
             
     
         
-            
-                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                    
-                    <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
         
     
         
@@ -1201,11 +1190,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
@@ -1226,14 +1210,19 @@
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">
@@ -1241,14 +1230,14 @@
             网络
         </span>
     
-        <span class="sidebar-category-name" data-categories="内存">
-            <span class="iconfont-archer">&#xe60a;</span>
-            内存
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
         </span>
     
     </div>
@@ -1264,7 +1253,7 @@
     var siteMeta = {
         url: "http://lihaizhou.top",
         root: "/",
-        author: "Steven Li"
+        author: "lidahai"
     }
 </script>
 

@@ -12,9 +12,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Steven Li">
+    <meta name="author" content="lidahai">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Steven Li">
+    <meta name="copyright" content="lidahai">
     
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次SystemServer OOM导致的系统重启分析之路">
 <meta property="og:url" content="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/index.html">
-<meta property="og:site_name" content="李海洲">
+<meta property="og:site_name" content="lidahai">
 <meta property="og:description" content="测试步骤MTBF测试跑出来的机器重启，先解释下何为MTBF？MTBF测试(Mean Time Between Failure)主要测试终端在连续工作状态下，出现死机、重启、冻屏、应用强制关闭等严重故障的概率。通过在一个周期内以自动化方式反复执行规定用例，记录测试过程中被测终端出现的故障数 复现概率1/200 问题现象机器出现重启，并自动给出源头是OOM导致的结论 初步分析正常步骤先看bugrepo">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://blog.lihaizhou.top/SystemServerOOM/SystemServerOOM1.png">
@@ -517,7 +517,7 @@
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文作者：<a href="http://lihaizhou.top">lidahai</a>
             <p>原文链接：<a href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">November 25th 2020, 8:59:48 am</a>
             <p>更新日期：<a href="http://lihaizhou.top/2020/11/25/一次SystemServer-OOM导致的系统重启分析之路/">October 16th 2021, 2:14:02 pm</a>
@@ -584,18 +584,7 @@
             
     
         
-            
-                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                    
-                    <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
         
     
         
@@ -1165,11 +1154,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
@@ -1190,14 +1174,19 @@
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">
@@ -1205,14 +1194,14 @@
             网络
         </span>
     
-        <span class="sidebar-category-name" data-categories="内存">
-            <span class="iconfont-archer">&#xe60a;</span>
-            内存
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
         </span>
     
     </div>
@@ -1228,7 +1217,7 @@
     var siteMeta = {
         url: "http://lihaizhou.top",
         root: "/",
-        author: "Steven Li"
+        author: "lidahai"
     }
 </script>
 

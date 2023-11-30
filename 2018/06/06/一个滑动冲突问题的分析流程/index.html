@@ -12,9 +12,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Steven Li">
+    <meta name="author" content="lidahai">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Steven Li">
+    <meta name="copyright" content="lidahai">
     
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个滑动冲突问题的分析流程">
 <meta property="og:url" content="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/index.html">
-<meta property="og:site_name" content="李海洲">
+<meta property="og:site_name" content="lidahai">
 <meta property="og:description" content="问题需求原先效果是用户在ViewPager上长按会弹出一个dialog，现在加了一个需求：用户有时候在长按时出现手指向左或向右微小滑动，此时也需要判断为长按并弹出dialog 初步分析外边的ViewPager是可以左右滑动的，现在希望单个界面即子view接收到触摸事件后能接管本次事件序列中后续事件，即子View接收到触摸事件后，注意此时手指未松开，所以还处于一次完整的事件序列中，等待一段时间And">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-12-28T06:59:54.000Z">
@@ -505,7 +505,7 @@
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文作者：<a href="http://lihaizhou.top">lidahai</a>
             <p>原文链接：<a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">June 6th 2018, 9:58:15 pm</a>
             <p>更新日期：<a href="http://lihaizhou.top/2018/06/06/一个滑动冲突问题的分析流程/">December 28th 2019, 2:59:54 pm</a>
@@ -572,18 +572,7 @@
             
     
         
-            
-                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                    
-                    <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
         
     
         
@@ -1153,11 +1142,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
@@ -1178,14 +1162,19 @@
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">
@@ -1193,14 +1182,14 @@
             网络
         </span>
     
-        <span class="sidebar-category-name" data-categories="内存">
-            <span class="iconfont-archer">&#xe60a;</span>
-            内存
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
         </span>
     
     </div>
@@ -1216,7 +1205,7 @@
     var siteMeta = {
         url: "http://lihaizhou.top",
         root: "/",
-        author: "Steven Li"
+        author: "lidahai"
     }
 </script>
 

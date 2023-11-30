@@ -12,9 +12,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Steven Li">
+    <meta name="author" content="lidahai">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Steven Li">
+    <meta name="copyright" content="lidahai">
     
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个底层内存分配异常导致无法进入launcher问题分析">
 <meta property="og:url" content="http://lihaizhou.top/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/index.html">
-<meta property="og:site_name" content="李海洲">
+<meta property="og:site_name" content="lidahai">
 <meta property="og:description" content="问题平台Android go 复现概率always 问题现象解锁后，Launcher图标未能加载出，按虚拟back,home键，下拉状态栏响应异常缓慢 前言Android Go是一个简化版本的Android O（及以上），能够在超低端的Android手机上流畅运行，具体量化就是RAM仅为512MB至1GB的机型 初步分析首次合入MTK提供的Android Go代码后开机，解锁后Launcher图标">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-12-28T07:00:12.000Z">
@@ -528,7 +528,7 @@
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文作者：<a href="http://lihaizhou.top">lidahai</a>
             <p>原文链接：<a href="http://lihaizhou.top/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">http://lihaizhou.top/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">May 31st 2018, 10:31:47 am</a>
             <p>更新日期：<a href="http://lihaizhou.top/2018/05/31/一个底层内存分配异常导致无法进入launcher问题分析/">December 28th 2019, 3:00:12 pm</a>
@@ -595,18 +595,7 @@
             
     
         
-            
-                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                    
-                    <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
         
     
         
@@ -1176,11 +1165,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
@@ -1201,14 +1185,19 @@
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">
@@ -1216,14 +1205,14 @@
             网络
         </span>
     
-        <span class="sidebar-category-name" data-categories="内存">
-            <span class="iconfont-archer">&#xe60a;</span>
-            内存
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
         </span>
     
     </div>
@@ -1239,7 +1228,7 @@
     var siteMeta = {
         url: "http://lihaizhou.top",
         root: "/",
-        author: "Steven Li"
+        author: "lidahai"
     }
 </script>
 

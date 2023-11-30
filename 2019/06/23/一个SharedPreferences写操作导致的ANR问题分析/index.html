@@ -12,9 +12,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Steven Li">
+    <meta name="author" content="lidahai">
     <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Steven Li">
+    <meta name="copyright" content="lidahai">
     
         <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
@@ -23,7 +23,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个SharedPreferences写操作导致的ANR问题分析">
 <meta property="og:url" content="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/index.html">
-<meta property="og:site_name" content="李海洲">
+<meta property="og:site_name" content="lidahai">
 <meta property="og:description" content="问题现象手机连接WIFI后出现设置弹出无响应的弹框问题概率仅出现一次问题平台Andorid P  高通平台 日志分析拿到bugreport，使用chkbugreport解析下(开源工具，将bugreport庞大的日志进行分门别类，并以网页形式展现出来)，打开浏览器看下event日志中的时间点 106-19 17:53:42.307  1000  1820  1959 I am_anr  : [0,">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2021-09-08T12:31:40.000Z">
@@ -512,7 +512,7 @@
     <!-- license -->
     
         <div class="license-wrapper">
-            <p>原文作者：<a href="http://lihaizhou.top">Steven Li</a>
+            <p>原文作者：<a href="http://lihaizhou.top">lidahai</a>
             <p>原文链接：<a href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/</a>
             <p>发表日期：<a href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">June 23rd 2019, 8:11:32 pm</a>
             <p>更新日期：<a href="http://lihaizhou.top/2019/06/23/一个SharedPreferences写操作导致的ANR问题分析/">September 8th 2021, 8:31:40 pm</a>
@@ -579,18 +579,7 @@
             
     
         
-            
-                <a href="mailto:hellolihaizhou@163.com" class="iconfont-archer email" title=email ></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                    
-                    <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
         
     
         
@@ -1160,11 +1149,6 @@
             性能
         </span>
     
-        <span class="sidebar-category-name" data-categories="ART">
-            <span class="iconfont-archer">&#xe60a;</span>
-            ART
-        </span>
-    
         <span class="sidebar-category-name" data-categories="ANR">
             <span class="iconfont-archer">&#xe60a;</span>
             ANR
@@ -1185,14 +1169,19 @@
             稳定性
         </span>
     
+        <span class="sidebar-category-name" data-categories="kernel，Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            kernel，Android
+        </span>
+    
         <span class="sidebar-category-name" data-categories="Linux">
             <span class="iconfont-archer">&#xe60a;</span>
             Linux
         </span>
     
-        <span class="sidebar-category-name" data-categories="kernel，Android">
+        <span class="sidebar-category-name" data-categories="ART">
             <span class="iconfont-archer">&#xe60a;</span>
-            kernel，Android
+            ART
         </span>
     
         <span class="sidebar-category-name" data-categories="网络">
@@ -1200,14 +1189,14 @@
             网络
         </span>
     
-        <span class="sidebar-category-name" data-categories="内存">
-            <span class="iconfont-archer">&#xe60a;</span>
-            内存
-        </span>
-    
         <span class="sidebar-category-name" data-categories="kernel">
             <span class="iconfont-archer">&#xe60a;</span>
             kernel
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="内存">
+            <span class="iconfont-archer">&#xe60a;</span>
+            内存
         </span>
     
     </div>
@@ -1223,7 +1212,7 @@
     var siteMeta = {
         url: "http://lihaizhou.top",
         root: "/",
-        author: "Steven Li"
+        author: "lidahai"
     }
 </script>
 
